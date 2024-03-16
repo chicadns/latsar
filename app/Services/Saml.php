@@ -163,7 +163,7 @@ class Saml
 
             data_set($settings, 'sp.entityId', config('app.url'));
             // data_set($settings, 'sp.assertionConsumerService.url', route('saml.acs'));
-            data_set($settings, 'sp.assertionConsumerService.url', route(url('').'/saml/acs'));
+            data_set($settings, 'sp.assertionConsumerService.url', 'https://simpati.bps.go.id/saml/acs');
             data_set($settings, 'sp.singleLogoutService.url', route('saml.sls'));
             data_set($settings, 'sp.x509cert', $setting->saml_sp_x509cert);
             data_set($settings, 'sp.privateKey', $setting->saml_sp_privatekey);
