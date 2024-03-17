@@ -169,7 +169,7 @@
                             @can('index', \App\Models\Consumable::class)
                                 <li aria-hidden="true"{!! (Request::is('consumables*') ? ' class="active"' : '') !!}>
                                     <a href="{{ url('consumables') }}" accesskey="4" tabindex="-1">
-                                        <i class="fas fa-tint fa-fw"></i>
+                                        <i class="fas fa-dolly-flatbed fa-fw"></i>
                                         <span class="sr-only">{{ trans('general.consumables') }}</span>
                                     </a>
                                 </li>
@@ -239,7 +239,7 @@
                                         @can('create', \App\Models\Consumable::class)
                                             <li {!! (Request::is('consunmables/create') ? 'class="active"' : '') !!}>
                                                 <a href="{{ route('consumables.create') }}" tabindex="-1">
-                                                    <i class="fas fa-tint fa-fw" aria-hidden="true"></i>
+                                                    <i class="fas fa-dolly-flatbed fa-fw" aria-hidden="true"></i>
                                                     {{ trans('general.consumable') }}
                                                 </a>
                                             </li>
@@ -591,7 +591,7 @@
                         @can('view', \App\Models\Consumable::class)
                             <li{!! (Request::is('consumables*') ? ' class="active"' : '') !!}>
                                 <a href="{{ url('consumables') }}">
-                                    <i class="fas fa-tint fa-fw"></i>
+                                    <i class="fas fa-dolly-flatbed fa-fw"></i>
                                     <span>{{ trans('general.consumables') }}</span>
                                 </a>
                             </li>
@@ -853,25 +853,24 @@
 
                 <div class="1hidden-xs pull-left">
                     <div class="pull-left" >
-                        <a target="_blank" href="https://snipeitapp.com" rel="noopener">Snipe-IT</a> is open source software,
-                        made with <i class="fas fa-heart" style="color: #a94442; font-size: 10px" aria-hidden="true"></i><span
-                                class="sr-only">love</span> by <a href="https://twitter.com/snipeitapp" rel="noopener">@snipeitapp</a>.
+                        <a target="_blank" href=<?php echo url(''); ?> rel="noopener">Manajemen Inventarisasi Aset TI (Mania)</a>
                     </div>
                     <div class="pull-right">
                     @if ($snipeSettings->version_footer!='off')
                         @if (($snipeSettings->version_footer=='on') || (($snipeSettings->version_footer=='admin') && (Auth::user()->isSuperUser()=='1')))
-                            &nbsp; <strong>Version</strong> {{ config('version.app_version') }} -
-                            build {{ config('version.build_version') }} ({{ config('version.branch') }})
+                            <!-- Rihan Y. (150822) -->
+                            <!-- &nbsp; <strong>Version</strong> {{ config('version.app_version') }} - build {{ config('version.build_version') }} ({{ config('version.branch') }}) -->
+                            Direktorat Sistem Informasi Statistik - BPS RI | <strong>Versi</strong> {{ config('version.app_version') }}-<strong>build</strong> {{ config('version.build_version') }}
                         @endif
                     @endif
 
                     @if ($snipeSettings->support_footer!='off')
                         @if (($snipeSettings->support_footer=='on') || (($snipeSettings->support_footer=='admin') && (Auth::user()->isSuperUser()=='1')))
-                            <a target="_blank" class="btn btn-default btn-xs"
-                               href="https://snipe-it.readme.io/docs/overview"
-                               rel="noopener">{{ trans('general.user_manual') }}</a>
-                            <a target="_blank" class="btn btn-default btn-xs" href="https://snipeitapp.com/support/"
-                               rel="noopener">{{ trans('general.bug_report') }}</a>
+                            <!-- Rihan Y. (150822) -->
+                            <!-- <a target="_blank" class="btn btn-default btn-xs" href="https://snipe-it.readme.io/docs/overview" rel="noopener">{{ trans('general.user_manual') }}</a> -->
+                            <!-- <a target="_blank" class="btn btn-default btn-xs" href="https://snipeitapp.com/support/" rel="noopener">{{ trans('general.bug_report') }}</a> -->
+                            <a target="_blank" class="btn btn-default btn-xs" href="https://www.bps.go.id" rel="noopener">{{ trans('general.user_manual') }}</a>
+                            <a target="_blank" class="btn btn-default btn-xs" href="https://www.bps.go.id" rel="noopener">{{ trans('general.bug_report') }}</a>
                         @endif
                     @endif
 
@@ -884,7 +883,8 @@
                     <br>
                     @if ($snipeSettings->footer_text!='')
                         <div class="pull-left">
-                            {!!  Helper::parseEscapedMarkedown($snipeSettings->footer_text)  !!}
+                            <!-- Rihan Y. (150822) -->
+                            <!-- {!!  Helper::parseEscapedMarkedown($snipeSettings->footer_text)  !!} -->
                         </div>
                     @endif
                 </div>
