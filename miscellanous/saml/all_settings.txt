@@ -1,0 +1,87 @@
+ID Entity:
+https://simpati.bps.go.id/public
+
+URL Assertion Consumer Service (ACS)
+https://simpati.bps.go.id/public/saml/ACS
+
+Public Certificate
+-----BEGIN CERTIFICATE-----
+MIIDbDCCAlSgAwIBAgIBADANBgkqhkiG9w0BAQsFADBPMQswCQYDVQQGEwJVUzEM
+MAoGA1UECAwDTi9BMQwwCgYDVQQHDANOL0ExETAPBgNVBAoMCFNuaXBlLUlUMREw
+DwYDVQQDDAhTbmlwZS1JVDAeFw0yMjA4MTUwMzQyMzFaFw0zMjA4MTIwMzQyMzFa
+ME8xCzAJBgNVBAYTAlVTMQwwCgYDVQQIDANOL0ExDDAKBgNVBAcMA04vQTERMA8G
+A1UECgwIU25pcGUtSVQxETAPBgNVBAMMCFNuaXBlLUlUMIIBIjANBgkqhkiG9w0B
+AQEFAAOCAQ8AMIIBCgKCAQEAz92LWqLVF7sKDtNT5a34uvWiTTqv3wRvMT2qI/fO
+1c+6oLyNBjZ0wQNaWdcOzYZ2dQl+AfP0c912bmAiD9A/sRl+fJ5uoTGHFUk/R8Ac
+b8JxREWIXqEwee32/TNkjsQFzKBvtAK1hf3q6YEu1e20/8smsauPGdpbOAB1K3EW
+DvzEVcpFXOEmt25ui2Aw7gtWCmwIG4X707yjewezR+0HvAXHo1OhbBlHhbwGQ+Un
+XWgDL9X30t32K4RqcaNhQ7hahk5lEqEyXmDUxh1odLLL2Ohg7f+4UH1DwMCKMZVI
+VbZHj6gT9DRitP6wd7vaHoVibswQeNeE2ueuqmNMEKDO6QIDAQABo1MwUTAdBgNV
+HQ4EFgQU9ZUtnfmwMzVRcgGuxYxvZIW84ScwHwYDVR0jBBgwFoAU9ZUtnfmwMzVR
+cgGuxYxvZIW84ScwDwYDVR0TAQH/BAUwAwEB/zANBgkqhkiG9w0BAQsFAAOCAQEA
+d976a1QLNIqjLQpMf2l99tt3FIVobVM62A2nkuUBWUEVQmixrn9+bHusXQsy1YWB
+675F+Tjfd+PtESAzKf/8Q70lqVVAcnJJ20zTm34c84omysT12HRFeBDqZdN9O5eN
+uadUGyAkXtsZg2cnknbFxr0hQI+OaMPsQ8VIy8BGX+oy5HLdN+wdZUXB+y9j+svI
+W/uytVglMNzLMdwG4PPbHqro/IcmoNEEXe4+o7+PhQaHfCZheOqgfPvmIQt8Vkhi
+kYbLza1/YLyLavB7/T4JutAAYJwCHXw7ZvKEpIKrIjHpW4tYtZlT90jiRuXeXWKV
+MO2xDuCeWHPtabBSDNC6mQ==
+-----END CERTIFICATE-----
+
+Metadata URL:
+https://simpati.bps.go.id/public/saml/metadata
+
+SAML Idp Metadata:
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ Copyright 2016 Red Hat, Inc. and/or its affiliates
+  ~ and other contributors as indicated by the @author tags.
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~ http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
+<EntitiesDescriptor Name="urn:keycloak" xmlns="urn:oasis:names:tc:SAML:2.0:metadata"
+					xmlns:dsig="http://www.w3.org/2000/09/xmldsig#">
+	<EntityDescriptor entityID="https://sso.bps.go.id/auth/realms/pegawai-bps">
+		<IDPSSODescriptor WantAuthnRequestsSigned="true"
+			protocolSupportEnumeration="urn:oasis:names:tc:SAML:2.0:protocol">
+                        <KeyDescriptor use="signing">
+                          <dsig:KeyInfo>
+                            <dsig:KeyName>kc3CEu8UM5iJBvzzvgZv-7cxFJLr2MMrhU0y7_4faE4</dsig:KeyName>
+                            <dsig:X509Data>
+                              <dsig:X509Certificate>MIICpTCCAY0CBgFvkz7EBzANBgkqhkiG9w0BAQsFADAWMRQwEgYDVQQDDAtwZWdhd2FpLWJwczAeFw0yMDAxMTEwNjE0MjFaFw0zMDAxMTEwNjE2MDFaMBYxFDASBgNVBAMMC3BlZ2F3YWktYnBzMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAlXNUXGdWBglPs3dy03w9VcEcIv17OlBNQxJcTWwoaRlmLsSHjrC0zbj6Q31jQSQQvSc8NbbnIhBI/7Ej02VFmoDmc4D8QIcliNEdTDiw9QDlYX8yNh6sxwTHWwZQ6VFDrkNj5ayDYiEOU1vibczI1HiJnIijrwnldu+fo0N5rPg0Er9QXk22Losk2rVFQk0Z5zm3EsKhRn17HkRqzToqEgr/SXAVHd7qt9FwaUS3efIoT/yVicup8p/h0zBP5P8PchFqJkc4Ha44AaXVj3/bMM3MfoXL7oAcBYCJe5QE79hznNxPGmCdDWXI1ZSVj1RdZ4fOYtleCgB45qIVnWm1mQIDAQABMA0GCSqGSIb3DQEBCwUAA4IBAQCQmGT68FQypfgjXUjEDJXeyCeh1/iBxxlzhjgEn02jq2dhHI6SSh6iYxe/wqyFpvV3X3N5TAeHC/8ttYc4251Ceyxv50UkGHKzDLgvX113lWwmpe+R3lAuB9jgMfh8jMvsdgPplFVozBcPEhZ7SpwviEAaIkQCDznj+XHJxssI1c8WYSxvOFjyIP/ZItVxJ3HcJ5Y808rSGXF6k3RLO+pD3rtlzsqwvAQsFp9exdErN66H6mjWdoVC8H4N+wU120XqLHwP/7fuqq0Yu2nhQhmhxigcp34we/rep4UQ+mh9aAuarFBgI1AtzeKDqsF4vlJswjkLQaGc8QT17kKva5/2</dsig:X509Certificate>
+                            </dsig:X509Data>
+                          </dsig:KeyInfo>
+                        </KeyDescriptor>
+
+			<SingleLogoutService
+					Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST"
+					Location="https://sso.bps.go.id/auth/realms/pegawai-bps/protocol/saml" />
+			<SingleLogoutService
+					Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect"
+					Location="https://sso.bps.go.id/auth/realms/pegawai-bps/protocol/saml" />
+			<NameIDFormat>urn:oasis:names:tc:SAML:2.0:nameid-format:persistent</NameIDFormat>
+			<NameIDFormat>urn:oasis:names:tc:SAML:2.0:nameid-format:transient</NameIDFormat>
+			<NameIDFormat>urn:oasis:names:tc:SAML:1.1:nameid-format:unspecified</NameIDFormat>
+			<NameIDFormat>urn:oasis:names:tc:SAML:1.1:nameid-format:emailAddress</NameIDFormat>
+			<SingleSignOnService Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST"
+				Location="https://sso.bps.go.id/auth/realms/pegawai-bps/protocol/saml" />
+			<SingleSignOnService
+				Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect"
+				Location="https://sso.bps.go.id/auth/realms/pegawai-bps/protocol/saml" />
+			<SingleSignOnService
+				Binding="urn:oasis:names:tc:SAML:2.0:bindings:SOAP"
+				Location="https://sso.bps.go.id/auth/realms/pegawai-bps/protocol/saml" />
+		</IDPSSODescriptor>
+	</EntityDescriptor>
+</EntitiesDescriptor>
+

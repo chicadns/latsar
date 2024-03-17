@@ -363,7 +363,8 @@
           <!-- row -->
           <div class="row">
             <div class="col-md-2">
-              <strong>{{ trans('admin/settings/general.snipe_version') }}:</strong>
+              <!-- <strong>{{ trans('admin/settings/general.snipe_version') }}</strong> -->
+              <strong>Versi Mania</strong>
             </div>
             <div class="col-md-4">
             {{ config('version.app_version') }}  build {{ config('version.build_version') }} ({{ config('version.hash_version') }})
