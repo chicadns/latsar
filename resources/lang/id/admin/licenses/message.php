@@ -40,13 +40,13 @@ return array(
     ),
 
     'checkout' => array(
-        'error'   => 'Terdapat kesalahan pada saat pemberian lisensi ini. Silahkan coba kembali.',
-        'success' => 'Lisensi telah berhasil diberikan'
+        'error'   => 'Terdapat kesalahan pada saat alokasi lisensi ini. Silahkan coba kembali.',
+        'success' => 'Lisensi telah berhasil dialokasikan'
     ),
 
     'checkin' => array(
-        'error'   => 'Terdapat kesalahan pada saat penerimaan lisensi ini. Silahkan coba kembali.',
-        'success' => 'Lisensi telah berhasil diterima'
+        'error'   => 'Terdapat kesalahan pada saat realokasi lisensi ini. Silahkan coba kembali.',
+        'success' => 'Lisensi telah berhasil direalokasikan'
     ),
 
 );

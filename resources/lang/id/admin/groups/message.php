@@ -2,21 +2,21 @@
 
 return array(
 
-    'group_exists'        => 'Kelompok sudah ada!',
-    'group_not_found'     => 'Group ID :id does not exist.',
+    'group_exists'        => 'Role sudah ada!',
+    'group_not_found'     => 'Role [:id] tidak ada.',
     'group_name_required' => 'Field nama di perlukan',
 
     'success' => array(
-        'create' => 'Sukses membuat kelompok.',
-        'update' => 'Sukses memperbarui kelompok.',
-        'delete' => 'Sukses menghapus kelompok.',
+        'create' => 'Sukses membuat role.',
+        'update' => 'Sukses memperbarui role.',
+        'delete' => 'Sukses menghapus role.',
     ),
 
     'delete' => array(
-        'confirm'   => 'Anda yakin menghapus kelompok ini?',
-        'create' => 'Terdapat kesalahan ketika membuat kelompok. Silahkan coba kembali.',
-        'update' => 'Terdapat kesalahan ketika memperbarui kelompok. Silahkan coba kembali.',
-        'delete' => 'Terdapat kesalahan ketika menghapus kelompok. Silahkan coba kembali.',
+        'confirm'   => 'Anda yakin menghapus role ini?',
+        'create' => 'Terdapat kesalahan ketika membuat role. Silahkan coba kembali.',
+        'update' => 'Terdapat kesalahan ketika memperbarui role. Silahkan coba kembali.',
+        'delete' => 'Terdapat kesalahan ketika menghapus role. Silahkan coba kembali.',
     ),
 
 );

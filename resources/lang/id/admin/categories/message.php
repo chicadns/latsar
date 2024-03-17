@@ -3,8 +3,8 @@
 return array(
 
     'does_not_exist' => 'Kategori tidak ada.',
-    'assoc_models'	 => 'Kategori ini saat ini dikaitkan dengan setidaknya satu model dan tidak dapat dihapus. Perbarui model Anda yang tidak ada referensi dari kategori ini dan coba lagi. ',
-    'assoc_items'	 => 'Kategori ini saat ini dikaitkan dengan setidaknya satu model dan tidak dapat dihapus. Perbarui model Anda yang tidak ada referensi dari kategori ini dan coba lagi. ',
+    'assoc_models'	 => 'Kategori ini saat ini dikaitkan dengan setidaknya satu model/tipe dan tidak dapat dihapus. Perbarui model/tipe Anda yang tidak ada referensi dari kategori ini dan coba lagi. ',
+    'assoc_items'	 => 'Kategori ini saat ini dikaitkan dengan setidaknya satu model/tipe dan tidak dapat dihapus. Perbarui model/tipe Anda yang tidak ada referensi dari kategori ini dan coba lagi. ',
 
     'create' => array(
         'error'   => 'Kategori belum terbuat, silahkan coba kembali.',

@@ -2,10 +2,10 @@
 
 return [
 
-    'undeployable' 		=> '<strong>Peringatan: </strong> Aset ini telah di tandai sebagai aset yang tak dapat digunakan.
+    'undeployable' 		=> '<strong>Peringatan: </strong> Aset ini telah di tandai sebagai aset yang tak dapat digunakan/dialokasikan.
                         Jika status ini telah berubah, silahkan perbarui status aset.',
     'does_not_exist' 	=> 'Aset tidak ada.',
-    'does_not_exist_or_not_requestable' => 'Aset tersebut tidak ada atau tidak dapat di minta.',
+    'does_not_exist_or_not_requestable' => 'Aset tidak ada atau tidak dapat diminta.',
     'assoc_users'	 	=> 'Aset ini sudah diberikan kepada pengguna dan tidak dapat di hapus. Silahkan cek aset terlebih dahulu kemudian coba hapus kembali. ',
 
     'create' => [
@@ -17,7 +17,7 @@ return [
         'error'   			=> 'Gagal perbarui aset, silahkan coba kembali',
         'success' 			=> 'Sukses perbarui aset.',
         'nothing_updated'	=>  'Tidak ada kolom yang dipilih, jadi tidak ada yang diperbaharui.',
-        'no_assets_selected'  =>  'Tidak ada aset yang dipilih, jadi tidak ada yang diperbarui.',
+        'no_assets_selected'  =>  'Tidak ada aset terpilih, jadi tidak ada yang diperbarui.',
     ],
 
     'restore' => [
@@ -65,23 +65,23 @@ return [
     ],
 
     'checkout' => [
-        'error'   		=> 'Aset gagal di berikan, silahkan coba kembali',
-        'success' 		=> 'Sukses memberikan aset.',
+        'error'   		=> 'Aset gagal dialokasikan, silahkan coba kembali',
+        'success' 		=> 'Sukses mengalokasikan aset.',
         'user_does_not_exist' => 'Pengguna tersebut tidak terdaftar. Silahkan coba kembali.',
-        'not_available' => 'Aset tersebut tidak tersedia untuk checkout!',
+        'not_available' => 'Aset tersebut tidak tersedia untuk dialokasikan!',
         'no_assets_selected' => 'Anda harus memilih setidaknya satu aset dari daftar',
     ],
 
     'checkin' => [
-        'error'   		=> 'Aset gagal di terima, silahkan coba kembali',
-        'success' 		=> 'Sukses menerima aset.',
+        'error'   		=> 'Aset gagal direalokasikan, silahkan coba kembali',
+        'success' 		=> 'Sukses realokasi aset.',
         'user_does_not_exist' => 'Pengguna tersebut tidak terdaftar. Silahkan coba kembali.',
-        'already_checked_in'  => 'Aset tersebut telah di terima.',
+        'already_checked_in'  => 'Aset tersebut telah direalokasi.',
 
     ],
 
     'requests' => [
-        'error'   		=> 'Aset gagal di minta, silahkan coba kembali',
+        'error'   		=> 'Aset gagal diminta, silahkan coba kembali',
         'success' 		=> 'Sukses meminta aset.',
         'canceled'      => 'Permintaan pemeriksaan berhasil dibatalkan',
     ],

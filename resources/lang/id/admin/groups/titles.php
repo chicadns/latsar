@@ -1,16 +1,16 @@
 <?php
 
 return [
-    'about_groups_title'            => 'Tentang Grup',
-    'about_groups'                  => 'Grup digunakan untuk menyamaratakan perizinan pengguna.',
-    'group_management' 	 	=> 'Manajemen Kelompok',
-    'create' 	 	 	    => 'Buat Grup Baru',
-    'update' 	 		        => 'Sunting Grup',
-    'group_name' 	 		=> 'Nama Kelompok',
-    'group_admin' 	 		=> 'Admin Kelompok',
+    'about_groups_title'            => 'Tentang Roles',
+    'about_groups'                  => 'Roles digunakan untuk menyamaratakan perizinan pengguna.',
+    'group_management' 	 	=> 'Manajemen Role',
+    'create' 	 	 	    => 'Buat Role Baru',
+    'update' 	 		        => 'Sunting Role',
+    'group_name' 	 		=> 'Nama Role',
+    'group_admin' 	 		=> 'Admin Role',
     'allow' 	 			=> 'Izin',
     'deny' 	 				=> 'Tolak',
-    'permission'            => 'Hak akses',
+    'permission'            => 'Perizinan',
     'grant'                 => 'Izinkan',
-    'no_permissions'        => 'Grup ini tidak memiliki izin.'
+    'no_permissions'        => 'Role ini tidak memiliki izin.'
 ];

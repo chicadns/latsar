@@ -1,8 +1,8 @@
 <?php
 
 return [
-    'ad'				        => 'Active Directory',
-    'ad_domain'				    => 'Domain Active Directory',
+    'ad'                        => 'Direktori Aktif',
+    'ad_domain'                 => 'Domain Direktori Aktif',
     'ad_domain_help'			=> 'Hal ini kadang-kadang sama sebagai domain email Anda, tetapi tidak selalu.',
     'ad_append_domain_label'    => 'Tambahkan nama domain',
     'ad_append_domain'          => 'Tambahkan nama domain ke bagian nama pengguna (username)',
@@ -10,10 +10,10 @@ return [
     'admin_cc_email'            => 'Tembusan Email',
     'admin_cc_email_help'       => 'Jika Anda ingin mengirim salinan email checkin / checkout yang dikirimkan ke pengguna akun email tambahan, masukkan di sini. Jika tidak, biarkan bidang ini kosong.',
     'is_ad'				        => 'Ini adalah server Active Directory',
-    'alerts'                	=> 'Alerts',
+    'alerts'                	=> 'Notifikasi',
     'alert_title'               => 'Update Notification Settings',
     'alert_email'				=> 'Kirim pemberitahuan kepada',
-    'alert_email_help'    => 'Email addresses or distribution lists you want alerts to be sent to, comma separated',
+    'alert_email_help'          => 'Alamat email atau daftar distribusi yang ingin Anda kirimkan notifikasi, dipisahkan oleh koma',
     'alerts_enabled'			=> 'Aktifkan pemberitahuan',
     'alert_interval'			=> 'Ambang batas pemberitahuan kadaluarsa (dalam hari)',
     'alert_inv_threshold'		=> 'Ambang pemberitahuan persediaan',

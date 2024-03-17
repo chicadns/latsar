@@ -1,11 +1,11 @@
 <?php
 
 return array(
-    'checkout'                          => 'Periksa barang habis pakai ke Pengguna',
-    'consumable_name'                   => 'Nama Barang Habis Pakai',
-    'create'                            => 'Membuat Barang Habis Pakai',
+    'checkout'                          => 'Periksa barang stok/penyimpanan ke Pengguna',
+    'consumable_name'                   => 'Nama Barang Stok/Penyimpanan',
+    'create'                            => 'Membuat Barang Stok/Penyimpanan',
     'item_no'                           => 'Nomor Barang',
     'remaining' 			            => 'Sisa',
     'total' 			                => 'Total',
-    'update'                            => 'Memperbarui Barang Habis Pakai',
+    'update'                            => 'Memperbarui Barang Stok/Penyimpanan',
 );

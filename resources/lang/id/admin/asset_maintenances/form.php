@@ -1,14 +1,14 @@
 <?php
 
     return [
-        'asset_maintenance_type' => 'Asset Maintenance Type',
-        'title'                  => 'Judul',
-        'start_date'             => 'Start Date',
-        'completion_date'        => 'Completion Date',
+        'asset_maintenance_type' => 'Status Pemeliharaan Perangkat',
+        'title'                  => 'Keterangan Pemeliharaan',
+        'start_date'             => 'Tanggal Terima Perangkat',
+        'completion_date'        => 'Tanggal Pengembalian Perangkat',
         'cost'                   => 'Biaya',
-        'is_warranty'            => 'Pengembangan Garansi',
-        'asset_maintenance_time' => 'Asset Maintenance Time (in days)',
+        'is_warranty'            => 'Garansi',
+        'asset_maintenance_time' => 'Waktu Pemeliharaan Perangkat (dalam hari)',
         'notes'                  => 'Catatan',
-        'update'                 => 'Update Asset Maintenance',
-        'create'                 => 'Create Asset Maintenance'
+        'update'                 => 'Perbarui Pemeliharaan Perangkat',
+        'create'                 => 'Buat Pemeliharaan Perangkat'
     ];

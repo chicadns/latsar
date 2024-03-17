@@ -1,5 +1,5 @@
 <?php
 
 return array(
-    'title'      				=> 'Nama Komponen',
+    'title'      				=> 'Nama Komponen/Sparepart',
 );

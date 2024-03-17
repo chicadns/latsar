@@ -1,5 +1,5 @@
 <?php
 
 return array(
-    'title'      				=> 'Nama Barang Habis Pakai',
+    'title'      				=> 'Nama Barang Stok/Penyimpanan',
 );

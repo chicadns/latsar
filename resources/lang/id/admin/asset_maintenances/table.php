@@ -1,8 +1,8 @@
 <?php
 
     return [
-        'title'         => 'Pemeliharaan Aset',
-        'asset_name'    => 'Nama Aset',
+        'title'         => 'Pemeliharaan Perangkat',
+        'asset_name'    => 'Nama Perangkat',
         'is_warranty'   => 'Garansi',
         'dl_csv'        => 'Unduh CSV',
     ];

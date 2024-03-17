@@ -3,9 +3,9 @@
 return array(
 
     'id'                        => 'ID',
-    'name'                      => 'nama departemen',
-    'manager'                   => 'Manajer',
-    'location'                  => 'Lokasi',
-    'create'                    => 'Buat Departemen',
-    'update'                    => 'Perbarui Departemen',
+    'name'                      => 'nama unit eselon 2/3',
+    'manager'                   => 'Pimpinan',
+    'location'                  => 'Ruangan/Lokasi',
+    'create'                    => 'Buat Unit Eselon 2/3',
+    'update'                    => 'Perbarui Unit Eselon 2/Eselon 3',
     );

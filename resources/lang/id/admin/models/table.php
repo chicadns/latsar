@@ -2,16 +2,16 @@
 
 return array(
 
-    'create'				=> 'Membuat Model aset',
-    'created_at' 			=> 'Dibuat',
-    'eol'	 				=> 'MHP',
-    'modelnumber'   		=> 'No. Model.',
-    'name'      			=> 'Nama Model Aset',
+    'create'				=> 'Membuat Model/Tipe Aset',
+    'created_at' 			=> 'Dibuat Pada',
+    'eol'	 				=> 'Masa Habis Pakai/Kelayakan',
+    'modelnumber'   		=> 'No. Model/Tipe.',
+    'name'      			=> 'Nama Model/Tipe Aset',
     'numassets' 			=> 'Aset',
-    'title'					=> 'Model Aset',
-    'update'				=> 'Perbarui Model Aset',
-    'view'					=> 'Tampilkan Model Aset',
-    'update'				=> 'Perbarui Model Aset',
-    'clone'				=> 'Duplikat Model',
-    'edit'				=> 'Sunting Model',
+    'title'					=> 'Model/Tipe Aset',
+    'update'				=> 'Perbarui Model/Tipe Aset',
+    'view'					=> 'Tampilkan Model/Tipe Aset',
+    'update'				=> 'Perbarui Model/Tipe Aset',
+    'clone'				=> 'Duplikat Model/Tipe',
+    'edit'				=> 'Sunting Model/Tipe',
 );

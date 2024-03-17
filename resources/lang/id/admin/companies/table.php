@@ -1,9 +1,9 @@
 <?php
 return array(
-    'companies' => 'Perusahaan',
-    'create'    => 'Membuat perusahaan',
-    'title'     => 'Perusahaan',
-    'update'    => 'Perbarui Perusahaan',
-    'name'      => 'Nama Perusahaan',
+    'companies' => 'Satuan/Unit Kerja',
+    'create'    => 'Membuat Satuan/Unit Kerja',
+    'title'     => 'Satuan/Unit Kerja',
+    'update'    => 'Perbarui Satuan/Unit Kerja',
+    'name'      => 'Nama Satuan/Unit Kerja',
     'id'        => 'ID',
 );

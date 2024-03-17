@@ -6,6 +6,6 @@ return [
     'months'   => 'Bulan',
     'term'   => 'Syarat',
     'title'      => 'Nama ',
-    'depreciation_min' => 'Nilai Penyusutan',
+    'depreciation_min' => 'Nilai Batas Bawah',
 
 ];
