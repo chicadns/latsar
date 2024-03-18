@@ -120,6 +120,14 @@
             {!! $errors->first('notes', '<span class="alert-msg" aria-hidden="true"><i class="fas fa-times" aria-hidden="true"></i> :message</span>') !!}
           </div>
         </div>
+        <!-- Tiket Halosis -->
+        <div class="form-group {{ $errors->has('tiket') ? ' has-error' : '' }}">
+          <label for="tiket" class="col-md-3 control-label">{{ trans('admin/asset_maintenances/form.tiket') }}</label>
+          <div class="col-md-7">
+            <textarea class="col-md-6 form-control" id="tiket" name="tiket">{{ old('tiket', $item->tiket) }}</textarea>
+            {!! $errors->first('tiket', '<span class="alert-msg" aria-hidden="true"><i class="fa fa-times" aria-hidden="true"></i> :message</span>') !!}
+          </div>
+        </div>
       </div> <!-- .box-body -->
 
       <div class="box-footer text-right">

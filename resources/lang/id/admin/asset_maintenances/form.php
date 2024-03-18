@@ -10,5 +10,6 @@
         'asset_maintenance_time' => 'Waktu Pemeliharaan Perangkat (dalam hari)',
         'notes'                  => 'Catatan',
         'update'                 => 'Perbarui Pemeliharaan Perangkat',
-        'create'                 => 'Buat Pemeliharaan Perangkat'
-    ];
+        'create'                 => 'Buat Pemeliharaan Perangkat',
+        'tiket'                  => 'Tiket Halosis'
+];

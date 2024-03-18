@@ -91,6 +91,11 @@ class AssetMaintenancesPresenter extends Presenter
                 'sortable' => true,
                 'title' => trans('admin/asset_maintenances/form.notes'),
             ], [
+                "field" => "tiket",
+                "searchable" => true,
+                "sortable" => true,
+                "title" => trans('admin/asset_maintenances/form.tiket'),
+            ], [
                 'field' => 'is_warranty',
                 'searchable' => true,
                 'sortable' => true,

@@ -64,6 +64,7 @@ class AssetMaintenancesController extends Controller
                                 'title',
                                 'asset_maintenance_time',
                                 'asset_maintenance_type',
+                                'tiket',
                                 'cost',
                                 'start_date',
                                 'completion_date',
@@ -130,6 +131,7 @@ class AssetMaintenancesController extends Controller
         // Save the asset maintenance data
         $assetMaintenance->asset_id = $request->input('asset_id');
         $assetMaintenance->asset_maintenance_type = $request->input('asset_maintenance_type');
+        $assetMaintenance->tiket = $request->input('tiket');
         $assetMaintenance->title = $request->input('title');
         $assetMaintenance->start_date = $request->input('start_date');
         $assetMaintenance->completion_date = $request->input('completion_date');
@@ -188,6 +190,7 @@ class AssetMaintenancesController extends Controller
         // Save the asset maintenance data
         $assetMaintenance->asset_id = $request->input('asset_id');
         $assetMaintenance->asset_maintenance_type = $request->input('asset_maintenance_type');
+        $assetMaintenance->tiket = $request->input('tiket');
         $assetMaintenance->title = $request->input('title');
         $assetMaintenance->start_date = $request->input('start_date');
         $assetMaintenance->completion_date = $request->input('completion_date');

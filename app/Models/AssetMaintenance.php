@@ -34,6 +34,7 @@ class AssetMaintenance extends Model implements ICompanyableChild
         'start_date'             => 'required|date',
         'completion_date'        => 'nullable|date',
         'notes'                  => 'string|nullable',
+        'tiket'                  => 'string|nullable',
         'cost'                   => 'numeric|nullable',
     ];
 
@@ -44,7 +45,7 @@ class AssetMaintenance extends Model implements ICompanyableChild
      *
      * @var array
      */
-    protected $searchableAttributes = ['title', 'notes', 'asset_maintenance_type', 'cost', 'start_date', 'completion_date'];
+    protected $searchableAttributes = ['title', 'notes', 'asset_maintenance_type', 'cost', 'start_date', 'completion_date', 'tiket'];
 
     /**
      * The relations and their attributes that should be included when searching the model.
