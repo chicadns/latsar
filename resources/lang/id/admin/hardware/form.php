@@ -38,7 +38,7 @@ return [
     'order'				=> 'Nomor Pemesanan',
     'qr'				=> 'Kode QR',
     'requestable'		=> 'Pengguna dapat meminta aset ini',
-    'select_statustype'	=> 'Memilih Tipe Status',
+    'select_statustype'	=> 'Pilih Tipe Status',
     'serial'			=> 'Serial Number/Service Tag',
     'status'			=> 'Status Aset',
     'tag'				=> 'Nomor Urut Aset',

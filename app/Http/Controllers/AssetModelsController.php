@@ -77,7 +77,7 @@ class AssetModelsController extends Controller
         $model->depreciation_id = $request->input('depreciation_id');
         $model->name = $request->input('name');
         $model->model_number = $request->input('model_number');
-        $model->min_amt = $request->input('min_amt');
+        // $model->min_amt = $request->input('min_amt');
         $model->manufacturer_id = $request->input('manufacturer_id');
         $model->category_id = $request->input('category_id');
         $model->notes = $request->input('notes');
@@ -155,7 +155,7 @@ class AssetModelsController extends Controller
         $model->eol = $request->input('eol');
         $model->name = $request->input('name');
         $model->model_number = $request->input('model_number');
-        $model->min_amt = $request->input('min_amt');
+        // $model->min_amt = $request->input('min_amt');
         $model->manufacturer_id = $request->input('manufacturer_id');
         $model->category_id = $request->input('category_id');
         $model->notes = $request->input('notes');

@@ -6,10 +6,10 @@
                 {!! $errors->first('custom_fieldset', '<span class="alert-msg" aria-hidden="true"><br><i class="fas fa-times"></i> :message</span>') !!}
             </div>
             <div class="col-md-3">
-                    <label class="form-control">
+                    <!-- <label class="form-control">
                     {{ Form::checkbox('add_default_values', 1, old('add_default_values', $add_default_values), ['data-livewire-component' => $_instance->id, 'id' => 'add_default_values', 'wire:model' => 'add_default_values']) }}
                     {{ trans('admin/models/general.add_default_values') }}
-                </label>
+                </label> -->
             </div>
     </div>
     @if ($this->add_default_values ) {{-- 'if the checkbox is enabled *AND* there are more than 0 fields in the fieldsset' --}}

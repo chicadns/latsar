@@ -1,5 +1,4 @@
 @extends('layouts/default', [
-    'helpText' => trans('admin/custom_fields/general.about_fieldsets_text'),
     'helpPosition' => 'right',
 ])
 
@@ -45,7 +44,7 @@
                 }'>
           <thead>
             <tr>
-              <th>{{ trans('general.name') }}</th>
+              <th>Fieldset</th>
               <th>{{ trans('admin/custom_fields/general.qty_fields') }}</th>
               <th>{{ trans('admin/custom_fields/general.used_by_models') }}</th>
               <th>{{ trans('table.actions') }}</th>
@@ -137,19 +136,19 @@
                 }'>
           <thead>
             <tr>
-              <th data-sortable="true" data-searchable="true">{{ trans('general.name') }}</th>
+              <th data-sortable="true" data-searchable="true">Kolom</th>
               <th data-sortable="true" data-searchable="true">{{ trans('admin/custom_fields/general.help_text')}}</th>
-              <th data-sortable="true" data-searchable="true">{{ trans('admin/custom_fields/general.unique') }}</th>
+              <!-- <th data-sortable="true" data-searchable="true">{{ trans('admin/custom_fields/general.unique') }}</th> -->
               <th data-sortable="true" data-visible="false">{{ trans('admin/custom_fields/general.db_field') }}</th>
               <th data-sortable="true" data-searchable="true">{{ trans('admin/custom_fields/general.field_format') }}</th>
-              <th data-sortable="true"><i class="fa fa-lock" aria-hidden="true"></i>
+              <!-- <th data-sortable="true"><i class="fa fa-lock" aria-hidden="true"></i>
                 <span class="hidden-xs hidden-sm hidden-md hidden-lg">{{ trans('admin/custom_fields/general.encrypted') }}</span>
-              </th>
+              </th> -->
               <th data-sortable="true"><i class="fa fa-list" aria-hidden="true"></i>
                 <span class="hidden-xs hidden-sm hidden-md hidden-lg">{{ trans('admin/custom_fields/general.show_in_listview_short') }}</span>
               </th>
               <th data-visible="false" data-sortable="true"><i class="fa fa-eye" aria-hidden="true"><span class="sr-only">Visible to User</span></i></th>
-              <th data-sortable="true" data-searchable="true"><i class="fa fa-envelope" aria-hidden="true"><span class="sr-only">Show in Email</span></i></th>
+              <!-- <th data-sortable="true" data-searchable="true"><i class="fa fa-envelope" aria-hidden="true"><span class="sr-only">Show in Email</span></i></th> -->
               <th data-sortable="true" data-searchable="true">{{ trans('admin/custom_fields/general.field_element_short') }}</th>
               <th data-searchable="true">{{ trans('admin/custom_fields/general.fieldsets') }}</th>
               <th>{{ trans('button.actions') }}</th>
@@ -161,7 +160,7 @@
               <td>{{ $field->name }}</td>
               <td>{{ $field->help_text }}</td>
 
-              <td class='text-center'>{!! ($field->is_unique=='1') ? '<i class="fas fa-check text-success" aria-hidden="true"><span class="sr-only">'.trans('general.yes').'</span></i>' : '<i class="fas fa-times text-danger" aria-hidden="true"><span class="sr-only">'.trans('general.no').'</span></i>'  !!}</td>
+              <!-- <td class='text-center'>{!! ($field->is_unique=='1') ? '<i class="fas fa-check text-success" aria-hidden="true"><span class="sr-only">'.trans('general.yes').'</span></i>' : '<i class="fas fa-times text-danger" aria-hidden="true"><span class="sr-only">'.trans('general.no').'</span></i>'  !!}</td> -->
               <td>
                  <code>{{ $field->convertUnicodeDbSlug() }}</code>
                 @if ($field->convertUnicodeDbSlug()!=$field->db_column)
@@ -170,10 +169,10 @@
                 @endif
               </td>
               <td>{{ $field->format }}</td>
-              <td>{!!  ($field->field_encrypted=='1' ? '<i class="fa fa-check text-success"></i>' : '<i class="fa fa-times text-danger"></i>') !!}</td>
+              <!-- <td>{!!  ($field->field_encrypted=='1' ? '<i class="fa fa-check text-success"></i>' : '<i class="fa fa-times text-danger"></i>') !!}</td> -->
               <td>{!!  ($field->show_in_listview=='1' ? '<i class="fa fa-check text-success"></i>' : '<i class="fa fa-times text-danger"></i>') !!}</td>
               <td>{!!  ($field->display_in_user_view=='1' ? '<i class="fa fa-check text-success"></i>' : '<i class="fa fa-times text-danger"></i>') !!}</td>
-              <td class='text-center'>{!! ($field->show_in_email=='1') ? '<i class="fas fa-check text-success" aria-hidden="true"><span class="sr-only">'.trans('general.yes').'</span></i>' : '<i class="fas fa-times text-danger" aria-hidden="true"><span class="sr-only">'.trans('general.no').'</span></i>'  !!}</td>
+              <!-- <td class='text-center'>{!! ($field->show_in_email=='1') ? '<i class="fas fa-check text-success" aria-hidden="true"><span class="sr-only">'.trans('general.yes').'</span></i>' : '<i class="fas fa-times text-danger" aria-hidden="true"><span class="sr-only">'.trans('general.no').'</span></i>'  !!}</td> -->
               <td>{{ $field->element }}</td>
               <td>
                 @foreach($field->fieldset as $fieldset)

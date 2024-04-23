@@ -31,7 +31,7 @@
 
     @csrf
 <div class="row">
-  <div class="col-md-12">
+    <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1 col-sm-12 col-sm-offset-0">
     <div class="box box-default">
         <div class="box-header with-border text-right">
             <button type="submit" class="btn btn-primary"> {{ trans('general.save') }}</button>
@@ -107,7 +107,7 @@
           </div>
 
           <!-- Help Text -->
-          <div class="form-group {{ $errors->has('help_text') ? ' has-error' : '' }}">
+          <!-- <div class="form-group {{ $errors->has('help_text') ? ' has-error' : '' }}">
               <label for="help_text" class="col-md-3 control-label">
                   {{ trans('admin/custom_fields/general.help_text') }}
               </label>
@@ -116,7 +116,7 @@
                   <p class="help-block">{{ trans('admin/custom_fields/general.help_text_description') }}</p>
                   {!! $errors->first('help_text', '<span class="alert-msg" aria-hidden="true"><i class="fas fa-times" aria-hidden="true"></i> :message</span>') !!}
               </div>
-          </div>
+          </div> -->
 
 
 
@@ -136,9 +136,9 @@
                   </label>
               </div>
 
-              @if (!$field->id)
+              <!-- @if (!$field->id) -->
               <!-- Encrypted  -->
-                  <div class="col-md-9 col-md-offset-3">
+                  <!-- <div class="col-md-9 col-md-offset-3">
                       <label class="form-control">
                           <input type="checkbox" value="1" name="field_encrypted" id="field_encrypted"{{ (Request::old('field_encrypted') || $field->field_encrypted) ? ' checked="checked"' : '' }}>
                           {{ trans('admin/custom_fields/general.encrypt_field') }}
@@ -150,15 +150,15 @@
                           <p><i class="fas fa-exclamation-triangle" aria-hidden="true"></i> {{ trans('admin/custom_fields/general.encrypt_field_help') }}</p>
                       </div>
                   </div>
-              @endif
+              @endif -->
 
               <!-- Show in Email  -->
-              <div class="col-md-9 col-md-offset-3">
+              <!-- <div class="col-md-9 col-md-offset-3">
                   <label class="form-control">
                       <input type="checkbox" name="show_in_email" aria-label="show_in_email" value="1"{{ (old('show_in_email') || $field->show_in_email) ? ' checked="checked"' : '' }}>
                       {{ trans('admin/custom_fields/general.show_in_email') }}
                   </label>
-              </div>
+              </div> -->
 
               <!-- Show in View All Assets profile view  -->
               <div class="col-md-9 col-md-offset-3">
@@ -169,12 +169,12 @@
               </div>
 
               <!-- Value Must be Unique -->
-              <div class="col-md-9 col-md-offset-3">
+              <!-- <div class="col-md-9 col-md-offset-3">
                   <label class="form-control">
                       <input type="checkbox" name="is_unique" aria-label="is_unique" value="1"{{ (old('is_unique') || $field->is_unique) ? ' checked="checked"' : '' }}>
                       {{ trans('admin/custom_fields/general.is_unique') }}
                   </label>
-              </div>
+              </div> -->
 
           </div>
 
@@ -225,6 +225,9 @@
       </div> <!-- /.box-body-->
 
       <div class="box-footer text-right">
+        <a class="btn btn-link text-right" href="{{ route('fields.index') }}" style="padding-right: 15px">
+            {{ trans('button.cancel') }}
+        </a>
         <button type="submit" class="btn btn-primary"> {{ trans('general.save') }}</button>
       </div>
 

@@ -13,6 +13,6 @@ return array(
     'view_deleted'              => 'Lihat yang Dihapus',
     'view_models'               => 'Lihat Model/Tipe',
     'fieldset'                  => 'Fieldset',
-    'no_custom_field'           => 'Field yang tidak bisa di rubah',
+    'no_custom_field'           => 'Pilih Fieldset',
     'add_default_values'        => 'Tambah Nilai Default',
 );

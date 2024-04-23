@@ -7,7 +7,7 @@
     {{ trans('admin/models/general.view_deleted') }}
     {{ trans('admin/models/table.title') }}
     @else
-    {{ trans('admin/models/general.view_models') }}
+    {{ trans('admin/models/table.title') }}
   @endif
 @parent
 @stop

@@ -2,7 +2,6 @@
     'createText' => trans('admin/statuslabels/table.create') ,
     'updateText' => trans('admin/statuslabels/table.update'),
     'helpTitle' => trans('admin/statuslabels/table.about'),
-    'helpText' => trans('admin/statuslabels/table.info'),
     'formAction' => (isset($item->id)) ? route('statuslabels.update', ['statuslabel' => $item->id]) : route('statuslabels.store'),
 ])
 
@@ -19,7 +18,7 @@
 
 @section('inputFields')
 
-@include ('partials.forms.edit.name', ['translated_name' => trans('general.name')])
+@include ('partials.forms.edit.name', ['translated_name' => trans('general.status_labels')])
 
 <!-- Label type -->
 <div class="form-group{{ $errors->has('statuslabel_types') ? ' has-error' : '' }}">

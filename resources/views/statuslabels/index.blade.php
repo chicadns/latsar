@@ -1,5 +1,4 @@
 @extends('layouts/default', [
-    'helpText' => trans('admin/statuslabels/table.info') ,
     'helpPosition' => 'right',
 ])
 
@@ -46,7 +45,7 @@
                 }'>
             <thead>
               <tr>
-                <th data-sortable="true" data-field="id" data-visible="false">{{ trans('general.id') }}</th>
+                <th data-sortable="true" data-field="id" data-visible="false">No. Urut</th>
                 <th data-sortable="true" data-field="name" data-formatter="statuslabelsAssetLinkFormatter">{{ trans('admin/statuslabels/table.name') }}</th>
                 <th data-sortable="false" data-field="type" data-formatter="statusLabelTypeFormatter">{{ trans('admin/statuslabels/table.status_type') }}</th>
                   <th data-sortable="true" data-field="assets_count">{{ trans('general.assets') }}</th>
