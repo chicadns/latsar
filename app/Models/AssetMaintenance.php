@@ -53,8 +53,11 @@ class AssetMaintenance extends Model implements ICompanyableChild
      * @var array
      */
     protected $searchableRelations = [
-        'asset'     => ['name', 'asset_tag'],
+        'asset'     => ['name', 'asset_tag', 'bmn', 'serial'],
         'asset.model'     => ['name', 'model_number'],
+        'asset.company' => ['name'],
+        'asset.pemegang' => ['first_name', 'last_name','employee_num', 'nip_baru'],
+
     ];
 
     public function getCompanyableParents()
@@ -74,12 +77,23 @@ class AssetMaintenance extends Model implements ICompanyableChild
         return [
             trans('admin/asset_maintenances/general.maintenance') => trans('admin/asset_maintenances/general.maintenance'),
             trans('admin/asset_maintenances/general.repair')      => trans('admin/asset_maintenances/general.repair'),
-            trans('admin/asset_maintenances/general.upgrade')     => trans('admin/asset_maintenances/general.upgrade'),
-            trans('admin/asset_maintenances/general.pat_test')     => trans('admin/asset_maintenances/general.pat_test'),
-            trans('admin/asset_maintenances/general.calibration')     => trans('admin/asset_maintenances/general.calibration'),
-            trans('admin/asset_maintenances/general.software_support')      => trans('admin/asset_maintenances/general.software_support'),
-            trans('admin/asset_maintenances/general.hardware_support')      => trans('admin/asset_maintenances/general.hardware_support'),
-            trans('admin/asset_maintenances/general.configuration_change')     => trans('admin/asset_maintenances/general.configuration_change'),
+            'Obsolete' => 'Obsolete',
+            // trans('admin/asset_maintenances/general.upgrade')     => trans('admin/asset_maintenances/general.upgrade'),
+            // trans('admin/asset_maintenances/general.pat_test')     => trans('admin/asset_maintenances/general.pat_test'),
+            // trans('admin/asset_maintenances/general.calibration')     => trans('admin/asset_maintenances/general.calibration'),
+            // trans('admin/asset_maintenances/general.software_support')      => trans('admin/asset_maintenances/general.software_support'),
+            // trans('admin/asset_maintenances/general.hardware_support')      => trans('admin/asset_maintenances/general.hardware_support'),
+            // trans('admin/asset_maintenances/general.configuration_change')     => trans('admin/asset_maintenances/general.configuration_change'),
+        ];
+    }
+
+    public static function getLokasiBarang()
+    {
+        return[
+            'Masuk ke teknisi' => 'Masuk ke teknisi',
+            'Pemeliharaan di vendor' => 'Pemeliharaan di vendor',
+            'Sudah kembali ke teknisi' => 'Sudah kembali ke teknisi',
+            'Sudah kembali ke pengguna' => 'Sudah kembali ke pengguna'
         ];
     }
 

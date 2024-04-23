@@ -28,6 +28,8 @@ class AssetMaintenancesTransformer
                 'id' => (int) $assetmaintenance->asset->id,
                 'name'=> ($assetmaintenance->asset->name) ? e($assetmaintenance->asset->name) : null,
                 'asset_tag'=> e($assetmaintenance->asset->asset_tag),
+                'bmn' => e($assetmaintenance->asset->bmn),
+                'serial' => e($assetmaintenance->asset->serial),
 
             ] : null,
             'model' => (($assetmaintenance->asset) && ($assetmaintenance->asset->model)) ? [
@@ -39,6 +41,12 @@ class AssetMaintenancesTransformer
                 'name'=> ($assetmaintenance->asset->company->name) ? e($assetmaintenance->asset->company->name) : null,
 
             ] : null,
+            'pemegang' => (($assetmaintenance->asset) && ($assetmaintenance->asset->pemegang)) ? [
+                'id' => (int) $assetmaintenance->asset->pemegang->id,
+                'name'=> e($assetmaintenance->asset->pemegang->getFullNameAttribute()),
+                'employee_number' =>  e($assetmaintenance->asset->pemegang->employee_num),
+                'nip_baru' =>  e($assetmaintenance->asset->pemegang->nip_baru),
+            ]  : null,
             'title'         => ($assetmaintenance->title) ? e($assetmaintenance->title) : null,
             'location' => (($assetmaintenance->asset) && ($assetmaintenance->asset->location)) ? [
                 'id' => (int) $assetmaintenance->asset->location->id,
@@ -56,6 +64,8 @@ class AssetMaintenancesTransformer
             'tiket'         => ($assetmaintenance->tiket) ? e($assetmaintenance->tiket) : null,
             'start_date'         => Helper::getFormattedDateObject($assetmaintenance->start_date, 'date'),
             'asset_maintenance_time'          => $assetmaintenance->asset_maintenance_time,
+            'lokasi_barang'          => e($assetmaintenance->lokasi_barang),
+            'tiket'          => ($assetmaintenance->tiket) ? e($assetmaintenance->tiket) : null,
             'completion_date'     => Helper::getFormattedDateObject($assetmaintenance->completion_date, 'date'),
             'user_id'    => ($assetmaintenance->admin) ? ['id' => $assetmaintenance->admin->id, 'name'=> e($assetmaintenance->admin->getFullNameAttribute())] : null,
             'created_at' => Helper::getFormattedDateObject($assetmaintenance->created_at, 'datetime'),

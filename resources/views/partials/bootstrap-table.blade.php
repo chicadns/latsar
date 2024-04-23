@@ -583,6 +583,34 @@
 
     }
 
+    function bmnLinkFormatter(value, row) {
+        if ((row.asset) && (row.asset.bmn)) {
+            return '<a href="{{ url('/') }}/hardware/' + row.asset.id + '"> ' + row.asset.bmn + '</a>';
+        }
+
+    }
+
+    function serialLinkFormatter(value, row) {
+        if ((row.asset) && (row.asset.serial)) {
+            return '<a href="{{ url('/') }}/hardware/' + row.asset.id + '"> ' + row.asset.serial + '</a>';
+        }
+
+    }
+
+    function employeeLinkFormatter(value, row) {
+        if ((row.pemegang) && (row.pemegang.employee_number)) {
+            return '<a href="{{ url('/') }}/users/' + row.pemegang.id + '"> ' + row.pemegang.employee_number + '</a>';
+        }
+
+    }
+
+    function nipBaruLinkFormatter(value, row) {
+        if ((row.pemegang) && (row.pemegang.nip_baru)) {
+            return '<a href="{{ url('/') }}/users/' + row.pemegang.id + '"> ' + row.pemegang.nip_baru + '</a>';
+        }
+
+    }
+
     function trueFalseFormatter(value) {
         if ((value) && ((value == 'true') || (value == '1'))) {
             return '<i class="fas fa-check text-success"></i><span class="sr-only">{{ trans('general.true') }}</span>';

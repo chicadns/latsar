@@ -75,14 +75,20 @@ class AssetMaintenancesController extends Controller
 
         // Prepare Asset Maintenance Type List
         $assetMaintenanceType = [
-                                    '' => 'Select an asset maintenance type',
+                                    '' => 'Pilih Status Pemeliharaan',
                                 ] + AssetMaintenance::getImprovementOptions();
         // Mark the selected asset, if it came in
+
+        $lokasiBarang = [
+                            '' => 'Pilih Lokasi Barang',
+                        ] + AssetMaintenance::getLokasiBarang();
 
         return view('asset_maintenances/edit')
                    ->with('asset', $asset)
                    ->with('assetMaintenanceType', $assetMaintenanceType)
+                   ->with('lokasiBarang', $lokasiBarang)
                    ->with('item', new AssetMaintenance);
+
     }
 
     /**
@@ -112,7 +118,8 @@ class AssetMaintenancesController extends Controller
         // Save the asset maintenance data
         $assetMaintenance->asset_id = $request->input('asset_id');
         $assetMaintenance->asset_maintenance_type = $request->input('asset_maintenance_type');
-        $assetMaintenance->tiket = $request->input('tiket');
+        $assetMaintenance->lokasi_barang          = $request->input('lokasi_barang');
+        $assetMaintenance->tiket                  = $request->input('tiket');
         $assetMaintenance->title = $request->input('title');
         $assetMaintenance->start_date = $request->input('start_date');
         $assetMaintenance->completion_date = $request->input('completion_date');
@@ -176,14 +183,19 @@ class AssetMaintenancesController extends Controller
 
         // Prepare Improvement Type List
         $assetMaintenanceType = [
-                                    '' => 'Select an improvement type',
+                                    '' => 'Pilih Status Pemeliharaan',
                                 ] + AssetMaintenance::getImprovementOptions();
+
+        $lokasiBarang = [
+                                    '' => 'Pilih Lokasi Barang',
+                                ] + AssetMaintenance::getLokasiBarang();
 
         // Get Supplier List
         // Render the view
         return view('asset_maintenances/edit')
                    ->with('selectedAsset', null)
                    ->with('assetMaintenanceType', $assetMaintenanceType)
+                   ->with('lokasiBarang', $lokasiBarang)
                    ->with('item', $assetMaintenance);
     }
 
@@ -224,7 +236,8 @@ class AssetMaintenancesController extends Controller
         // Save the asset maintenance data
         $assetMaintenance->asset_id = $request->input('asset_id');
         $assetMaintenance->asset_maintenance_type = $request->input('asset_maintenance_type');
-        $assetMaintenance->tiket = $request->input('tiket');
+        $assetMaintenance->lokasi_barang          = $request->input('lokasi_barang');
+        $assetMaintenance->tiket                  = $request->input('tiket');
         $assetMaintenance->title = $request->input('title');
         $assetMaintenance->start_date = $request->input('start_date');
         $assetMaintenance->completion_date = $request->input('completion_date');

@@ -183,6 +183,7 @@ class Asset extends Depreciable
         'model'              => ['name', 'model_number', 'eol'],
         'model.category'     => ['name'],
         'model.manufacturer' => ['name'],
+        'pemegang'           => ['first_name', 'last_name', 'employee_num', 'nip_baru'],
     ];
 
     // To properly set the expected checkin as Y-m-d
@@ -716,6 +717,11 @@ class Asset extends Depreciable
     public function model()
     {
         return $this->belongsTo(\App\Models\AssetModel::class, 'model_id')->withTrashed();
+    }
+
+    public function pemegang()
+    {
+        return $this->belongsTo('\App\Models\User', 'assigned_to')->withTrashed();
     }
 
     /**
@@ -1519,6 +1525,14 @@ class Asset extends Depreciable
                     $query->where(function ($query) use ($search_val) {
                         $query->whereHas('supplier', function ($query) use ($search_val) {
                             $query->where('suppliers.name', 'LIKE', '%'.$search_val.'%');
+                        });
+                    });
+                }
+
+                if ($fieldname =='pemegang') {
+                    $query->where(function ($query) use ($search_val) {
+                        $query->whereHas('pemegang', function ($query) use ($search_val) {
+                            $query->where('users.name', 'LIKE', '%' . $search_val . '%');
                         });
                     });
                 }

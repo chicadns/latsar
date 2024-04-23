@@ -8,7 +8,7 @@ return array(
     'createuser' 			=> 'Buat Pengguna Baru',
     'deny'  				=> 'Menolak',
     'email'      			=> 'Email',
-    'employee_num'      	=> 'No. Karyawan.',
+    'employee_num'      	=> 'NIP Lama',
     'first_name' 			=> 'Nama Depan',
     'groupnotes'			=> 'Select a group to assign to the user, remember that a user takes on the permissions of the group they are assigned. Use ctrl+click (or cmd+click on MacOS) to deselect groups.',
     'id'         			=> 'Id',

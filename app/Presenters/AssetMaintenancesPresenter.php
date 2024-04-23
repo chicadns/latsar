@@ -19,7 +19,7 @@ class AssetMaintenancesPresenter extends Presenter
                 'searchable' => false,
                 'sortable' => true,
                 'switchable' => true,
-                'title' => trans('general.id'),
+                'title' => 'No. Urut',
                 'visible' => false,
             ], [
                 'field' => 'company',
@@ -42,6 +42,41 @@ class AssetMaintenancesPresenter extends Presenter
                 'title' => trans('admin/hardware/table.asset_tag'),
                 'formatter' => 'assetTagLinkFormatter',
             ], [
+                "field" => "pemegang",
+                "searchable" => true,
+                "sortable" => true,
+                "title" => "Nama Pemegang Aset",
+                "visible" => true,
+                "formatter" => "usersLinkObjFormatter"
+            ], [
+                "field" => "employee_number",
+                "searchable" => true,
+                "sortable" => true,
+                "title" => trans('admin/users/table.employee_num'),
+                "visible" => true,
+                "formatter" => "employeeLinkFormatter"
+            ], [
+                "field" => "nip_baru",
+                "searchable" => true,
+                "sortable" => true,
+                "switchable" => true,
+                "title" => 'NIP Baru',
+                "visible" => true,
+                "formatter" => "nipBaruLinkFormatter"
+            ], [
+                "field" => "bmn",
+                "searchable" => true,
+                "sortable" => true,
+                "title" => trans('admin/hardware/form.bmn'),
+                "formatter" => "bmnLinkFormatter"
+            ], [
+                "field" => "serial",
+                "searchable" => true,
+                "sortable" => true,
+                "title" => trans('admin/hardware/form.serial'),
+                "formatter" => "serialLinkFormatter"
+            ], [
+
                 'field' => 'model',
                 'searchable' => true,
                 'sortable' => true,
@@ -57,13 +92,15 @@ class AssetMaintenancesPresenter extends Presenter
                 'title' => trans('general.supplier'),
                 'visible' => false,
                 'formatter' => 'suppliersLinkObjFormatter',
-            ], [
-                'field' => 'location',
-                'searchable' => true,
-                'sortable' => true,
-                'title' => trans('general.location'),
-                'formatter' => 'locationsLinkObjFormatter',
-            ], [
+            ], 
+            // [
+            //     'field' => 'location',
+            //     'searchable' => true,
+            //     'sortable' => true,
+            //     'title' => trans('general.location'),
+            //     'formatter' => 'locationsLinkObjFormatter',
+            // ], 
+            [
                 'field' => 'asset_maintenance_type',
                 'searchable' => true,
                 'sortable' => true,
@@ -91,17 +128,24 @@ class AssetMaintenancesPresenter extends Presenter
                 'sortable' => true,
                 'title' => trans('admin/asset_maintenances/form.notes'),
             ], [
+                "field" => "lokasi_barang",
+                "searchable" => true,
+                "sortable" => true,
+                "title" => 'Lokasi Barang',
+            ], [
                 "field" => "tiket",
                 "searchable" => true,
                 "sortable" => true,
                 "title" => trans('admin/asset_maintenances/form.tiket'),
-            ], [
-                'field' => 'is_warranty',
-                'searchable' => true,
-                'sortable' => true,
-                'title' => trans('admin/asset_maintenances/table.is_warranty'),
-                'formatter' => 'trueFalseFormatter'
-            ], [
+            ], 
+            // [
+            //     'field' => 'is_warranty',
+            //     'searchable' => true,
+            //     'sortable' => true,
+            //     'title' => trans('admin/asset_maintenances/table.is_warranty'),
+            //     'formatter' => 'trueFalseFormatter'
+            // ], 
+            [
                 'field' => 'cost',
                 'searchable' => true,
                 'sortable' => true,

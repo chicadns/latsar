@@ -21,7 +21,7 @@
 @section('content')
 
 <div class="row">
-  <div class="col-md-9">
+  <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1 col-sm-12 col-sm-offset-0">
     @if ($item->id)
       <form class="form-horizontal" method="post" action="{{ route('maintenances.update', $item->id) }}" autocomplete="off">
       {{ method_field('PUT') }}
@@ -85,14 +85,14 @@
         </div>
 
         <!-- Warranty -->
-        <div class="form-group">
+        <!-- <div class="form-group">
           <div class="col-sm-offset-3 col-sm-9">
               <label class="form-control">
                 <input type="checkbox" value="1" name="is_warranty" id="is_warranty" {{ old('is_warranty', $item->is_warranty) == '1' ? ' checked="checked"' : '' }}>
                 {{ trans('admin/asset_maintenances/form.is_warranty') }}
               </label>
           </div>
-        </div>
+        </div> -->
 
         <!-- Asset Maintenance Cost -->
         <div class="form-group {{ $errors->has('cost') ? ' has-error' : '' }}">
@@ -126,6 +126,14 @@
           <div class="col-md-7">
             <textarea class="col-md-6 form-control" id="tiket" name="tiket">{{ old('tiket', $item->tiket) }}</textarea>
             {!! $errors->first('tiket', '<span class="alert-msg" aria-hidden="true"><i class="fa fa-times" aria-hidden="true"></i> :message</span>') !!}
+          </div>
+        </div>
+        <!-- lokasi barang -->
+        <div class="form-group {{ $errors->has('lokasi_barang') ? ' has-error' : '' }}">
+          <label for="lokasi_barang" class="col-md-3 control-label">Lokasi Barang</label>
+          <div class="col-md-7 {{  (\App\Helpers\Helper::checkIfRequired($item, 'asset_maintenance_type')) ? ' required' : '' }}">
+              {{ Form::select('lokasi_barang', $lokasiBarang , old('lokasi_barang', $item->lokasi_barang), ['class'=>'select2', 'style'=>'min-width:350px', 'aria-label'=>'lokasi_barang']) }}
+              {!! $errors->first('lokasi_barang', '<span class="alert-msg" aria-hidden="true"><i class="fa fa-times" aria-hidden="true"></i> :message</span>') !!}
           </div>
         </div>
       </div> <!-- .box-body -->

@@ -36,7 +36,7 @@ class AssetMaintenancesController extends Controller
     {
         $this->authorize('view', Asset::class);
 
-        $maintenances = AssetMaintenance::select('asset_maintenances.*')->with('asset', 'asset.model', 'asset.location', 'asset.defaultLoc', 'supplier', 'asset.company', 'admin');
+        $maintenances = AssetMaintenance::select('asset_maintenances.*')->with('asset', 'asset.model', 'asset.location', 'asset.defaultLoc', 'supplier', 'asset.company', 'asset.pemegang', 'admin');
 
         if ($request->filled('search')) {
             $maintenances = $maintenances->TextSearch($request->input('search'));
@@ -131,7 +131,8 @@ class AssetMaintenancesController extends Controller
         // Save the asset maintenance data
         $assetMaintenance->asset_id = $request->input('asset_id');
         $assetMaintenance->asset_maintenance_type = $request->input('asset_maintenance_type');
-        $assetMaintenance->tiket = $request->input('tiket');
+        $assetMaintenance->lokasi_barang          = $request->input('lokasi_barang');
+        $assetMaintenance->tiket                  = $request->input('tiket');
         $assetMaintenance->title = $request->input('title');
         $assetMaintenance->start_date = $request->input('start_date');
         $assetMaintenance->completion_date = $request->input('completion_date');
@@ -190,7 +191,8 @@ class AssetMaintenancesController extends Controller
         // Save the asset maintenance data
         $assetMaintenance->asset_id = $request->input('asset_id');
         $assetMaintenance->asset_maintenance_type = $request->input('asset_maintenance_type');
-        $assetMaintenance->tiket = $request->input('tiket');
+        $assetMaintenance->lokasi_barang          = $request->input('lokasi_barang');
+        $assetMaintenance->tiket                  = $request->input('tiket');
         $assetMaintenance->title = $request->input('title');
         $assetMaintenance->start_date = $request->input('start_date');
         $assetMaintenance->completion_date = $request->input('completion_date');
