@@ -143,7 +143,7 @@ class AssetsController extends Controller
             $asset->supplier_id             = request('supplier_id', null);
             $asset->requestable             = request('requestable', 0);
             $asset->rtd_location_id         = request('rtd_location_id', null);
-            $asset->byod                    = request('byod', 0);
+            // $asset->byod                    = request('byod', 0);
 
             if (! empty($settings->audit_interval)) {
                 $asset->next_audit_date = Carbon::now()->addMonths($settings->audit_interval)->toDateString();
@@ -332,7 +332,7 @@ class AssetsController extends Controller
         // If the box isn't checked, it's not in the request at all.
         $asset->requestable = $request->filled('requestable');
         $asset->rtd_location_id = $request->input('rtd_location_id', null);
-        $asset->byod = $request->input('byod', 0);
+        // $asset->byod = $request->input('byod', 0);
 
         $status = Statuslabel::find($asset->status_id);
 

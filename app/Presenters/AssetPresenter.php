@@ -284,15 +284,15 @@ class AssetPresenter extends Presenter
             //     'title' => trans('general.next_audit_date'),
             //     'formatter' => 'dateDisplayFormatter',
             // ], 
-            [
-                'field' => 'byod',
-                'searchable' => false,
-                'sortable' => true,
-                'visible' => false,
-                'title' => trans('general.byod'),
-                'formatter' => 'trueFalseFormatter',
+            // [
+            //     'field' => 'byod',
+            //     'searchable' => false,
+            //     'sortable' => true,
+            //     'visible' => false,
+            //     'title' => trans('general.byod'),
+            //     'formatter' => 'trueFalseFormatter',
 
-            ],
+            // ],
         ];
 
         // This looks complicated, but we have to confirm that the custom fields exist in custom fieldsets

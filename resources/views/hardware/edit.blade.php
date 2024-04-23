@@ -3,7 +3,6 @@
     'createText' => trans('admin/hardware/form.create'),
     'updateText' => trans('admin/hardware/form.update'),
     'topSubmit' => true,
-    'helpText' => trans('help.assets'),
     'helpPosition' => 'right',
     'formAction' => ($item->id) ? route('hardware.update', ['hardware' => $item->id]) : route('hardware.store'),
 ])
@@ -122,7 +121,7 @@
             @include ('partials.forms.edit.warranty')
 
             <!-- byod checkbox -->
-            <div class="form-group">
+            <!-- <div class="form-group">
                 <div class="col-md-7 col-md-offset-3">
                     <label for="byod" class="form-control">
                         <input type="checkbox" value="1" name="byod" {{ (old('remote', $item->byod)) == '1' ? ' checked="checked"' : '' }} aria-label="byod">
@@ -132,7 +131,7 @@
                     <p class="help-block">{{ trans('general.byod_help') }}
                     </p>
                 </div>
-            </div>
+            </div> -->
         </div>
     </div>
 

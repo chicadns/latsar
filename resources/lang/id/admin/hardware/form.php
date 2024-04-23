@@ -18,7 +18,7 @@ return [
     'checkin_date'		=> 'Tanggal Pengembalian',
     'checkout_to'		=> 'Diberikan kepada',
     'cost'				=> 'Harga Pembelian',
-    'create'			=> 'Membuat aset',
+    'create'			=> 'Buat Perangkat Keras Baru',
     'date'				=> 'Tanggal pembelian',
     'depreciation'	    => 'Penyusutan',
     'depreciates_on'	=> 'Penyusutan aktif',

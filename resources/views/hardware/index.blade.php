@@ -2,38 +2,36 @@
 
 @section('title0')
 
-  @if ((Request::get('company_id')) && ($company))
-    {{ $company->name }}
-  @endif
 
-
-{{ trans('general.assets') }}
 @if (Request::get('status'))
   @if (Request::get('status')=='Pending')
-    {{ trans('general.pending') }}
+    {{ trans('general.assets') }} - {{ trans('general.pending') }}
   @elseif (Request::get('status')=='RTD')
-    {{ trans('general.ready_to_deploy') }}
+    {{ trans('general.assets') }} - {{ trans('general.ready_to_deploy') }}
   @elseif (Request::get('status')=='Deployed')
-    {{ trans('general.deployed') }}
+    {{ trans('general.assets') }} - {{ trans('general.deployed') }}
   @elseif (Request::get('status')=='Undeployable')
-    {{ trans('general.undeployable') }}
+    {{ trans('general.assets') }} - {{ trans('general.undeployable') }}
   @elseif (Request::get('status')=='Deployable')
-    {{ trans('general.deployed') }}
+    {{ trans('general.assets') }} - {{ trans('general.deployed') }}
   @elseif (Request::get('status')=='Requestable')
-    {{ trans('admin/hardware/general.requestable') }}
+    {{ trans('general.assets') }} - {{ trans('admin/hardware/general.requestable') }}
   @elseif (Request::get('status')=='Archived')
-    {{ trans('general.archived') }}
+    {{ trans('general.assets') }} - {{ trans('general.archived') }}
   @elseif (Request::get('status')=='Deleted')
-    {{ trans('general.deleted') }}
-  @elseif (Request::get('status')=='byod')
-    {{ trans('general.byod') }}
+    {{ trans('general.assets') }} - {{ trans('general.deleted') }}
   @endif
 @else
-{{ trans('general.all') }}
+{{ trans('general.all') }} {{ trans('general.assets') }}
+@endif
+
+@if ((Request::get('company_id')) && ($company))
+  {{ $company->name }}
 @endif
 
   @if (Request::has('order_number'))
     : Order #{{ Request::get('order_number') }}
+    : Nomor BAST #{{ Request::get('order_number') }}  
   @endif
 @stop
 

@@ -107,7 +107,7 @@ class Asset extends Depreciable
         'supplier_id'     => 'exists:suppliers,id|nullable',
         'asset_eol_date'  => 'date|nullable',
         'eol_explicit'    => 'boolean|nullable',
-        'byod'            => 'boolean',
+        // 'byod'            => 'boolean',
     ];
 
   /**
@@ -137,7 +137,7 @@ class Asset extends Depreciable
         'requestable',
         'last_checkout',
         'expected_checkin',
-        'byod',
+        // 'byod',
         'asset_eol_date',
         'eol_explicit', 
         'last_audit_date',

@@ -35,7 +35,7 @@ class AssetsTransformer
                 'id' => (int) $asset->model->id,
                 'name'=> e($asset->model->name),
             ] : null,
-            'byod' => ($asset->byod ? true : false),
+            // 'byod' => ($asset->byod ? true : false),
 
             'model_number' => (($asset->model) && ($asset->model->model_number)) ? e($asset->model->model_number) : null,
             'eol' => (($asset->model) && ($asset->model->eol != '')) ? $asset->model->eol : null,
