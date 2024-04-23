@@ -86,6 +86,7 @@ class AssetsController extends Controller
             'model_number',
             'last_checkout',
             'notes',
+            'bmn',
             'expected_checkin',
             'order_number',
             'image',
@@ -545,6 +546,7 @@ class AssetsController extends Controller
         $asset->model_id                = $request->get('model_id');
         $asset->order_number            = $request->get('order_number');
         $asset->notes                   = $request->get('notes');
+        $asset->bmn                     = $request->get('bmn');
         $asset->asset_tag               = $request->get('asset_tag', Asset::autoincrement_asset()); //yup, problem :/
         // NO IT IS NOT!!! This is never firing; we SHOW the asset_tag you're going to get, so it *will* be filled in!
         $asset->user_id                 = Auth::id();

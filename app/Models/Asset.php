@@ -125,6 +125,7 @@ class Asset extends Depreciable
         'model_id',
         'name',
         'notes',
+        'bmn',
         'order_number',
         'purchase_cost',
         'purchase_date',
@@ -158,6 +159,7 @@ class Asset extends Depreciable
       'order_number', 
       'purchase_cost', 
       'notes', 
+      'bmn',
       'created_at',
       'updated_at',      
       'purchase_date', 
@@ -1361,7 +1363,8 @@ class Asset extends Depreciable
                     ->orWhere('assets.asset_tag', 'LIKE', '%'.$search.'%')
                     ->orWhere('assets.serial', 'LIKE', '%'.$search.'%')
                     ->orWhere('assets.order_number', 'LIKE', '%'.$search.'%')
-                    ->orWhere('assets.notes', 'LIKE', '%'.$search.'%');
+                    ->orWhere('assets.notes', 'LIKE', '%'.$search.'%')
+                    ->orWhere('assets.bmn', 'LIKE', '%'.$search.'%');
             }
 
         })->withTrashed()->whereNull('assets.deleted_at'); //workaround for laravel bug
@@ -1427,6 +1430,10 @@ class Asset extends Depreciable
 
                 if ($fieldname == 'notes') {
                     $query->where('assets.notes', 'LIKE', '%'.$search_val.'%');
+                }
+
+                if ($fieldname =='bmn') {
+                    $query->where('assets.bmn', 'LIKE', '%'.$search_val.'%');
                 }
 
                 if ($fieldname == 'order_number') {

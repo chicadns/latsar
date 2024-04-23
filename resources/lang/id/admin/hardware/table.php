@@ -21,7 +21,7 @@ return [
     'serial'   		=> 'Serial Number/Service Tag',
     'status'   		=> 'Status Perangkat',
     'title'      	=> 'Aset ',
-    'image'		    => 'Gambar Aset',
+    'image'		    => 'Gambar Perangkat',
     'days_without_acceptance' => 'Tanda Terima',
     'monthly_depreciation' => 'Penyusutan Bulanan',
     'assigned_to'    => 'Ditugaskan Kepada',

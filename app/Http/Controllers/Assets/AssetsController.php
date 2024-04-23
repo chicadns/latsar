@@ -129,6 +129,7 @@ class AssetsController extends Controller
             $asset->model_id                = $request->input('model_id');
             $asset->order_number            = $request->input('order_number');
             $asset->notes                   = $request->input('notes');
+            $asset->bmn                     = $request->input('bmn', null);
             $asset->user_id                 = Auth::id();
             $asset->archived                = '0';
             $asset->physical                = '1';
@@ -363,6 +364,7 @@ class AssetsController extends Controller
         $asset->order_number = $request->input('order_number');
         $asset->asset_tag = $asset_tag[1];
         $asset->notes = $request->input('notes');
+        $asset->bmn   = $request->input('bmn');
         $asset->physical = '1';
 
         $asset = $request->handleImages($asset);

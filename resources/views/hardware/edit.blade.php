@@ -45,6 +45,18 @@
       @endif
   </div>
 
+    @include ('partials.forms.edit.name', ['translated_name' => trans('admin/hardware/form.name')])
+
+    <!-- Nomer BMN -->
+    <div class="form-group {{ $errors->has('bmn') ? ' has-error' : '' }}">
+        <label for="bmn" class="col-md-3 control-label">{{ trans('admin/hardware/form.bmn') }}</label>
+        <div class="col-md-7 col-sm-12">
+            <input class="form-control" type="text" name="bmn" aria-label="bmn" id="bmn" value="{{ old('bmn', $item->bmn) }}" />
+            {!! $errors->first('bmn', '<span class="alert-msg" aria-hidden="true"><i class="fa fa-times" aria-hidden="true"></i> :message</span>') !!}
+        </div>
+    </div>
+
+
     @include ('partials.forms.edit.serial', ['fieldname'=> 'serials[1]', 'old_val_name' => 'serials.1', 'translated_serial' => trans('admin/hardware/form.serial')])
 
     <div class="input_fields_wrap">
@@ -66,7 +78,7 @@
 
     @include ('partials.forms.edit.notes')
     @include ('partials.forms.edit.location-select', ['translated_name' => trans('admin/hardware/form.default_location'), 'fieldname' => 'rtd_location_id'])
-    @include ('partials.forms.edit.requestable', ['requestable_text' => trans('admin/hardware/general.requestable')])
+    <!-- include ('partials.forms.edit.requestable', ['requestable_text' => trans('admin/hardware/general.requestable')]) -->
 
 
 
@@ -97,10 +109,10 @@
 
         <div class="col-md-9 col-sm-9 col-md-offset-3">
 
-        <a id="optional_info" class="text-primary">
+        <!-- <a id="optional_info" class="text-primary">
             <i class="fa fa-caret-right fa-2x" id="optional_info_icon"></i>
             <strong>{{ trans('admin/hardware/form.optional_infos') }}</strong>
-        </a>
+        </a> -->
 
         </div>
         
@@ -135,7 +147,15 @@
 
         <div id='order_details' class="col-md-12" style="display:none">
             <br>
-            @include ('partials.forms.edit.order_number')
+            <!-- Order Number -->
+            <div class="form-group {{ $errors->has('order_number') ? ' has-error' : '' }}">
+                <label for="order_number" class="col-md-3 control-label">{{ trans('admin/hardware/form.order_number') }}</label>
+                <div class="col-md-7 col-sm-12">
+                    <input class="form-control" type="text" name="order_number" aria-label="order_number" id="order_number" value="{{ old('order_number', $item->order_number) }}" />
+                    {!! $errors->first('order_number', '<span class="alert-msg" aria-hidden="true"><i class="fa fa-times" aria-hidden="true"></i> :message</span>') !!}
+                </div>
+            </div>
+            <!-- include ('partials.forms.edit.order_number') -->
             @include ('partials.forms.edit.purchase_date')
             @include ('partials.forms.edit.eol_date')
             @include ('partials.forms.edit.supplier-select', ['translated_name' => trans('general.supplier'), 'fieldname' => 'supplier_id'])
@@ -148,6 +168,7 @@
                 @endphp
 
             @include ('partials.forms.edit.purchase_cost', ['currency_type' => $currency_type])
+            @include ('partials.forms.edit.warranty')
 
         </div>
     </div>
@@ -342,12 +363,12 @@
         });
 
         {{-- TODO: Clean up some of the duplication in here. Not too high of a priority since we only copied it once. --}}
-        $("#optional_info").on("click",function(){
-            $('#optional_details').fadeToggle(100);
-            $('#optional_info_icon').toggleClass('fa-caret-right fa-caret-down');
-            var optional_info_open = $('#optional_info_icon').hasClass('fa-caret-down');
-            document.cookie = "optional_info_open="+optional_info_open+'; path=/';
-        });
+        // $("#optional_info").on("click",function(){
+        //     $('#optional_details').fadeToggle(100);
+        //     $('#optional_info_icon').toggleClass('fa-caret-right fa-caret-down');
+        //     var optional_info_open = $('#optional_info_icon').hasClass('fa-caret-down');
+        //     document.cookie = "optional_info_open="+optional_info_open+'; path=/';
+        // });
 
         $("#order_info").on("click",function(){
             $('#order_details').fadeToggle(100);
@@ -359,12 +380,12 @@
         var all_cookies = document.cookie.split(';')
         for(var i in all_cookies) {
             var trimmed_cookie = all_cookies[i].trim(' ')
-            if (trimmed_cookie.startsWith('optional_info_open=')) {
-                elems = all_cookies[i].split('=', 2)
-                if (elems[1] == 'true') {
-                    $('#optional_info').trigger('click')
-                }
-            }
+            // if (trimmed_cookie.startsWith('optional_info_open=')) {
+            //     elems = all_cookies[i].split('=', 2)
+            //     if (elems[1] == 'true') {
+            //         $('#optional_info').trigger('click')
+            //     }
+            // }
             if (trimmed_cookie.startsWith('order_info_open=')) {
                 elems = all_cookies[i].split('=', 2)
                 if (elems[1] == 'true') {

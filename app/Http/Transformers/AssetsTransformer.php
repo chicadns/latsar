@@ -59,6 +59,7 @@ class AssetsTransformer
                 'name'=> e($asset->supplier->name),
             ] : null,
             'notes' => ($asset->notes) ? Helper::parseEscapedMarkedownInline($asset->notes) : null,
+            'bmn' => ($asset->bmn) ? e($asset->bmn) : null,
             'order_number' => ($asset->order_number) ? e($asset->order_number) : null,
             'company' => ($asset->company) ? [
                 'id' => (int) $asset->company->id,
@@ -193,6 +194,7 @@ class AssetsTransformer
                     'last_name'=> ($asset->assigned->last_name) ? e($asset->assigned->last_name) : null,
                     'email'=> ($asset->assigned->email) ? e($asset->assigned->email) : null,
                     'employee_number' =>  ($asset->assigned->employee_num) ? e($asset->assigned->employee_num) : null,
+                    'nip_baru' =>  ($asset->assigned->nip_baru) ? e($asset->assigned->nip_baru) : null,
                     'type' => 'user',
                 ] : null;
         }
