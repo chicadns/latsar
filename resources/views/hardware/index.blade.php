@@ -7,7 +7,7 @@
   @endif
 
 
-
+{{ trans('general.assets') }}
 @if (Request::get('status'))
   @if (Request::get('status')=='Pending')
     {{ trans('general.pending') }}
@@ -31,7 +31,6 @@
 @else
 {{ trans('general.all') }}
 @endif
-{{ trans('general.assets') }}
 
   @if (Request::has('order_number'))
     : Order #{{ Request::get('order_number') }}
