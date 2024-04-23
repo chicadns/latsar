@@ -2,7 +2,6 @@
     'createText' => trans('admin/manufacturers/table.create') ,
     'updateText' => trans('admin/manufacturers/table.update'),
     'helpTitle' => trans('admin/manufacturers/table.about_manufacturers_title'),
-    'helpText' => trans('admin/manufacturers/table.about_manufacturers_text'),
     'formAction' => (isset($item->id)) ? route('manufacturers.update', ['manufacturer' => $item->id]) : route('manufacturers.store'),
 ])
 

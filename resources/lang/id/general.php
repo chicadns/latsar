@@ -244,7 +244,7 @@ return [
     'select_category'       => 'Pilih Kategori',
     'select_department'     => 'Pilih Unit Eselon 2/3',
     'select_depreciation'	=> 'Pilih tipe penyusutan',
-    'select_location'		=> 'Pilih Ruangan/Lokasi Aset',
+    'select_location'		=> 'Pilih Ruangan/Lokasi',
     'select_manufacturer'	=> 'Pilih Merk',
     'select_model'			=> 'Pilih Model/Tipe',
     'select_supplier'		=> 'Pilih Penyedia/Pemasok',

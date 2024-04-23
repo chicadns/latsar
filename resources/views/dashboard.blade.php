@@ -93,7 +93,7 @@
         <p>{{ strtolower(trans('general.consumables')) }}</p>
       </div>
       <div class="icon" aria-hidden="true">
-        <i class="fas fa-tint"></i>
+        <i class="fas fa-dolly-flatbed"></i>
       </div>
       @can('index', \App\Models\Consumable::class)
         <a href="{{ route('consumables.index') }}" class="small-box-footer">{{ trans('general.view_all') }} <i class="fa fa-arrow-circle-right" aria-hidden="true"></i></a>
@@ -375,7 +375,7 @@
                                     <span class="sr-only">{{ trans('general.accessories_count') }}</span>
                                 </th>
                                 <th class="col-sm-1" data-visible="true" data-field="consumables_count" data-sortable="true">
-                                    <i class="fas fa-tint" data-toggle="tooltip" title="Barang Stok/Penyimpanan" aria-hidden="true"></i>
+                                    <i class="fas fa-dolly-flatbed" data-toggle="tooltip" title="Barang Stok/Penyimpanan" aria-hidden="true"></i>
                                     <span class="sr-only">{{ trans('general.consumables_count') }}</span>
                                 </th>
                                 <th class="col-sm-1" data-visible="true" data-field="components_count" data-sortable="true">

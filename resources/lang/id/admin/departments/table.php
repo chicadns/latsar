@@ -3,7 +3,7 @@
 return array(
 
     'id'                        => 'ID',
-    'name'                      => 'nama unit eselon 2/3',
+    'name'                      => 'Unit Eselon 2/3',
     'manager'                   => 'Pimpinan',
     'location'                  => 'Ruangan/Lokasi',
     'create'                    => 'Buat Unit Eselon 2/3',

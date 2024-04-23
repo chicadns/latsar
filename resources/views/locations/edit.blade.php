@@ -3,7 +3,6 @@
     'updateText' => trans('admin/locations/table.update'),
     'topSubmit' => true,
     'helpPosition' => 'right',
-    'helpText' => trans('admin/locations/table.about_locations'),
     'formAction' => (isset($item->id)) ? route('locations.update', ['location' => $item->id]) : route('locations.store'),
 ])
 

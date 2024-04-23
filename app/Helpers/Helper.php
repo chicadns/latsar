@@ -548,11 +548,11 @@ class Helper
     {
         $category_types = [
             '' => '',
-            'accessory' => trans('general.accessory'),
-            'asset' => trans('general.asset'),
-            'consumable' => trans('general.consumable'),
-            'component' => trans('general.component'),
-            'license' => trans('general.license'),
+            'accessory' => 'Aksesori',
+            'asset' => 'Perangkat Keras',
+            'consumable' => 'Barang Persediaan',
+            'component' => 'Komponen',
+            'license' => 'Perangkat Lunak',
         ];
 
         if ($selection != null){

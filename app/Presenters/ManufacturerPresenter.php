@@ -20,7 +20,7 @@ class ManufacturerPresenter extends Presenter
                 'searchable' => false,
                 'sortable' => true,
                 'switchable' => true,
-                'title' => trans('general.id'),
+                'title' => 'No. Urut',
                 'visible' => false,
             ],
             [
@@ -94,7 +94,7 @@ class ManufacturerPresenter extends Presenter
                 'sortable' => true,
                 'switchable' => true,
                 'title' => ' <span class="hidden-md hidden-lg">Assets</span>'
-                    .'<span class="hidden-xs"><i class="fas fa-barcode fa-lg"></i></span>',
+                    .'<span class="hidden-xs" data-toggle="tooltip" title="Jumlah Perangkat Keras"><i class="fas fa-barcode fa-lg"></i></span>',
                 'visible' => true,
             ],
             [
@@ -103,7 +103,7 @@ class ManufacturerPresenter extends Presenter
                 'sortable' => true,
                 'switchable' => true,
                 'title' => ' <span class="hidden-md hidden-lg">Licenses</span>'
-                    .'<span class="hidden-xs"><i class="far fa-save fa-lg"></i></span>',
+                    .'<span class="hidden-xs" data-toggle="tooltip" title="Jumlah Perangkat Lunak"><i class="far fa-save fa-lg"></i></span>',
                 'visible' => true,
             ],
             [
@@ -112,7 +112,7 @@ class ManufacturerPresenter extends Presenter
                 'sortable' => true,
                 'switchable' => true,
                 'title' => ' <span class="hidden-md hidden-lg">Consumables</span>'
-                    .'<span class="hidden-xs"><i class="fas fa-tint fa-lg"></i></span>',
+                    .'<span class="hidden-xs" data-toggle="tooltip" title="Jumlah Barang Stok/Persediaan"><i class="fas fa-dolly-flatbed fa-lg"></i></span>',
                 'visible' => true,
             ],
             [
@@ -121,7 +121,7 @@ class ManufacturerPresenter extends Presenter
                 'sortable' => true,
                 'switchable' => true,
                 'title' => ' <span class="hidden-md hidden-lg">Accessories</span>'
-                    .'<span class="hidden-xs"><i class="far fa-keyboard fa-lg"></i></span>',
+                    .'<span class="hidden-xs" data-toggle="tooltip" title="Jumlah Aksesori"><i class="far fa-keyboard fa-lg"></i></span>',
                 'visible' => true,
             ],
             [

@@ -9,7 +9,7 @@ return [
     'city'                      => 'Kota',
     'state'                     => 'Provinsi',
     'country'                   => 'Negara',
-    'create'                    => 'Membuat Lokasi',
+    'create'                    => 'Buat Lokasi',
     'update'                    => 'Perbarui Lokasi',
     'print_assigned'            => 'Cetak Semua Ditugaskan',
     'print_all_assigned'        => 'Cetak Semua Ditugaskan',

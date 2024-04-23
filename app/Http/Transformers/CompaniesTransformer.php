@@ -25,6 +25,7 @@ class CompaniesTransformer
         if ($company) {
             $array = [
                 'id' => (int) $company->id,
+                'kode_wil' => (int) $company->kode_wil,
                 'name' => e($company->name),
                 'phone' => ($company->phone!='') ? e($company->phone): null,
                 'fax' => ($company->fax!='') ? e($company->fax): null,

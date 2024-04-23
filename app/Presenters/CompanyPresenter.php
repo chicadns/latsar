@@ -19,9 +19,17 @@ class CompanyPresenter extends Presenter
                 'searchable' => false,
                 'sortable' => true,
                 'switchable' => true,
-                'title' => trans('general.id'),
+                'title' => 'No. Urut',
                 'visible' => false,
             ], [
+                "field" => "kode_wil",
+                "searchable" => false,
+                "sortable" => true,
+                "switchable" => true,
+                "title" => 'Kode Wilayah',
+                "visible" => true
+            ],[
+
                 'field' => 'name',
                 'searchable' => true,
                 'sortable' => true,
@@ -65,14 +73,14 @@ class CompanyPresenter extends Presenter
                 'field' => 'users_count',
                 'searchable' => false,
                 'sortable' => true,
-                'title' => '<span class="hidden-xs"><i class="fas fa-users"></i></span><span class="hidden-md hidden-lg">'.trans('general.users').'</span></th>',
+                'title' => '<span class="hidden-xs" data-toggle="tooltip" title="Jumlah Pegawai"><i class="fas fa-users"></i></span><span class="hidden-md hidden-lg">'.trans('general.users').'</span></th>',
                 'visible' => true,
 
             ], [
                 'field' => 'assets_count',
                 'searchable' => false,
                 'sortable' => true,
-                'title' => '<span class="hidden-xs"><i class="fas fa-barcode" aria-hidden="true"></i></span><span class="hidden-md hidden-lg">'.trans('general.assets').'</span>',
+                'title' => '<span class="hidden-xs" data-toggle="tooltip" title="Jumlah Perangkat Keras"><i class="fas fa-barcode" aria-hidden="true"></i></span><span class="hidden-md hidden-lg">'.trans('general.assets').'</span>',
                 'visible' => true,
 
             ], [
@@ -80,25 +88,25 @@ class CompanyPresenter extends Presenter
                 'searchable' => false,
                 'sortable' => true,
                 'visible' => true,
-                'title' => ' <span class="hidden-xs"><i class="far fa-save"></i></span><span class="hidden-md hidden-lg">'.trans('general.licenses').'</span>',
+                'title' => ' <span class="hidden-xs" data-toggle="tooltip" title="Jumlah Perangkat Lunak"><i class="far fa-save"></i></span><span class="hidden-md hidden-lg">'.trans('general.licenses').'</span>',
             ], [
                 'field' => 'accessories_count',
                 'searchable' => false,
                 'sortable' => true,
                 'visible' => true,
-                'title' => ' <span class="hidden-xs"><i class="far fa-keyboard"></i></span><span class="hidden-md hidden-lg">'.trans('general.accessories').'</span>',
+                'title' => ' <span class="hidden-xs" data-toggle="tooltip" title="Jumlah Aksesori"><i class="far fa-keyboard"></i></span><span class="hidden-md hidden-lg">'.trans('general.accessories').'</span>',
             ], [
                 'field' => 'consumables_count',
                 'searchable' => false,
                 'sortable' => true,
                 'visible' => true,
-                'title' => ' <span class="hidden-xs"><i class="fas fa-tint"></i></span><span class="hidden-md hidden-lg">'.trans('general.consumables').'</span>',
+                'title' => ' <span class="hidden-xs" data-toggle="tooltip" title="Jumlah Barang Stok"><i class="fas fa-dolly-flatbed"></i></span><span class="hidden-md hidden-lg">'.trans('general.consumables').'</span>',
             ], [
                 'field' => 'components_count',
                 'searchable' => false,
                 'sortable' => true,
                 'visible' => true,
-                'title' => ' <span class="hidden-xs"><i class="far fa-hdd"></i></span><span class="hidden-md hidden-lg">'.trans('general.components').'</span>',
+                'title' => ' <span class="hidden-xs" data-toggle="tooltip" title="Jumlah Komponen"><i class="far fa-hdd"></i></span><span class="hidden-md hidden-lg">'.trans('general.components').'</span>',
             ], [
                 'field' => 'updated_at',
                 'searchable' => false,

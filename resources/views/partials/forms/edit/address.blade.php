@@ -6,13 +6,13 @@
     </div>
 </div>
 
-<div class="form-group {{ $errors->has('address2') ? ' has-error' : '' }}">
+<!-- <div class="form-group {{ $errors->has('address2') ? ' has-error' : '' }}">
     <label class="sr-only " for="address2">{{  trans('general.address')  }}</label>
     <div class="col-md-7 col-md-offset-3">
         {{Form::text('address2', old('address2', $item->address2), array('class' => 'form-control', 'aria-label'=>'address2', 'maxlength'=>'191')) }}
         {!! $errors->first('address2', '<span class="alert-msg" aria-hidden="true"><i class="fas fa-times" aria-hidden="true"></i> :message</span>') !!}
     </div>
-</div>
+</div> -->
 
 <div class="form-group {{ $errors->has('city') ? ' has-error' : '' }}">
     {{ Form::label('city', trans('general.city'), array('class' => 'col-md-3 control-label', 'maxlength'=>'191')) }}

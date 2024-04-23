@@ -20,7 +20,7 @@ class LocationPresenter extends Presenter
                 'searchable' => false,
                 'sortable' => true,
                 'switchable' => true,
-                'title' => trans('general.id'),
+                'title' => 'No. Urut',
                 'visible' => false,
             ],
             [

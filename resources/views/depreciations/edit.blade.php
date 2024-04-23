@@ -2,7 +2,7 @@
     'createText' => trans('admin/depreciations/general.create') ,
     'updateText' => trans('admin/depreciations/general.update'),
     'helpPosition'  => 'right',
-    'helpText' => trans('help.depreciations'),
+    
     'formAction' => (isset($item->id)) ? route('depreciations.update', ['depreciation' => $item->id]) : route('depreciations.store'),
 ])
 

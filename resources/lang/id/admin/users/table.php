@@ -18,7 +18,7 @@ return array(
     'last_name'  			=> 'Nama Belakang',
     'location'  			=> 'Lokasi',
     'lock_passwords'		=> 'Detail masuk tidak dapat di ubah ketika instalasi.',
-    'manager' 				=> 'Manajer',
+    'manager' 				=> 'Pimpinan',
     'managed_locations'     => 'Lokasi yang Dikelola',
     'name' 					=> 'Nama',
     'notes'                 => 'Catatan',
