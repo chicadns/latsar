@@ -102,6 +102,7 @@ class UsersController extends Controller
         $user->last_name = $request->input('last_name');
         $user->locale = $request->input('locale');
         $user->employee_num = $request->input('employee_num');
+        $user->nip_baru = $request->input('nip_baru');
         $user->activated = $request->input('activated', 0);
         $user->jobtitle = $request->input('jobtitle');
         $user->phone = $request->input('phone');
@@ -255,6 +256,7 @@ class UsersController extends Controller
         $user->two_factor_optin = $request->input('two_factor_optin') ?: 0;
         $user->locale = $request->input('locale');
         $user->employee_num = $request->input('employee_num');
+        $user->nip_baru = $request->input('nip_baru');
         $user->activated = $request->input('activated', 0);
         $user->jobtitle = $request->input('jobtitle', null);
         $user->phone = $request->input('phone');
@@ -271,11 +273,11 @@ class UsersController extends Controller
         $user->activated = $request->input('activated', $request->user()->is($user) ? 1 : 0);
         $user->zip = $request->input('zip', null);
         $user->remote = $request->input('remote', 0);
-        $user->vip = $request->input('vip', 0);
+        // $user->vip = $request->input('vip', 0);
         $user->website = $request->input('website', null);
-        $user->start_date = $request->input('start_date', null);
-        $user->end_date = $request->input('end_date', null);
-        $user->autoassign_licenses = $request->input('autoassign_licenses', 0);
+        // $user->start_date = $request->input('start_date', null);
+        // $user->end_date = $request->input('end_date', null);
+        // $user->autoassign_licenses = $request->input('autoassign_licenses', 0);
 
         // Update the location of any assets checked out to this user
         Asset::where('assigned_type', User::class)
@@ -569,6 +571,7 @@ class UsersController extends Controller
                             ($user->company) ? $user->company->name : '',
                             $user->jobtitle,
                             $user->employee_num,
+                            $user->nip_baru,
                             $user->present()->fullName(),
                             $user->username,
                             $user->email,

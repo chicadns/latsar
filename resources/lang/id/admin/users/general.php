@@ -50,5 +50,5 @@ return [
     'email_credentials_text' => 'Email my credentials to the email address above',
     'next_save_user' => 'Next: Save User',
     'all_assigned_list_generation' => 'Dihasilkan pada:',
-    'email_user_creds_on_create' => 'Email this user their credentials?',
+    'email_user_creds_on_create' => 'Kirim Kredensial Ke Pengguna Via Email?',
 ];

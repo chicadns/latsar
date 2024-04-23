@@ -45,6 +45,7 @@ class User extends SnipeModel implements AuthenticatableContract, AuthorizableCo
         'department_id',
         'email',
         'employee_num',
+        'nip_baru',
         'first_name',
         'jobtitle',
         'last_name',
@@ -59,13 +60,13 @@ class User extends SnipeModel implements AuthenticatableContract, AuthorizableCo
         'username',
         'zip',
         'remote',
-        'start_date',
-        'end_date',
+        // 'start_date',
+        // 'end_date',
         'scim_externalid',
         'avatar',
         'gravatar',
         'vip',
-        'autoassign_licenses',
+        // 'autoassign_licenses',
     ];
 
     protected $casts = [
@@ -92,9 +93,9 @@ class User extends SnipeModel implements AuthenticatableContract, AuthorizableCo
         'website'                 => 'url|nullable|max:191',
         'manager_id'              => 'nullable|exists:users,id|cant_manage_self',
         'location_id'             => 'exists:locations,id|nullable',
-        'start_date'              => 'nullable|date_format:Y-m-d',
-        'end_date'                => 'nullable|date_format:Y-m-d|after_or_equal:start_date',
-        'autoassign_licenses'     => 'boolean',
+        // 'start_date'              => 'nullable|date_format:Y-m-d',
+        // 'end_date'                => 'nullable|date_format:Y-m-d|after_or_equal:start_date',
+        // 'autoassign_licenses'     => 'boolean',
         'address'                 => 'max:191|nullable',
         'city'                    => 'max:191|nullable',
         'state'                   => 'min:2|max:191|nullable',
@@ -119,6 +120,7 @@ class User extends SnipeModel implements AuthenticatableContract, AuthorizableCo
         'phone',
         'jobtitle',
         'employee_num',
+        'nip_baru',
     ];
 
     /**

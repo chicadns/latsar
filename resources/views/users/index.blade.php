@@ -2,12 +2,12 @@
 {{-- Page title --}}
 @section('title')
 
+    {{ trans('general.users') }}
     @if (request('status')=='deleted')
         {{ trans('general.deleted') }}
     @else
         {{ trans('general.current') }}
     @endif
-    {{ trans('general.users') }}
     @parent
 
 @stop

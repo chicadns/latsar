@@ -31,6 +31,7 @@ class UsersTransformer
                 'remote' => ($user->remote == '1') ? true : false,
                 'locale' => ($user->locale) ? e($user->locale) : null,
                 'employee_num' => ($user->employee_num) ? e($user->employee_num) : null,
+                'nip_baru' => e($user->nip_baru),
                 'manager' => ($user->manager) ? [
                     'id' => (int) $user->manager->id,
                     'name'=> e($user->manager->first_name).' '.e($user->manager->last_name),
@@ -56,7 +57,7 @@ class UsersTransformer
                 'notes'=> Helper::parseEscapedMarkedownInline($user->notes),
                 'permissions' => $user->decodePermissions(),
                 'activated' => ($user->activated == '1') ? true : false,
-                'autoassign_licenses' => ($user->autoassign_licenses == '1') ? true : false,
+                // 'autoassign_licenses' => ($user->autoassign_licenses == '1') ? true : false,
                 'ldap_import' => ($user->ldap_import == '1') ? true : false,
                 'two_factor_enrolled' => ($user->two_factor_active_and_enrolled()) ? true : false,
                 'two_factor_optin' => ($user->two_factor_active()) ? true : false,
@@ -71,8 +72,8 @@ class UsersTransformer
                 ] : null,
                 'created_at' => Helper::getFormattedDateObject($user->created_at, 'datetime'),
                 'updated_at' => Helper::getFormattedDateObject($user->updated_at, 'datetime'),
-                'start_date' => Helper::getFormattedDateObject($user->start_date, 'date'),
-                'end_date' => Helper::getFormattedDateObject($user->end_date, 'date'),
+                // 'start_date' => Helper::getFormattedDateObject($user->start_date, 'date'),
+                // 'end_date' => Helper::getFormattedDateObject($user->end_date, 'date'),
                 'last_login' => Helper::getFormattedDateObject($user->last_login, 'datetime'),
                 'deleted_at' => ($user->deleted_at) ? Helper::getFormattedDateObject($user->deleted_at, 'datetime') : null,
             ];

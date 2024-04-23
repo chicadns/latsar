@@ -24,6 +24,7 @@ class UserFactory extends Factory
             'country' => $this->faker->country(),
             'email' => $this->faker->safeEmail(),
             'employee_num' => $this->faker->numberBetween(3500, 35050),
+            'nip_baru' => $this->faker->numberBetween(3500, 35050),
             'first_name' => $this->faker->firstName(),
             'jobtitle' => $this->faker->jobTitle(),
             'last_name' => $this->faker->lastName(),

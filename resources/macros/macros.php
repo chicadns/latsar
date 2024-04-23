@@ -9,15 +9,84 @@
  */
 Form::macro('locales', function ($name = 'locale', $selected = null, $class = null, $id = null) {
 
-    $idclause = (!is_null($id)) ? $id : '';
+    $locales = [
+        ''=> 'Pilih Bahasa',
+        'en'=> 'English, US',
+        'en-GB'=> 'English, UK',
+        'af'=> 'Afrikaans',
+        'ar'=> 'Arabic',
+        'bg'=> 'Bulgarian',
+        'zh-CN'=> 'Chinese Simplified',
+        'zh-TW'=> 'Chinese Traditional',
+        'hr'=> 'Croatian',
+        'cs'=> 'Czech',
+        'da'=> 'Danish',
+        'nl'=> 'Dutch',
+        'en-ID'=> 'English, Indonesia',
+        'et'=> 'Estonian',
+        'fil'=> 'Filipino',
+        'fi'=> 'Finnish',
+        'fr'=> 'French',
+        'de'=> 'German',
+        'de-i'=> 'German (Informal)',
+        'el'=> 'Greek',
+        'he'=> 'Hebrew',
+        'hu'=> 'Hungarian',
+        'is' => 'Icelandic',
+        'id'=> 'Indonesian',
+        'ga-IE'=> 'Irish',
+        'it'=> 'Italian',
+        'ja'=> 'Japanese',
+        'ko'=> 'Korean',
+        'lv'=>'Latvian',
+        'lt'=> 'Lithuanian',
+        'mk'=> 'Macedonian',
+        'ms'=> 'Malay',
+        'mi'=> 'Maori',
+        'mn'=> 'Mongolian',
+        'no'=> 'Norwegian',
+        'fa'=> 'Persian',
+        'pl'=> 'Polish',
+        'pt-PT'=> 'Portuguese',
+        'pt-BR'=> 'Portuguese, Brazilian',
+        'ro'=> 'Romanian',
+        'ru'=> 'Russian',
+        'sr-CS' => 'Serbian (Latin)',
+        'sl'=> 'Slovenian',
+        'es-ES'=> 'Spanish',
+        'es-CO'=> 'Spanish, Colombia',
+        'es-MX'=> 'Spanish, Mexico',
+        'es-VE'=> 'Spanish, Venezuela',
+        'sv-SE'=> 'Swedish',
+        'tl'=> 'Tagalog',
+        'ta'=> 'Tamil',
+        'th'=> 'Thai',
+        'tr'=> 'Turkish',
+        'uk'=> 'Ukranian',
+        'vi'=> 'Vietnamese',
+        'cy'=> 'Welsh',
+        'zu'=> 'Zulu',
+    ];
 
-    $select = '<select name="'.$name.'" class="'.$class.'" style="min-width:100%"'.$idclause.' aria-label="'.$name.'" data-placeholder="'.trans('localizations.select_language').'">';
-    $select .= '<option value=""  role="option">'.trans('localizations.select_language').'</option>';
-
-    // Pull the autoglossonym array from the localizations translation file
-    foreach (trans('localizations.languages') as $abbr => $locale) {
-        $select .= '<option value="'.$abbr.'"'.(($selected == $abbr) ? ' selected="selected" role="option" aria-selected="true"' : ' aria-selected="false"').'>'.$locale.'</option> ';
+    $idclause = '';
+    if ($id) {
+        $idclause = " id='$id'";
     }
+    $select = '<select name="'.$name.'" class="'.$class.'" style="min-width:350px"'.$idclause.' aria-label="'.$name.'">';
+
+    foreach ($locales as $abbr => $locale) {
+        $select .= '<option value="'.$abbr.'"'.($selected == $abbr ? ' selected="selected"' : '').'>'.$locale.'</option> ';
+    }  
+
+    // $idclause = (!is_null($id)) ? $id : '';
+
+    // $select = '<select name="'.$name.'" class="'.$class.'" style="min-width:100%"'.$idclause.' aria-label="'.$name.'" data-placeholder="'.trans('localizations.select_language').'">';
+    // $select .= '<option value=""  role="option">'.trans('localizations.select_language').'</option>';
+
+    // // Pull the autoglossonym array from the localizations translation file
+    // foreach (trans('localizations.languages') as $abbr => $locale) {
+    //     $select .= '<option value="'.$abbr.'"'.(($selected == $abbr) ? ' selected="selected" role="option" aria-selected="true"' : ' aria-selected="false"').'>'.$locale.'</option> ';
+    // }
 
     $select .= '</select>';
 

@@ -49,6 +49,7 @@ class UsersController extends Controller
             'users.department_id',
             'users.email',
             'users.employee_num',
+            'users.nip_baru',
             'users.first_name',
             'users.id',
             'users.jobtitle',
@@ -68,10 +69,10 @@ class UsersController extends Controller
             'users.zip',
             'users.remote',
             'users.ldap_import',
-            'users.start_date',
-            'users.end_date',
-            'users.vip',
-            'users.autoassign_licenses',
+            // 'users.start_date',
+            // 'users.end_date',
+            // 'users.vip',
+            // 'users.autoassign_licenses',
 
         ])->with('manager', 'groups', 'userloc', 'company', 'department', 'assets', 'licenses', 'accessories', 'consumables', 'createdBy',)
             ->withCount('assets as assets_count', 'licenses as licenses_count', 'accessories as accessories_count', 'consumables as consumables_count');
@@ -229,6 +230,7 @@ class UsersController extends Controller
                         'jobtitle',
                         'username',
                         'employee_num',
+                        'nip_baru',
                         'assets',
                         'accessories',
                         'consumables',
@@ -255,9 +257,9 @@ class UsersController extends Controller
                         'two_factor_enrolled',
                         'remote',
                         'vip',
-                        'start_date',
-                        'end_date',
-                        'autoassign_licenses',
+                        // 'start_date',
+                        // 'end_date',
+                        // 'autoassign_licenses',
                     ];
 
                 $sort = in_array($request->get('sort'), $allowed_columns) ? $request->get('sort') : 'first_name';
