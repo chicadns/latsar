@@ -14,12 +14,11 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
 
 
-    <link rel="apple-touch-icon"
-          href="{{ ($snipeSettings) && ($snipeSettings->favicon!='') ?  Storage::disk('public')->url(e($snipeSettings->logo)) :  config('app.url').'/img/snipe-logo-bug.png' }}">
-    <link rel="apple-touch-startup-image"
-          href="{{ ($snipeSettings) && ($snipeSettings->favicon!='') ?  Storage::disk('public')->url(e($snipeSettings->logo)) :  config('app.url').'/img/snipe-logo-bug.png' }}">
-    <link rel="shortcut icon" type="image/ico"
-          href="{{ ($snipeSettings) && ($snipeSettings->favicon!='') ?  Storage::disk('public')->url(e($snipeSettings->favicon)) : config('app.url').'/favicon.ico' }} ">
+
+    <link rel="apple-touch-icon" href="{{ ($snipeSettings) && ($snipeSettings->favicon!='') ?  Storage::disk('public')->url(e($snipeSettings->logo)) :  config('app.url').'/img/favicon.ico' }}">
+    <link rel="apple-touch-startup-image" href="{{ ($snipeSettings) && ($snipeSettings->favicon!='') ?  Storage::disk('public')->url(e($snipeSettings->logo)) :  config('app.url').'/img/favicon.ico' }}">
+    <link rel="shortcut icon" type="image/ico" href="{{ ($snipeSettings) && ($snipeSettings->favicon!='') ?  Storage::disk('public')->url(e($snipeSettings->favicon)) : config('app.url').'/logo.png' }} ">
+    <link rel="shortcut icon" type="image/ico" href="{{ url(asset('favicon.ico')) }}">    
 
 
     <meta name="csrf-token" content="{{ csrf_token() }}">
@@ -99,16 +98,7 @@
             <header class="main-header">
 
                 <!-- Logo -->
-
-
-                <!-- Header Navbar: style can be found in header.less -->
-                <nav class="navbar navbar-static-top" role="navigation">
-                    <!-- Sidebar toggle button above the compact sidenav -->
-                    <a href="#" style="color: white" class="sidebar-toggle btn btn-white" data-toggle="push-menu"
-                       role="button">
-                        <span class="sr-only">{{ trans('general.toggle_navigation') }}</span>
-                    </a>
-                    <div class="nav navbar-nav navbar-left">
+                    <div class="navbar-nav">
                         <div class="left-navblock">
                             @if ($snipeSettings->brand == '3')
                                 <a class="logo navbar-brand no-hover" href="{{ config('app.url') }}">
@@ -128,16 +118,24 @@
                                 </a>
                             @else
                                 <a class="logo navbar-brand no-hover" href="{{ config('app.url') }}">
-                                    {{ $snipeSettings->site_name }}
+                                    <span class="logo-lg" style="font-style: bold; font-size: 18pt;"> <img src="{{ url(asset('bpslogo.ico')) }}" style="width: 45px; height:45px;"> &nbsp {{ $snipeSettings->site_name }} &nbsp</span>
                                 </a>
                             @endif
                         </div>
                     </div>
 
-                    <!-- Navbar Right Menu -->
+                    <!-- Header Navbar: style can be found in header.less -->
+                    <nav class="navbar navbar-static-top" role="navigation">
+                        <!-- Sidebar toggle button above the compact sidenav -->
+                        <a href="#" style="color: white" class="sidebar-toggle btn btn-white" data-toggle="push-menu" role="button">
+                        <span class="sr-only">Toggle navigation</span>
+                        </a>
+  
+
+                    <!-- Navbar Menu Atas -->
                     <div class="navbar-custom-menu">
                         <ul class="nav navbar-nav">
-                            @can('index', \App\Models\Asset::class)
+                            <!-- @can('index', \App\Models\Asset::class)
                                 <li aria-hidden="true"
                                     {!! (Request::is('hardware*') ? ' class="active"' : '') !!} tabindex="-1">
                                     <a href="{{ url('hardware') }}" accesskey="1" tabindex="-1">
@@ -179,8 +177,9 @@
                                         <span class="sr-only">{{ trans('general.components') }}</span>
                                     </a>
                                 </li>
-                            @endcan
+                            @endcan -->
 
+                            <!-- seacrh perangkat -->
                             @can('index', \App\Models\Asset::class)
                                 <li>
                                     <form class="navbar-form navbar-left form-horizontal" role="search"
@@ -204,6 +203,7 @@
                                 </li>
                             @endcan
 
+                            <!-- create new assets -->
                             @can('admin')
                                 <li class="dropdown" aria-hidden="true">
                                     <a href="#" class="dropdown-toggle" data-toggle="dropdown" tabindex="-1">
@@ -262,6 +262,7 @@
                                 </li>
                             @endcan
 
+                            <!-- low inventory -->
                             @can('admin')
                                 @if ($snipeSettings->show_alerts_in_menu=='1')
                                     <!-- Tasks: style can be found in dropdown.less -->
@@ -333,21 +334,21 @@
                                         <!-- User image -->
                                         <li {!! (Request::is('account/profile') ? ' class="active"' : '') !!}>
                                             <a href="{{ route('view-assets') }}">
-                                                <i class="fas fa-check fa-fw" aria-hidden="true"></i>
+                                                <i class="fas fa-barcode fa-fw" aria-hidden="true"></i>
                                                 {{ trans('general.viewassets') }}
                                             </a></li>
 
                                         @can('viewRequestable', \App\Models\Asset::class)
                                             <li {!! (Request::is('account/requested') ? ' class="active"' : '') !!}>
                                                 <a href="{{ route('account.requested') }}">
-                                                    <i class="fas fa-check fa-disk fa-fw" aria-hidden="true"></i>
+                                                    <i class="fas fa-laptop fa-disk fa-fw" aria-hidden="true"></i>
                                                     {{ trans('general.requested_assets_menu') }}
                                                 </a></li>
                                         @endcan
 
                                         <li {!! (Request::is('account/accept') ? ' class="active"' : '') !!}>
                                             <a href="{{ route('account.accept') }}">
-                                                <i class="fas fa-check fa-disk fa-fw"></i>
+                                                <i class="fas fa-check-square fa-disk fa-fw"></i>
                                                 {{ trans('general.accept_assets_menu') }}
                                             </a></li>
 
@@ -421,7 +422,7 @@
                         @can('admin')
                             <li {!! (\Request::route()->getName()=='home' ? ' class="active"' : '') !!} class="firstnav">
                                 <a href="{{ route('home') }}">
-                                    <i class="fas fa-tachometer-alt fa-fw" aria-hidden="true"></i>
+                                    <i class="fas fa-home fa-fw" aria-hidden="true"></i>
                                     <span>{{ trans('general.dashboard') }}</span>
                                 </a>
                             </li>
@@ -455,7 +456,7 @@
                                     <li{!! (Request::query('status') == 'Deployed' ? ' class="active"' : '') !!}>
                                         <a href="{{ url('hardware?status=Deployed') }}">
                                             <i class="far fa-circle text-blue fa-fw"></i>
-                                            {{ trans('general.all') }}
+                                            <!-- {{ trans('general.all') }} -->
                                             {{ trans('general.deployed') }}
                                             ({{ (isset($total_deployed_sidebar)) ? $total_deployed_sidebar : '' }})
                                         </a>
@@ -463,7 +464,7 @@
                                     <li{!! (Request::query('status') == 'RTD' ? ' class="active"' : '') !!}>
                                         <a href="{{ url('hardware?status=RTD') }}">
                                             <i class="far fa-circle text-green fa-fw"></i>
-                                            {{ trans('general.all') }}
+                                            <!-- {{ trans('general.all') }} -->
                                             {{ trans('general.ready_to_deploy') }}
                                             ({{ (isset($total_rtd_sidebar)) ? $total_rtd_sidebar : '' }})
                                         </a>
@@ -471,7 +472,7 @@
                                     <li{!! (Request::query('status') == 'Pending' ? ' class="active"' : '') !!}><a
                                                 href="{{ url('hardware?status=Pending') }}"><i
                                                     class="far fa-circle text-orange fa-fw"></i>
-                                            {{ trans('general.all') }}
+                                            <!-- {{ trans('general.all') }} -->
                                             {{ trans('general.pending') }}
                                             ({{ (isset($total_pending_sidebar)) ? $total_pending_sidebar : '' }})
                                         </a>
@@ -479,7 +480,7 @@
                                     <li{!! (Request::query('status') == 'Undeployable' ? ' class="active"' : '') !!} ><a
                                                 href="{{ url('hardware?status=Undeployable') }}"><i
                                                     class="fas fa-times text-red fa-fw"></i>
-                                            {{ trans('general.all') }}
+                                            <!-- {{ trans('general.all') }} -->
                                             {{ trans('general.undeployable') }}
                                             ({{ (isset($total_undeployable_sidebar)) ? $total_undeployable_sidebar : '' }})
                                         </a>
@@ -495,7 +496,7 @@
                                     <li{!! (Request::query('status') == 'Archived' ? ' class="active"' : '') !!}><a
                                                 href="{{ url('hardware?status=Archived') }}"><i
                                                     class="fas fa-times text-red fa-fw"></i>
-                                            {{ trans('general.all') }}
+                                            <!-- {{ trans('general.all') }} -->
                                             {{ trans('admin/hardware/general.archived') }}
                                             ({{ (isset($total_archived_sidebar)) ? $total_archived_sidebar : '' }})
                                         </a>
@@ -631,8 +632,9 @@
                         @can('backend.interact')
                             <li class="treeview {!! in_array(Request::route()->getName(),App\Helpers\Helper::SettingUrls()) ? ' active': '' !!}">
                                 <a href="#" id="settings">
-                                    <i class="fas fa-cog" aria-hidden="true"></i>
-                                    <span>{{ trans('general.settings') }}</span>
+                                    <i class="fas fa-book" aria-hidden="true"></i>
+                                    <!-- <span>{{ trans('general.settings') }}</span> -->
+                                    <span>Kamus</span>
                                     <i class="fa fa-angle-left pull-right"></i>
                                 </a>
 

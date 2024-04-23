@@ -277,7 +277,7 @@
          <!-- Locations -->
          <div class="box box-default">
             <div class="box-header with-border">
-                <h2 class="box-title">{{ trans('general.asset') }} {{ trans('general.locations') }}</h2>
+                <h2 class="box-title">{{ trans('general.asset') }} {{ trans('general.bylocations') }}</h2>
                 <div class="box-tools pull-right">
                     <button type="button" class="btn btn-box-tool" data-widget="collapse">
                         <i class="fas fa-minus" aria-hidden="true"></i>
@@ -303,20 +303,15 @@
 
                             <thead>
                             <tr>
-                                <th class="col-sm-3" data-visible="true" data-field="name" data-formatter="locationsLinkFormatter" data-sortable="true">{{ trans('general.name') }}</th>
-                                
+                                <th class="col-sm-3" data-visible="true" data-field="name" data-formatter="locationsLinkFormatter" data-sortable="true">{{ trans('general.locations') }}</th>
                                 <th class="col-sm-1" data-visible="true" data-field="assets_count" data-sortable="true">
-                                    <i class="fas fa-barcode" aria-hidden="true"></i>
-                                    <span class="sr-only">{{ trans('general.asset_count') }}</span>
+                                    {{ trans('general.asset_count') }}
                                 </th>
                                 <th class="col-sm-1" data-visible="true" data-field="assigned_assets_count" data-sortable="true">
-                                    
-                                    {{ trans('general.assigned') }}
+                                    {{ trans('general.assigned_count') }}
                                 </th>
                                 <th class="col-sm-1" data-visible="true" data-field="users_count" data-sortable="true">
-                                    <i class="fas fa-users" aria-hidden="true"></i>
-                                    <span class="sr-only">{{ trans('general.people') }}</span>
-                                    
+                                    {{ trans('general.people_count') }}
                                 </th>
                                 
                             </tr>
@@ -337,7 +332,7 @@
         <!-- Categories -->
         <div class="box box-default">
             <div class="box-header with-border">
-                <h2 class="box-title">{{ trans('general.asset') }} {{ trans('general.categories') }}</h2>
+                <h2 class="box-title">Aset Berdasarkan {{ trans('general.categories') }}</h2>
                 <div class="box-tools pull-right">
                     <button type="button" class="btn btn-box-tool" data-widget="collapse">
                         <i class="fas fa-minus" aria-hidden="true"></i>
@@ -363,29 +358,29 @@
 
                             <thead>
                             <tr>
-                                <th class="col-sm-3" data-visible="true" data-field="name" data-formatter="categoriesLinkFormatter" data-sortable="true">{{ trans('general.name') }}</th>
-                                <th class="col-sm-3" data-visible="true" data-field="category_type" data-sortable="true">
+                                <th class="col-sm-3" data-visible="true" data-field="name" data-formatter="categoriesLinkFormatter" data-sortable="true">{{ trans('general.categories') }}</th>
+                                <th class="col-sm-3" data-visible="true" data-field="trans_type" data-sortable="true">
                                     {{ trans('general.type') }}
                                 </th>
                                 <th class="col-sm-1" data-visible="true" data-field="assets_count" data-sortable="true">
-                                    <i class="fas fa-barcode" aria-hidden="true"></i>
+                                    <i class="fas fa-barcode" data-toggle="tooltip" title="Perangkat Keras" aria-hidden="true"></i>
                                     <span class="sr-only">{{ trans('general.asset_count') }}</span>
                                 </th>
+                                <th class="col-sm-1" data-visible="true" data-field="licenses_count" data-sortable="true">
+                                    <i class="far fa-save" data-toggle="tooltip" title="Perangkat Lunak" aria-hidden="true"></i>
+                                    <span class="sr-only">{{ trans('general.licenses_count') }}</span>
+                                </th>
                                 <th class="col-sm-1" data-visible="true" data-field="accessories_count" data-sortable="true">
-                                    <i class="far fa-keyboard" aria-hidden="true"></i>
+                                    <i class="far fa-keyboard" data-toggle="tooltip" title="Aksesoris" aria-hidden="true"></i>
                                     <span class="sr-only">{{ trans('general.accessories_count') }}</span>
                                 </th>
                                 <th class="col-sm-1" data-visible="true" data-field="consumables_count" data-sortable="true">
-                                    <i class="fas fa-tint" aria-hidden="true"></i>
+                                    <i class="fas fa-tint" data-toggle="tooltip" title="Barang Stok/Penyimpanan" aria-hidden="true"></i>
                                     <span class="sr-only">{{ trans('general.consumables_count') }}</span>
                                 </th>
                                 <th class="col-sm-1" data-visible="true" data-field="components_count" data-sortable="true">
-                                    <i class="far fa-hdd" aria-hidden="true"></i>
+                                    <i class="far fa-hdd" data-toggle="tooltip" title="Komponen" aria-hidden="true"></i>
                                     <span class="sr-only">{{ trans('general.components_count') }}</span>
-                                </th>
-                                <th class="col-sm-1" data-visible="true" data-field="licenses_count" data-sortable="true">
-                                    <i class="far fa-save" aria-hidden="true"></i>
-                                    <span class="sr-only">{{ trans('general.licenses_count') }}</span>
                                 </th>
                             </tr>
                             </thead>

@@ -53,11 +53,11 @@
 
 <body class="hold-transition login-page">
 
-    @if (($snipeSettings) && ($snipeSettings->logo!=''))
+    <!-- @if (($snipeSettings) && ($snipeSettings->logo!=''))
         <center>
             <a href="{{ config('app.url') }}"><img id="login-logo" src="{{ Storage::disk('public')->url('').e($snipeSettings->logo) }}"></a>
         </center>
-    @endif
+    @endif -->
   <!-- Content -->
   @yield('content')
 

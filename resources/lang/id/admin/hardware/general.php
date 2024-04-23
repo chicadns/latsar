@@ -17,7 +17,7 @@ return [
     'model_deleted'  			=> 'Model/Tipe Aset ini telah dihapus. Anda harus memulihkan model/tipe aset tersebut sebelum Anda dapat memulihkan Aset.',
     'model_invalid'             => 'The Model of this Asset is invalid.',
     'model_invalid_fix'         => 'The Asset should be edited to correct this before attempting to check it in or out.',
-    'requestable'               => 'Dapat diminta',
+    'requestable'               => 'Aset yang Dapat diminta',
     'requested'				    => 'Telah diminta',
     'not_requestable'           => 'Tidak Dapat Diminta',
     'requestable_status_warning' => 'Jangan mengubah status yang dapat diminta',

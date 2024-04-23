@@ -13,6 +13,28 @@ __This is web-based software__. This means there is no executable file (aka no .
 
 -----
 
+## MANAJEMEN ASET BARANG TI - Fungsi PTI
+
+This is internal project for BPS RI - PTI Subdirectorate, built from Snipe-IT FOSS project. Knowing who has which laptop, when it was purchased in order to depreciate it correctly, handling software licenses, etc.
+
+It is built on [Laravel 8](http://laravel.com).
+
+__This is web-based software__. This means there is no executable file (aka no .exe files), and it must be run on a web server and accessed through a web browser. It runs on any Mac OSX, flavor of Linux, as well as Windows, and we have a [Docker image](https://snipe-it.readme.io/docs/docker) available if that's what you're into.
+
+-----
+
+### Installation Roadmap (Yosral)
+- (paling awal) run `git clone http://git.bps.go.id/yosral/simpati-pti.git`
+- (pull/update branch masing-masing) run `git pull origin *branch_sumber*`
+- (install dependencies package) run `composer update`
+- (atur environment framework) atur environment host, database, dll. dengan copy file `.env.example`, rename (misal `.env.yosral`)
+- (clear cache terlebih dulu sebelum run semua command artisan) run `php artisan cache:clear`, kemudian `composer dump-autoload`
+- (buat database [kitloong/laravel-migrations-generator](https://github.com/kitloong/laravel-migrations-generator), [orangehill/iseed](https://github.com/orangehill/iseed)) run `php artisan migrate:refresh`, jika belum berhasil periksa kembali file `.env` yang sebelumnya sudah diset
+- (run dengan artisan apache) run `php artisan serve`, kemudian klik link url yang muncul untuk ke web browser
+- (wajib buat terlebih dahulu berbagai custom-field sebelum seeding database )
+- (proses seeding database) run `php artisan db:seed`
+-----
+
 ### Installation
 
 For instructions on installing and configuring Snipe-IT on your server, check out the [installation manual](https://snipe-it.readme.io/docs). (Please see the [requirements documentation](https://snipe-it.readme.io/docs/requirements) for full requirements.)

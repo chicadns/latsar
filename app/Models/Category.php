@@ -185,6 +185,23 @@ class Category extends SnipeModel
 
     }
 
+    // Translate kategori ke indonesia
+    public function transType(){
+        switch ($this->category_type){
+            case 'asset':
+                return trans('general.assets');
+            case 'accessory':
+                return trans('general.accessories');
+            case 'component':
+                return trans('general.components');
+            case 'consumable':
+                return trans('general.consumables');
+            case 'license':
+                return trans('general.licenses');
+            }
+        return '';
+    }
+
     /**
      * Establishes the category -> assets relationship
      *

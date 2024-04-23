@@ -645,7 +645,8 @@ class Helper
         $consumables = Consumable::withCount('consumableAssignments as consumable_assignments_count')->whereNotNull('min_amt')->get();
         $accessories = Accessory::withCount('users as users_count')->whereNotNull('min_amt')->get();
         $components = Component::whereNotNull('min_amt')->get();
-        $asset_models = AssetModel::where('min_amt', '>', 0)->get();
+        //updated for installing system with related MANIA Database by Hamam. H.W. STIS.
+        // $asset_models = AssetModel::where('min_amt', '>', 0)->get();
 
         $avail_consumables = 0;
         $items_array = [];
@@ -708,27 +709,28 @@ class Helper
             }
         }
 
-        foreach ($asset_models as $asset_model){
+        //updated for installing system with related MANIA Database by Hamam. H.W. STIS.
+        // foreach ($asset_models as $asset_model){
 
-            $asset = new Asset();
-            $total_owned = $asset->where('model_id', '=', $asset_model->id)->count();
-            $avail = $asset->where('model_id', '=', $asset_model->id)->whereNull('assigned_to')->count();
+        //     $asset = new Asset();
+        //     $total_owned = $asset->where('model_id', '=', $asset_model->id)->count();
+        //     $avail = $asset->where('model_id', '=', $asset_model->id)->whereNull('assigned_to')->count();
 
-            if ($avail < ($asset_model->min_amt)+ \App\Models\Setting::getSettings()->alert_threshold) {
-                if ($avail > 0) {
-                    $percent = number_format((($avail / $total_owned) * 100), 0);
-                } else {
-                    $percent = 100;
-                }
-                $items_array[$all_count]['id'] = $asset_model->id;
-                $items_array[$all_count]['name'] = $asset_model->name;
-                $items_array[$all_count]['type'] = 'models';
-                $items_array[$all_count]['percent'] = $percent;
-                $items_array[$all_count]['remaining'] = $avail;
-                $items_array[$all_count]['min_amt'] = $asset_model->min_amt;
-                $all_count++;
-            }
-        }
+        //     if ($avail < ($asset_model->min_amt)+ \App\Models\Setting::getSettings()->alert_threshold) {
+        //         if ($avail > 0) {
+        //             $percent = number_format((($avail / $total_owned) * 100), 0);
+        //         } else {
+        //             $percent = 100;
+        //         }
+        //         $items_array[$all_count]['id'] = $asset_model->id;
+        //         $items_array[$all_count]['name'] = $asset_model->name;
+        //         $items_array[$all_count]['type'] = 'models';
+        //         $items_array[$all_count]['percent'] = $percent;
+        //         $items_array[$all_count]['remaining'] = $avail;
+        //         $items_array[$all_count]['min_amt'] = $asset_model->min_amt;
+        //         $all_count++;
+        //     }
+        // }
 
         return $items_array;
     }
