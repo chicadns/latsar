@@ -19,7 +19,7 @@ class LicensePresenter extends Presenter
                 'searchable' => false,
                 'sortable' => true,
                 'switchable' => true,
-                'title' => trans('general.id'),
+                'title' => trans('admin/licenses/table.id'),
                 'visible' => false,
             ], [
                 'field' => 'company',
@@ -36,28 +36,6 @@ class LicensePresenter extends Presenter
                 'title' => trans('general.name'),
                 'formatter' => 'licensesLinkFormatter',
             ], [
-                'field' => 'product_key',
-                'searchable' => true,
-                'sortable' => true,
-                'title' => trans('admin/licenses/form.license_key'),
-                'formatter' => 'licensesLinkFormatter',
-            ], [
-                'field' => 'expiration_date',
-                'searchable' => true,
-                'sortable' => true,
-                'title' => trans('admin/licenses/form.expiration'),
-                'formatter' => 'dateDisplayFormatter',
-            ], [
-                'field' => 'license_email',
-                'searchable' => true,
-                'sortable' => true,
-                'title' => trans('admin/licenses/form.to_email'),
-            ], [
-                'field' => 'license_name',
-                'searchable' => true,
-                'sortable' => true,
-                'title' => trans('admin/licenses/form.to_name'),
-            ], [
                 'field' => 'category',
                 'searchable' => true,
                 'sortable' => true,
@@ -66,6 +44,55 @@ class LicensePresenter extends Presenter
                 'visible' => false,
                 'formatter' => 'categoriesLinkObjFormatter',
             ], [
+                'field' => 'product_key',
+                'searchable' => true,
+                'sortable' => true,
+                'title' => trans('admin/licenses/form.license_key'),
+                'formatter' => 'licensesLinkFormatter',
+            ], [
+                "field" => "mulaiberlaku",
+                "searchable" => true,
+                "sortable" => true,
+                "visible" => false,
+                "title" => trans('admin/licenses/form.mulaiberlaku'),
+                'formatter' => 'dateDisplayFormatter'
+            ], [
+                'field' => 'expiration_date',
+                'searchable' => true,
+                'sortable' => true,
+                'title' => trans('admin/licenses/form.expiration'),
+                'formatter' => 'dateDisplayFormatter',
+            ], [
+                'field' => 'seats',
+                'searchable' => false,
+                'sortable' => true,
+                'title' => trans('admin/licenses/form.seats'),
+            ], [
+                'field' => 'free_seats_count',
+                'searchable' => false,
+                'sortable' => true,
+                'title' => trans('admin/licenses/form.remaining_seats'),
+            ],
+            // [
+            //     'field' => 'license_email',
+            //     'searchable' => true,
+            //     'sortable' => true,
+            //     'title' => trans('admin/licenses/form.to_email'),
+            // ], [
+            //     'field' => 'license_name',
+            //     'searchable' => true,
+            //     'sortable' => true,
+            //     'title' => trans('admin/licenses/form.to_name'),
+            // ],
+            [
+                'field' => 'manufacturer',
+                'searchable' => true,
+                'sortable' => true,
+                'title' => trans('general.manufacturer'),
+                'formatter' => 'manufacturersLinkObjFormatter'
+
+            ],
+            [
                 'field' => 'supplier',
                 'searchable' => true,
                 'sortable' => true,
@@ -73,46 +100,6 @@ class LicensePresenter extends Presenter
                 'title' => trans('general.supplier'),
                 'visible' => false,
                 'formatter' => 'suppliersLinkObjFormatter',
-            ], [
-                'field' => 'manufacturer',
-                'searchable' => true,
-                'sortable' => true,
-                'title' => trans('general.manufacturer'),
-                'formatter' => 'manufacturersLinkObjFormatter',
-            ], [
-                'field' => 'seats',
-                'searchable' => false,
-                'sortable' => true,
-                'title' => trans('admin/accessories/general.total'),
-            ], [
-                'field' => 'free_seats_count',
-                'searchable' => false,
-                'sortable' => true,
-                'title' => trans('admin/accessories/general.remaining'),
-            ], [
-                'field' => 'purchase_date',
-                'searchable' => true,
-                'sortable' => true,
-                'visible' => false,
-                'title' => trans('general.purchase_date'),
-                'formatter' => 'dateDisplayFormatter',
-            ],
-            [
-                'field' => 'termination_date',
-                'searchable' => true,
-                'sortable' => true,
-                'visible' => false,
-                'title' => trans('admin/licenses/form.termination_date'),
-                'formatter' => 'dateDisplayFormatter',
-            ],
-            [
-                'field' => 'depreciation',
-                'searchable' => true,
-                'sortable' => true,
-                'switchable' => true,
-                'title' => trans('admin/hardware/form.depreciation'),
-                'visible' => false,
-                'formatter' => 'depreciationsLinkObjFormatter',
             ],
 
             [
@@ -123,6 +110,31 @@ class LicensePresenter extends Presenter
                 'title' => trans('admin/licenses/form.maintained'),
                 'formatter' => 'trueFalseFormatter',
             ], [
+                'field' => 'purchase_date',
+                'searchable' => true,
+                'sortable' => true,
+                'visible' => false,
+                'title' => trans('general.purchase_date'),
+                'formatter' => 'dateDisplayFormatter',
+            ], 
+            // [
+            //     'field' => 'termination_date',
+            //     'searchable' => true,
+            //     'sortable' => true,
+            //     'visible' => false,
+            //     'title' => trans('admin/licenses/form.termination_date'),
+            //     'formatter' => 'dateDisplayFormatter',
+            // ],
+            // [
+            //     'field' => 'depreciation',
+            //     'searchable' => true,
+            //     'sortable' => true,
+            //     'switchable' => true,
+            //     'title' => trans('admin/hardware/form.depreciation'),
+            //     'visible' => false,
+            //     'formatter' => 'depreciationsLinkObjFormatter',
+            // ], 
+            [
                 'field' => 'reassignable',
                 'searchable' => false,
                 'sortable' => true,

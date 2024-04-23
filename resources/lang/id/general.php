@@ -206,7 +206,7 @@ return [
     'no_results'			=> 'Tidak ada hasil.',
     'no'  					=> 'Tidak',
     'notes'  				=> 'Catatan',
-    'order_number'          => 'Jumlah order',
+    'order_number'          => 'Nomor Sertifikat', //buat di software
     'only_deleted'          => 'Hanya Aset yang Dihapus',
     'page_menu'				=> 'Menampilkan item _MENU_',
     'pagination_info'		=> 'Menampilkan hal_START_ to _END_ of _TOTAL_',

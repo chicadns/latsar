@@ -33,45 +33,53 @@
     {!! $errors->first('seats', '<div class="col-md-8 col-md-offset-3"><span class="alert-msg" aria-hidden="true"><i class="fas fa-times" aria-hidden="true"></i> :message</span></div>') !!}
 </div>
 
+<!-- Reassignable -->
+<div class="form-group {{ $errors->has('reassignable') ? ' has-error' : '' }}">
+    <label for="reassignable" class="col-md-3 control-label">{{ trans('admin/licenses/form.reassignable') }}</label>
+    <div class="col-md-7 input-group">
+        {{ Form::Checkbox('reassignable', '1', old('reassignable', $item->id ? $item->reassignable : '1'),array('class' => 'minimal', 'aria-label'=>'reassignable')) }}
+        {{ trans('general.yes') }}
+    </div>
+</div>
+
 @include ('partials.forms.edit.company-select', ['translated_name' => trans('general.company'), 'fieldname' => 'company_id'])
 @include ('partials.forms.edit.manufacturer-select', ['translated_name' => trans('general.manufacturer'), 'fieldname' => 'manufacturer_id',])
 
 <!-- Licensed to name -->
-<div class="form-group {{ $errors->has('license_name') ? ' has-error' : '' }}">
+<!-- <div class="form-group {{ $errors->has('license_name') ? ' has-error' : '' }}">
     <label for="license_name" class="col-md-3 control-label">{{ trans('admin/licenses/form.to_name') }}</label>
     <div class="col-md-7">
         <input class="form-control" type="text" name="license_name" id="license_name" value="{{ old('license_name', $item->license_name) }}" />
         {!! $errors->first('license_name', '<span class="alert-msg" aria-hidden="true"><i class="fas fa-times" aria-hidden="true"></i> :message</span>') !!}
     </div>
-</div>
+</div> -->
 
 <!-- Licensed to email -->
-<div class="form-group {{ $errors->has('license_email') ? ' has-error' : '' }}">
+<!-- <div class="form-group {{ $errors->has('license_email') ? ' has-error' : '' }}">
     <label for="license_email" class="col-md-3 control-label">{{ trans('admin/licenses/form.to_email') }}</label>
     <div class="col-md-7">
         <input class="form-control" type="text" name="license_email" id="license_email" value="{{ old('license_email', $item->license_email) }}" />
         {!! $errors->first('license_email', '<span class="alert-msg" aria-hidden="true"><i class="fas fa-times" aria-hidden="true"></i> :message</span>') !!}
     </div>
-</div>
-
-<!-- Reassignable -->
-<div class="form-group {{ $errors->has('reassignable') ? ' has-error' : '' }}">
-    <div class="col-md-3 control-label">
-        <strong>{{ trans('admin/licenses/form.reassignable') }}</strong>
-    </div>
-    <div class="col-md-7">
-        <label class="form-control">
-        {{ Form::Checkbox('reassignable', '1', old('reassignable', $item->id ? $item->reassignable : '1'),array('aria-label'=>'reassignable')) }}
-        {{ trans('general.yes') }}
-        </label>
-    </div>
-</div>
-
+</div> -->
 
 @include ('partials.forms.edit.supplier-select', ['translated_name' => trans('general.supplier'), 'fieldname' => 'supplier_id'])
-@include ('partials.forms.edit.order_number')
 @include ('partials.forms.edit.purchase_cost')
 @include ('partials.forms.edit.purchase_date')
+
+<!-- Mulai Berlaku -->
+<div class="form-group {{ $errors->has('mulaiberlaku') ? ' has-error' : '' }}">
+    <label for="mulaiberlaku" class="col-md-3 control-label">{{ trans('admin/licenses/form.mulaiberlaku') }}</label>
+
+    <div class="input-group col-md-4">
+        <div class="input-group date" data-provide="datepicker" data-date-format="yyyy-mm-dd"  data-autoclose="true">
+            <input type="text" class="form-control" placeholder="{{ trans('general.select_date') }}" name="mulaiberlaku" id="mulaiberlaku" value="{{ old('mulaiberlaku', $item->mulaiberlaku) }}">
+            <span class="input-group-addon"><i class="fa fa-calendar" aria-hidden="true"></i></span>
+        </div>
+        {!! $errors->first('mulaiberlaku', '<span class="alert-msg" aria-hidden="true"><i class="fa fa-times" aria-hidden="true"></i> :message</span>') !!}
+    </div>
+
+</div>
 
 <!-- Expiration Date -->
 <div class="form-group {{ $errors->has('expiration_date') ? ' has-error' : '' }}">
@@ -88,7 +96,7 @@
 </div>
 
 <!-- Termination Date -->
-<div class="form-group {{ $errors->has('termination_date') ? ' has-error' : '' }}">
+<!-- <div class="form-group {{ $errors->has('termination_date') ? ' has-error' : '' }}">
     <label for="termination_date" class="col-md-3 control-label">{{ trans('admin/licenses/form.termination_date') }}</label>
 
     <div class="input-group col-md-4">
@@ -98,19 +106,19 @@
         </div>
         {!! $errors->first('termination_date', '<span class="alert-msg" aria-hidden="true"><i class="fas fa-times" aria-hidden="true"></i> :message</span>') !!}
     </div>
-</div>
+</div> -->
 
 {{-- @TODO How does this differ from Order #? --}}
 <!-- Purchase Order -->
 <div class="form-group {{ $errors->has('purchase_order') ? ' has-error' : '' }}">
     <label for="purchase_order" class="col-md-3 control-label">{{ trans('admin/licenses/form.purchase_order') }}</label>
-    <div class="col-md-3">
+    <div class="col-md-7 col-sm-12">
         <input class="form-control" type="text" name="purchase_order" id="purchase_order" value="{{ old('purchase_order', $item->purchase_order) }}" />
         {!! $errors->first('purchase_order', '<span class="alert-msg" aria-hidden="true"><i class="fas fa-times" aria-hidden="true"></i> :message</span>') !!}
     </div>
 </div>
 
-@include ('partials.forms.edit.depreciation')
+@include ('partials.forms.edit.order_number')
 
 <!-- Maintained -->
 <div class="form-group {{ $errors->has('maintained') ? ' has-error' : '' }}">

@@ -278,6 +278,16 @@ class License extends Depreciable
         $this->attributes['termination_date'] = $value;
     }
 
+    public function setMulaiBerlakuAttribute($value)
+    {
+        if ($value == '' || $value == '0000-00-00') {
+            $value = null;
+        } else {
+            $value = (new Carbon($value))->toDateString();
+        }
+        $this->attributes['mulaiberlaku'] = $value;
+    }
+
     /**
      * Establishes the license -> company relationship
      *

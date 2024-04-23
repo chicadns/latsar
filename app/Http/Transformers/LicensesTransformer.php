@@ -35,6 +35,7 @@ class LicensesTransformer
             'purchase_cost' => Helper::formatCurrencyOutput($license->purchase_cost),
             'purchase_cost_numeric' => $license->purchase_cost,
             'notes' => Helper::parseEscapedMarkedownInline($license->notes),
+            'mulaiberlaku' => Helper::getFormattedDateObject($license->mulaiberlaku, 'date'),
             'expiration_date' => Helper::getFormattedDateObject($license->expiration_date, 'date'),
             'seats' => (int) $license->seats,
             'free_seats_count' => (int) $license->free_seats_count,

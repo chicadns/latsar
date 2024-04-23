@@ -4,7 +4,7 @@ return array(
 
     'assigned_to'   	=> 'Diberikan kepada',
     'checkout'   		=> 'Alokasi',
-    'id'      			=> 'ID',
+    'id'      			=> 'No. Urut',
     'license_email'   	=> 'Email Lisensi',
     'license_name'   	=> 'Dilisensikan kepada',
     'purchase_date'   	=> 'Tanggal pembelian',

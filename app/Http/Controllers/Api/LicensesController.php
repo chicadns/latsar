@@ -123,6 +123,7 @@ class LicensesController extends Controller
                         'name',
                         'purchase_cost',
                         'expiration_date',
+                        'mulaiberlaku',
                         'purchase_order',
                         'order_number',
                         'notes',

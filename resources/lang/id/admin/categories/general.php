@@ -2,7 +2,7 @@
 
 return array(
     'asset_categories' 					=> 'Kategori Aset',
-    'category_name'  					=> 'Nama Kategori',
+    'category_name'  					=> 'Kategori',
     'checkin_email'                     => 'Kirim email ke pengguna saat realokasi/alokasi.',
     'checkin_email_notification'        => 'Pengguna ini akan dikirimi email saat realokasi/alokasi.',
     'clone'                             => 'Kategori duplikat',
