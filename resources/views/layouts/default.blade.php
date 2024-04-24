@@ -117,7 +117,7 @@
                                     <span class="sr-only">{{ $snipeSettings->site_name }}</span>
                                 </a>
                             @else
-                                <a class="logo navbar-brand no-hover" href="{{ config('app.url') }}">
+                                <a class="logo navbar-brand no-hover hidden-xs" href="{{ config('app.url') }}">
                                     <span class="logo-lg" style="font-style: bold; font-size: 18pt;"> <img src="{{ url(asset('bpslogo.ico')) }}" style="width: 45px; height:45px;"> &nbsp {{ $snipeSettings->site_name }} &nbsp</span>
                                 </a>
                             @endif
@@ -130,7 +130,10 @@
                         <a href="#" style="color: white" class="sidebar-toggle btn btn-white" data-toggle="push-menu" role="button">
                         <span class="sr-only">Toggle navigation</span>
                         </a>
-  
+                        <a href="#" style="float:left" class="sidebar-toggle-mobile visible-xs btn" data-toggle="push-menu" role="button">
+                        <span class="sr-only">{{ trans('general.toggle_navigation') }}</span>
+                        <i class="fas fa-bars"></i>
+                        </a>                
 
                     <!-- Navbar Menu Atas -->
                     <div class="navbar-custom-menu">
@@ -182,7 +185,7 @@
                             <!-- seacrh perangkat -->
                             @can('index', \App\Models\Asset::class)
                                 <li>
-                                    <form class="navbar-form navbar-left form-horizontal" role="search"
+                                    <form class="navbar-form navbar-left form-horizontal hidden-xs" role="search"
                                           action="{{ route('findbytag/hardware') }}" method="get">
                                         <div class="col-xs-12 col-md-12">
                                             <div class="col-xs-12 form-group">
@@ -405,11 +408,6 @@
                         </ul>
                     </div>
                 </nav>
-                <a href="#" style="float:left" class="sidebar-toggle-mobile visible-xs btn" data-toggle="push-menu"
-                   role="button">
-                    <span class="sr-only">{{ trans('general.toggle_navigation') }}</span>
-                    <i class="fas fa-bars"></i>
-                </a>
                 <!-- Sidebar toggle button-->
             </header>
 
