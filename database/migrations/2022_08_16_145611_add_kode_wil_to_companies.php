@@ -13,9 +13,16 @@ class AddKodeWilToCompanies extends Migration
      */
     public function up()
     {
-        Schema::table('companies', function (Blueprint $table) {
-			$table->integer('kode_wil')->nullable();
-        });
+
+        if (Schema::hasColumn('companies', 'kode_wil')) {
+            Schema::table('companies', function (Blueprint $table) {
+                $table->integer('kode_wil')->nullable()->change();
+            });
+        } else {
+            Schema::table('companies', function (Blueprint $table) {
+                $table->integer('kode_wil')->nullable();
+            });
+        }
     }
 
     /**

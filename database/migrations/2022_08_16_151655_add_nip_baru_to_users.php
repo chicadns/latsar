@@ -13,9 +13,16 @@ class AddNipBaruToUsers extends Migration
      */
     public function up()
     {
-        Schema::table('users', function (Blueprint $table) {
-			$table->text('nip_baru')->nullable();
-        });
+
+        if (Schema::hasColumn('users', 'nip_baru')) {
+            Schema::table('users', function (Blueprint $table) {
+                $table->text('nip_baru')->nullable()->change();
+            });
+        } else {
+            Schema::table('users', function (Blueprint $table) {
+                $table->text('nip_baru')->nullable();
+            });
+        }
     }
 
     /**

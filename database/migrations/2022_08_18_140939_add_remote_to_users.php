@@ -13,9 +13,15 @@ class AddRemoteToUsers extends Migration
      */
     public function up()
     {
-        Schema::table('users', function (Blueprint $table) {
-            $table->boolean('remote')->default(0);
-        });
+        if (Schema::hasColumn('users', 'remote')) {
+            Schema::table('users', function (Blueprint $table) {
+                $table->boolean('remote')->default(0)->change();
+            });
+        } else {
+            Schema::table('users', function (Blueprint $table) {
+                $table->boolean('remote')->default(0);
+            });
+        }
     }
 
     /**

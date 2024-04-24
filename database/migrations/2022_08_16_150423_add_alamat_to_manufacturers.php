@@ -13,10 +13,18 @@ class AddAlamatToManufacturers extends Migration
      */
     public function up()
     {
-        Schema::table('manufacturers', function (Blueprint $table) {
-            $table->string('alamat', 200)->nullable();
-            $table->string('fax_perus', 35)->nullable();
-        });
+        $columns = array('alamat' => 200, 'fax_perus' => 35);
+        foreach($columns as $key => $value){
+            if (Schema::hasColumn('manufacturers', $key)) {
+                Schema::table('manufacturers', function (Blueprint $table) use ($key, $value) {
+                    $table->string($key, $value)->nullable()->change();
+                });
+            } else {
+                Schema::table('manufacturers', function (Blueprint $table) use ($key, $value) {
+                    $table->string($key, $value)->nullable();
+                });
+            }
+        }
     }
 
     /**

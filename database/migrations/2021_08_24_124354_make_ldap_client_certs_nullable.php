@@ -13,11 +13,26 @@ class MakeLdapClientCertsNullable extends Migration
      */
     public function up()
     {
-        Schema::table('settings', function (Blueprint $table) {
-            //
-            $table->text('ldap_client_tls_cert')->nullable()->change();
-            $table->text('ldap_client_tls_key')->nullable()->change();
-        });
+
+        if (Schema::hasColumn('settings', 'ldap_client_tls_cert')) {
+            Schema::table('settings', function (Blueprint $table) {
+                $table->text('ldap_client_tls_cert')->nullable()->default(null)->change();
+            });
+        } else {
+            Schema::table('settings', function (Blueprint $table) {
+                $table->text('ldap_client_tls_cert')->nullable()->default(null);
+            });
+        }
+
+        if (Schema::hasColumn('settings', 'ldap_client_tls_key')) {
+            Schema::table('settings', function (Blueprint $table) {
+                $table->text('ldap_client_tls_key')->nullable()->default(null)->change();
+            });
+        } else {
+            Schema::table('settings', function (Blueprint $table) {
+                $table->text('ldap_client_tls_key')->nullable()->default(null);
+            });
+        }
     }
 
     /**
@@ -28,7 +43,8 @@ class MakeLdapClientCertsNullable extends Migration
     public function down()
     {
         Schema::table('settings', function (Blueprint $table) {
-            //
+            $table->dropColumn('ldap_client_tls_cert');
+            $table->dropColumn('ldap_client_tls_key');
         });
     }
 }

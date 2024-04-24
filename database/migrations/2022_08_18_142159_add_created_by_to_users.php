@@ -13,9 +13,17 @@ class AddCreatedByToUsers extends Migration
      */
     public function up()
     {
-        Schema::table('users', function (Blueprint $table) {
-            $table->integer('created_by')->unsigned()->nullable();
-        });
+
+        if (Schema::hasColumn('users', 'created_by')) {
+            Schema::table('users', function (Blueprint $table) {
+                $table->integer('created_by')->unsigned()->nullable()->change();
+            });
+        } else {
+            Schema::table('users', function (Blueprint $table) {
+                $table->integer('created_by')->unsigned()->nullable();
+            });
+        }
+
     }
 
     /**

@@ -13,9 +13,25 @@ class AddDepreciationMinimumValue extends Migration
      */
     public function up()
     {
-        Schema::table('depreciations', function (Blueprint $table) {
-            $table->decimal('depreciation_min', 8,2)->after('months')->nullable();
-        });
+        if (Schema::hasColumn('depreciations', 'user_id')) {
+            Schema::table('depreciations', function (Blueprint $table) {
+                $table->integer('user_id')->nullable()->default(null)->change();
+            });
+        } else {
+            Schema::table('depreciations', function (Blueprint $table) {
+                $table->integer('user_id')->nullable()->default(null);
+            });
+        }
+
+        if (Schema::hasColumn('depreciations', 'depreciation_min')) {
+            Schema::table('depreciations', function (Blueprint $table) {
+                $table->decimal('depreciation_min', 8, 2)->after('months')->nullable()->default(null)->change();
+            });
+        } else {
+            Schema::table('depreciations', function (Blueprint $table) {
+                $table->decimal('depreciation_min', 8, 2)->after('months')->nullable()->default(null);
+            });
+        }
     }
 
     /**
@@ -26,6 +42,7 @@ class AddDepreciationMinimumValue extends Migration
     public function down()
     {
         Schema::table('depreciations', function (Blueprint $table) {
+            $table->dropColumn('user_id');
             $table->dropColumn('depreciation_min');
         });
     }

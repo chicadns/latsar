@@ -13,9 +13,15 @@ class AddTiketToAssetMaintenances extends Migration
      */
     public function up()
     {
-        Schema::table('asset_maintenances', function (Blueprint $table) {
-			$table->string('tiket', 150)->nullable();
-        });
+        if (Schema::hasColumn('asset_maintenances', 'tiket')) {
+            Schema::table('asset_maintenances', function (Blueprint $table) {
+                $table->string('tiket', 150)->nullable()->change();
+            });
+        } else {
+            Schema::table('asset_maintenances', function (Blueprint $table) {
+                $table->string('tiket', 150)->nullable();
+            });
+        }
     }
 
     /**

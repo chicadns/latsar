@@ -1,13 +1,10 @@
-<?php
-
-namespace Database\Seeders;
+<?php 
 
 use App\Models\Setting;
+use Database\Seeders\DayLocationsTableSeeder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Seeder;
-use Illuminate\Support\Facades\Artisan;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Log;
+
 
 class DatabaseSeeder extends Seeder
 {
@@ -21,39 +18,120 @@ class DatabaseSeeder extends Seeder
         Model::unguard();
 
         // Only create default settings if they do not exist in the db.
-        if (! Setting::first()) {
-            // factory(Setting::class)->create();
+        if(!Setting::first()) {
+           // factory(Setting::class)->create();
             $this->call(SettingsSeeder::class);
-        }
+            $this->call(YosralAccessoriesTableSeeder::class);
+            $this->call(YosralAccessoriesUsersTableSeeder::class);
+            $this->call(YosralActionLogsTableSeeder::class);
+            $this->call(YosralAssetLogsTableSeeder::class);
+            $this->call(YosralAssetMaintenancesTableSeeder::class);
+            $this->call(YosralAssetUploadsTableSeeder::class);
+            $this->call(YosralCategoriesTableSeeder::class);
+            $this->call(YosralCheckoutAcceptancesTableSeeder::class);
+            $this->call(YosralCheckoutRequestsTableSeeder::class);
+            $this->call(YosralCompaniesTableSeeder::class);
+            $this->call(YosralComponentsTableSeeder::class);
+            $this->call(YosralComponentsAssetsTableSeeder::class);
+            $this->call(YosralConsumablesTableSeeder::class);
+            $this->call(YosralConsumablesUsersTableSeeder::class);
+            $this->call(YosralCustomFieldCustomFieldsetTableSeeder::class);
+            $this->call(YosralCustomFieldsTableSeeder::class);
+            $this->call(YosralCustomFieldsetsTableSeeder::class);
+            $this->call(YosralDepartmentsTableSeeder::class);
+            $this->call(YosralDepreciationsTableSeeder::class);
+            $this->call(YosralImportsTableSeeder::class);
+            $this->call(YosralKitsTableSeeder::class);
+            $this->call(YosralKitsAccessoriesTableSeeder::class);
+            $this->call(YosralKitsConsumablesTableSeeder::class);
+            $this->call(YosralKitsLicensesTableSeeder::class);
+            $this->call(YosralKitsModelsTableSeeder::class);
+            $this->call(YosralLicenseSeatsTableSeeder::class);
+            $this->call(YosralLicensesTableSeeder::class);
+            $this->call(YosralLocationsTableSeeder::class);
+            $this->call(YosralLoginAttemptsTableSeeder::class);
+            $this->call(YosralManufacturersTableSeeder::class);
+            $this->call(YosralMigrationsTableSeeder::class);
+            $this->call(YosralModelsTableSeeder::class);
+            $this->call(YosralModelsCustomFieldsTableSeeder::class);
+            $this->call(YosralOauthAccessTokensTableSeeder::class);
+            $this->call(YosralOauthAuthCodesTableSeeder::class);
+            $this->call(YosralOauthClientsTableSeeder::class);
+            $this->call(YosralOauthPersonalAccessClientsTableSeeder::class);
+            $this->call(YosralOauthRefreshTokensTableSeeder::class);
+            $this->call(YosralPasswordResetsTableSeeder::class);
+            $this->call(YosralPermissionGroupsTableSeeder::class);
+            $this->call(YosralRequestedAssetsTableSeeder::class);
+            $this->call(YosralRequestsTableSeeder::class);
+            $this->call(YosralSettingsTableSeeder::class);
+            $this->call(YosralStatusLabelsTableSeeder::class);
+            $this->call(YosralSuppliersTableSeeder::class);
+            $this->call(YosralThrottleTableSeeder::class);
+            $this->call(YosralUsersTableSeeder::class);
+            $this->call(YosralUsersGroupsTableSeeder::class);
+    }
 
-        $this->call(CompanySeeder::class);
-        $this->call(CategorySeeder::class);
-        $this->call(LocationSeeder::class);
-        $this->call(DepartmentSeeder::class);
-        $this->call(UserSeeder::class);
-        $this->call(DepreciationSeeder::class);
-        $this->call(ManufacturerSeeder::class);
-        $this->call(SupplierSeeder::class);
-        $this->call(AssetModelSeeder::class);
-        $this->call(DepreciationSeeder::class);
-        $this->call(StatuslabelSeeder::class);
-        $this->call(AccessorySeeder::class);
-        $this->call(AssetSeeder::class);
-        $this->call(LicenseSeeder::class);
-        $this->call(ComponentSeeder::class);
-        $this->call(ConsumableSeeder::class);
-        $this->call(ActionlogSeeder::class);
-        $this->call(CustomFieldSeeder::class);
-        $this->call(AldoCustomFieldsTableSeeder::class);
+        $this->call(YosralAccessoriesTableSeeder::class);
+        $this->call(YosralAccessoriesUsersTableSeeder::class);
+        $this->call(YosralActionLogsTableSeeder::class);
+        $this->call(YosralAssetLogsTableSeeder::class);
+        $this->call(YosralAssetMaintenancesTableSeeder::class);
+        $this->call(YosralAssetUploadsTableSeeder::class);
+        $this->call(YosralCategoriesTableSeeder::class);
+        $this->call(YosralCheckoutAcceptancesTableSeeder::class);
+        $this->call(YosralCheckoutRequestsTableSeeder::class);
+        $this->call(YosralCompaniesTableSeeder::class);
+        $this->call(YosralComponentsTableSeeder::class);
+        $this->call(YosralComponentsAssetsTableSeeder::class);
+        $this->call(YosralConsumablesTableSeeder::class);
+        $this->call(YosralConsumablesUsersTableSeeder::class);
+        $this->call(YosralCustomFieldCustomFieldsetTableSeeder::class);
+        $this->call(YosralCustomFieldsTableSeeder::class);
+        $this->call(YosralCustomFieldsetsTableSeeder::class);
+        $this->call(YosralDepartmentsTableSeeder::class);
+        $this->call(YosralDepreciationsTableSeeder::class);
+        $this->call(YosralImportsTableSeeder::class);
+        $this->call(YosralKitsTableSeeder::class);
+        $this->call(YosralKitsAccessoriesTableSeeder::class);
+        $this->call(YosralKitsConsumablesTableSeeder::class);
+        $this->call(YosralKitsLicensesTableSeeder::class);
+        $this->call(YosralKitsModelsTableSeeder::class);
+        $this->call(YosralLicenseSeatsTableSeeder::class);
+        $this->call(YosralLicensesTableSeeder::class);
+        $this->call(YosralLocationsTableSeeder::class);
+        $this->call(YosralLoginAttemptsTableSeeder::class);
+        $this->call(YosralManufacturersTableSeeder::class);
+        $this->call(YosralMigrationsTableSeeder::class);
+        $this->call(YosralModelsTableSeeder::class);
+        $this->call(YosralModelsCustomFieldsTableSeeder::class);
+        $this->call(YosralOauthAccessTokensTableSeeder::class);
+        $this->call(YosralOauthAuthCodesTableSeeder::class);
+        $this->call(YosralOauthClientsTableSeeder::class);
+        $this->call(YosralOauthPersonalAccessClientsTableSeeder::class);
+        $this->call(YosralOauthRefreshTokensTableSeeder::class);
+        $this->call(YosralPasswordResetsTableSeeder::class);
+        $this->call(YosralPermissionGroupsTableSeeder::class);
+        $this->call(YosralRequestedAssetsTableSeeder::class);
+        $this->call(YosralRequestsTableSeeder::class);
+        $this->call(YosralSettingsTableSeeder::class);
+        $this->call(YosralStatusLabelsTableSeeder::class);
+        $this->call(YosralSuppliersTableSeeder::class);
+        $this->call(YosralThrottleTableSeeder::class);
+        $this->call(YosralUsersTableSeeder::class);
+        $this->call(YosralUsersGroupsTableSeeder::class);
+        $this->call(AldoAssetsTableSeeder::class);
+        $this->call(DayLocationsTableSeeder::class);
 
         Artisan::call('snipeit:sync-asset-locations', ['--output' => 'all']);
         $output = Artisan::output();
-        Log::info($output);
+        \Log::info($output);
 
         Model::reguard();
 
         DB::table('imports')->truncate();
         DB::table('asset_maintenances')->truncate();
         DB::table('requested_assets')->truncate();
+
+
     }
 }

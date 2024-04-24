@@ -44,10 +44,6 @@ class MakeFieldsNullableForIntegrity extends Migration
             $table->integer('user_id')->nullable()->default(null)->change();
             $table->boolean('maintained')->nullable()->default(null)->change();
         });
-
-        Schema::table('depreciations', function (Blueprint $table) {
-            $table->integer('user_id')->nullable()->default(null)->change();
-        });
     }
 
     /**

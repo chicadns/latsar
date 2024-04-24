@@ -13,9 +13,15 @@ class AddLokasiBarangToAssetMaintenances extends Migration
      */
     public function up()
     {
-        Schema::table('asset_maintenances', function (Blueprint $table) {
-            $table->string('lokasi_barang', 150);
-        });
+        if (Schema::hasColumn('asset_maintenances', 'lokasi_barang')) {
+            Schema::table('asset_maintenances', function (Blueprint $table) {
+                $table->string('lokasi_barang', 150)->change();
+            });
+        } else {
+            Schema::table('asset_maintenances', function (Blueprint $table) {
+                $table->string('lokasi_barang', 150);
+            });
+        }
     }
 
     /**

@@ -13,9 +13,15 @@ class AddMulaiberlakuToLicenses extends Migration
      */
     public function up()
     {
-        Schema::table('licenses', function (Blueprint $table) {
-            $table->date('mulaiberlaku')->nullable();
-        });
+        if (Schema::hasColumn('licenses', 'mulaiberlaku')) {
+            Schema::table('licenses', function (Blueprint $table) {
+                $table->date('mulaiberlaku')->nullable()->change();
+            });
+        } else {
+            Schema::table('licenses', function (Blueprint $table) {
+                $table->date('mulaiberlaku')->nullable();
+            });
+        }
     }
 
     /**

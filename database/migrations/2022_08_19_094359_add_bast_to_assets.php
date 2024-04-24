@@ -13,9 +13,15 @@ class AddBastToAssets extends Migration
      */
     public function up()
     {
-        Schema::table('assets', function (Blueprint $table) {
-            $table->text('_snipeit_bast_5')->nullable();
-        });
+        if (Schema::hasColumn('assets', '_snipeit_bast_4')) {
+            Schema::table('assets', function (Blueprint $table) {
+                $table->text('_snipeit_bast_4')->nullable()->change();
+            });
+        } else {
+            Schema::table('assets', function (Blueprint $table) {
+                $table->text('_snipeit_bast_4')->nullable();
+            });
+        }
     }
 
     /**
@@ -26,7 +32,7 @@ class AddBastToAssets extends Migration
     public function down()
     {
         Schema::table('assets', function (Blueprint $table) {
-            $table->dropColumn('_snipeit_bast_5');
+            $table->dropColumn('_snipeit_bast_4');
         });
     }
 }
