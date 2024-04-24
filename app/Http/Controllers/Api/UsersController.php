@@ -114,6 +114,10 @@ class UsersController extends Controller
             $users = $users->where('users.employee_num', '=', $request->input('employee_num'));
         }
 
+        if ($request->filled('nip_baru')) {
+            $users = $users->where('users.nip_baru', '=', $request->input('nip_baru'));
+        }
+
         if ($request->filled('state')) {
             $users = $users->where('users.state', '=', $request->input('state'));
         }
@@ -579,6 +583,23 @@ class UsersController extends Controller
         $user->notify((new CurrentInventory($user)));
  
         return response()->json(Helper::formatStandardApiResponse('success', null, trans('admin/users/message.inventorynotification.success')));
+    }
+
+    /**
+     * Return JSON containing a list of assets assigned to a user.
+     * based on user's NIP | user's ID
+     * @author [Y. Rihan] [yosral@bps.go.id>]
+     * @since [v6.0.9]
+     * @param $nipBaru
+     * @return string JSON
+     */
+    public function assetsByNip(Request $request, $nip)
+    {
+        $this->authorize('view', User::class);
+        $this->authorize('view', Asset::class);
+        $assets = Asset::where('assigned_to', '=', $id)->where('assigned_type', '=', User::class)->with('model')->get();
+
+        return (new AssetsTransformer)->transformAssets($assets, $assets->count(), $request);
     }
 
     /**
