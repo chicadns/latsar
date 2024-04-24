@@ -161,9 +161,14 @@ class Saml
             //Let onelogin/php-saml know to use 'X-Forwarded-*' headers if it is from a trusted proxy
             OneLogin_Saml2_Utils::setProxyVars(request()->isFromTrustedProxy());
 
+            /**
+             * Change settings required for MANIA to worked with SAML SSO BPS
+             * At 07/10/2022
+             * @author Rihan Yosral <yosral@bps.go.id>
+             */
+            data_set($settings, 'baseurl', \Config::get('saml.base_url'));
             data_set($settings, 'sp.entityId', config('app.url'));
-            // data_set($settings, 'sp.assertionConsumerService.url', route('saml.acs'));
-            data_set($settings, 'sp.assertionConsumerService.url', 'http://simpati.bps.go.id/public/saml/acs');
+            data_set($settings, 'sp.assertionConsumerService.url', route('saml.acs'));
             data_set($settings, 'sp.singleLogoutService.url', route('saml.sls'));
             data_set($settings, 'sp.x509cert', $setting->saml_sp_x509cert);
             data_set($settings, 'sp.privateKey', $setting->saml_sp_privatekey);

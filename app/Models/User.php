@@ -63,9 +63,16 @@ class User extends SnipeModel implements AuthenticatableContract, AuthorizableCo
         // 'start_date',
         // 'end_date',
         'scim_externalid',
-        'avatar',
         'gravatar',
-        'vip',
+        /**
+         * Add new fillable fields
+         * by Rihan Y. (yosral@bps.go.id) (10/10/2022)
+         */
+        'id',
+        'nip_baru',
+        'avatar',
+        'permissions',
+        'created_by',
         // 'autoassign_licenses',
     ];
 
