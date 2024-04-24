@@ -19,6 +19,7 @@ class CreateConsumables extends Migration
             $table->integer('category_id')->nullable()->default(null);
             $table->integer('location_id')->nullable()->default(null);
             $table->integer('user_id')->nullable()->default(null);
+            $table->text('notes')->nullable()->default(null);
             $table->integer('qty')->default(0);
             $table->boolean('requestable')->default(0);
             $table->timestamps();
@@ -35,6 +36,7 @@ class CreateConsumables extends Migration
             $table->integer('user_id')->nullable()->default(null);
             $table->integer('consumable_id')->nullable()->default(null);
             $table->integer('assigned_to')->nullable()->default(null);
+            $table->text('note')->nullable()->default(null);
             $table->timestamps();
         });
     }
