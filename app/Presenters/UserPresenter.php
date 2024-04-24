@@ -408,6 +408,15 @@ class UserPresenter extends Presenter
     {
         if ($this->avatar) {
 
+            /**
+             * If the user using SSO login, don't add url() base before
+             *
+             * By Rihan Y. (yosral@bps.go.id) at 11/10/22
+             */
+            if ($this->created_by == '0'){
+                return $this->avatar;
+            }
+
             // Check if it's a google avatar or some external avatar
             if (Str::startsWith($this->avatar, ['http://', 'https://'])) {
                 return $this->avatar;

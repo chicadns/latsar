@@ -105,7 +105,7 @@
         <!-- Avatar -->
 
         @if (($user->avatar) && ($user->avatar!=''))
-          <div class="form-group{{ $errors->has('image_delete') ? ' has-error' : '' }}">
+          {{-- <div class="form-group{{ $errors->has('image_delete') ? ' has-error' : '' }}">
             <div class="col-md-9 col-md-offset-3">
               <label for="image_delete" class="form-control">
                 {{ Form::checkbox('image_delete', '1', old('image_delete'), ['id' => 'image_delete', 'aria-label'=>'image_delete']) }}
@@ -119,7 +119,28 @@
               <img src="{{ Storage::disk('public')->url(app('users_upload_path').e($user->avatar)) }}" class="img-responsive">
               {!! $errors->first('image_delete', '<span class="alert-msg">:message</span>') !!}
             </div>
-          </div>
+          </div> --}}
+          @if($user->created_by == '0' && !$user->isSuperUser())
+                <!-- Rihan Y. (yosral@bps.go.id) change SSO Profile Form (11/10/22) -->
+                <div class="form-group {{ $errors->has('image_delete') ? 'has-error' : '' }}">
+                <label class="col-md-3 control-label">Foto<br><small>(Non-Editable)</small></label>
+                <div class="col-md-9">
+                  <img src="{{  $user->avatar }}" alt="{{ $user->present()->fullName() }} avatar image">
+                </div>
+              </div>  
+            @else
+                <div class="form-group {{ $errors->has('image_delete') ? 'has-error' : '' }}">
+                <label class="col-md-3 control-label" for="avatar_delete">{{ trans('general.image_delete') }}</label>
+                <div class="col-md-9">
+                  <label for="avatar_delete">
+                    {{ Form::checkbox('avatar_delete', '1', old('avatar_delete'), array('class' => 'minimal')) }}
+                  </label>
+                  <br>
+                  <img src="{{ url('/') }}/uploads/avatars/{{  $user->avatar }}" alt="{{ $user->present()->fullName() }} avatar image">
+                  {!! $errors->first('avatar_delete', '<span class="alert-msg" aria-hidden="true"><br>:message</span>') !!}
+                </div>
+              </div>  
+            @endif
         @endif
 
 
