@@ -7,6 +7,7 @@ use Illuminate\Foundation\Support\Providers\RouteServiceProvider as ServiceProvi
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Facades\Route;
+use App\Models\User;
 
 class RouteServiceProvider extends ServiceProvider
 {
@@ -25,6 +26,17 @@ class RouteServiceProvider extends ServiceProvider
             $this->mapWebRoutes();
 
             require base_path('routes/scim.php');
+        });
+
+        /**
+         * Add default searching of user by nip_baru.
+         * besides of id as the default parameter
+         * @author [Y. Rihan] [yosral@bps.go.id>]
+         * @since [v6.0.9]
+         * @return [user's model by id or nip_baru]
+         */
+        Route::bind('user', function ($value) {
+            return User::where('id', $value)->orWhere('nip_baru', $value)->firstOrFail();
         });
     }
 

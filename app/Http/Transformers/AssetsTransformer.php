@@ -15,7 +15,15 @@ class AssetsTransformer
     {
         $array = [];
         foreach ($assets as $asset) {
-            $array[] = self::transformAsset($asset);
+            /**
+             * Edited by [Rihan Yosral], for simplified assets information
+             * comes from SIMPEG integration with SIMPATI/MANIA
+             * to fulfilled the requirement for merit systems (by merely API integration)
+             * @since [v6.0.9]
+             */
+            //Don't delete this commented code!
+            // $array[] = self::transformAsset($asset);
+            $array[] = self::transformAssetSimplified($asset);
         }
 
         return (new DatatablesTransformer)->transformDatatables($array, $total);
@@ -174,6 +182,103 @@ class AssetsTransformer
         }
         
         $array += $permissions_array;
+
+        return $array;
+    }
+
+    /**
+     * Return simplify version of assets listed by user containing a list of assets assigned to a user.
+     *
+     * @author [A. Gianotto, Rihan Y.] [<yosral@bps.go.id>]
+     * @since [v6.0.9]
+     * @param $asset
+     * @return string JSON
+     */
+    public function transformAssetSimplified(Asset $asset)
+    {
+        $setting = Setting::getSettings();
+
+        $array = [
+            'nama_barang' => e($asset->name),
+            'serial_number' => e($asset->serial),
+            'nama_model' => ($asset->model) ? e($asset->model->name) : null,
+            'masa_pakai' => ($asset->purchase_date != '') ? Helper::getFormattedDateObject($asset->present()->eol_date(), 'date') : null,
+            'status_label' => ($asset->assetstatus) ? [
+                'nama_status'=> e($asset->assetstatus->name),
+                'meta_status' => e($asset->present()->statusMeta),
+            ] : null,
+            'kategori' => (($asset->model) && ($asset->model->category)) ? e($asset->model->category->name) : null,
+            'catatan' => ($asset->notes) ? e($asset->notes) : null,
+            'nup_bmn' => ($asset->bmn) ? e($asset->bmn) : null,
+            'foto_barang' => ($asset->getImageUrl()) ? $asset->getImageUrl() : null,
+            'alokasi_untuk' => $this->transformAssignedTo($asset),
+            'bulan_garansi' =>  ($asset->warranty_months > 0) ? e($asset->warranty_months.' '.trans('admin/hardware/form.months')) : null,
+            'akhir_garansi' => ($asset->warranty_months > 0) ? Helper::getFormattedDateObject($asset->warranty_expires, 'date') : null,
+            'alokasi_terakhir' => Helper::getFormattedDateObject($asset->last_checkout, 'datetime'),
+            'waktu_pengembalian' => Helper::getFormattedDateObject($asset->expected_checkin, 'date'),
+            'harga_beli' => Helper::formatCurrencyOutput($asset->purchase_cost),
+            'jumlah_alokasi' => (int) $asset->checkout_counter,
+            'jumlah_realokasi' => (int) $asset->checkin_counter,
+        ];
+
+
+        if (($asset->model) && ($asset->model->fieldset) && ($asset->model->fieldset->fields->count() > 0)) {
+            $fields_array = [];
+
+            foreach ($asset->model->fieldset->fields as $field) {
+                if ($field->isFieldDecryptable($asset->{$field->db_column})) {
+                    $decrypted = Helper::gracefulDecrypt($field, $asset->{$field->db_column});
+                    $value = (Gate::allows('superadmin')) ? $decrypted : strtoupper(trans('admin/custom_fields/general.encrypted'));
+
+                    if ($field->format == 'DATE'){
+                        if (Gate::allows('superadmin')){
+                            $value = Helper::getFormattedDateObject($value, 'date', false);
+                        } else {
+                           $value = strtoupper(trans('admin/custom_fields/general.encrypted'));
+                        }
+                    }
+
+                    $fields_array[$field->name] = [
+                            'value' => e($value),
+                        ];
+
+                } else {
+                    $value = $asset->{$field->db_column};
+
+                    if (($field->format == 'DATE') && (!is_null($value)) && ($value!='')){
+                        $value = Helper::getFormattedDateObject($value, 'date', false);
+                    }
+                    
+                    $fields_array[$field->name] = e($value);
+                }
+
+                $array['lainnya'] = $fields_array;
+            }
+        } else {
+            $array['lainnya'] = [];
+        }
+
+        if (request('components')=='true') {
+        
+            if ($asset->components) {
+                $array['components'] = [];
+    
+                foreach ($asset->components as $component) {
+                    $array['components'][] = [
+                        
+                            'id' => $component->id,
+                            'pivot_id' => $component->pivot->id,
+                            'name' => e($component->name),
+                            'qty' => $component->pivot->assigned_qty,
+                            'price_cost' => $component->purchase_cost,
+                            'purchase_total' => $component->purchase_cost * $component->pivot->assigned_qty,
+                            'checkout_date' => Helper::getFormattedDateObject($component->pivot->created_at, 'datetime') ,
+                        
+                    ];
+                }
+            }
+
+        }
 
         return $array;
     }
