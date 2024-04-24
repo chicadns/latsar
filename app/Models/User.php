@@ -36,6 +36,12 @@ class User extends SnipeModel implements AuthenticatableContract, AuthorizableCo
     protected $table = 'users';
     protected $injectUniqueIdentifier = true;
 
+    /**
+    * Cast 'id' primary key to string, dodge the bugs
+    * by Rihan Y. (yosral@bps.go.id) (13/10/2022)
+    */
+    protected $keyType = 'string';
+
     protected $fillable = [
         'activated',
         'address',

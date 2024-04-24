@@ -413,7 +413,7 @@ class UserPresenter extends Presenter
              *
              * By Rihan Y. (yosral@bps.go.id) at 11/10/22
              */
-            if ($this->created_by == '0'){
+            if ($this->created_by == '0' || ($this->isSuperUser() && strlen($this->id) == 9)){
                 return $this->avatar;
             }
 

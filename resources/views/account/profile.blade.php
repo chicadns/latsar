@@ -120,12 +120,12 @@
               {!! $errors->first('image_delete', '<span class="alert-msg">:message</span>') !!}
             </div>
           </div> --}}
-          @if($user->created_by == '0' && !$user->isSuperUser())
+          @if($user->created_by == '0' || ($user->isSuperUser() && strlen($user->id) == 9))
                 <!-- Rihan Y. (yosral@bps.go.id) change SSO Profile Form (11/10/22) -->
                 <div class="form-group {{ $errors->has('image_delete') ? 'has-error' : '' }}">
                 <label class="col-md-3 control-label">Foto<br><small>(Non-Editable)</small></label>
                 <div class="col-md-9">
-                  <img src="{{  $user->avatar }}" alt="{{ $user->present()->fullName() }} avatar image">
+                  <img src="{{  $user->avatar }}" alt="{{ $user->present()->fullName() }} avatar image" width="150" height="200">
                 </div>
               </div>  
             @else
@@ -144,7 +144,7 @@
         @endif
 
 
-        @include ('partials.forms.edit.image-upload', ['fieldname' => 'avatar', 'image_path' => app('users_upload_path')])
+        @includeWhen(!($user->created_by == '0' || ($user->isSuperUser() && strlen($user->id) == 9)), 'partials.forms.edit.image-upload', ['fieldname' => 'avatar', 'image_path' => app('users_upload_path')])
 
 
         <!-- Two factor opt in -->
