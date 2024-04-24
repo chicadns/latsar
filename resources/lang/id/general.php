@@ -85,7 +85,7 @@ return [
     'current'  				=> 'Saat ini',
     'current_password'      => 'Password Saat Ini',
     'customize_report'      => 'Sesuaikan/Ubah Report',
-    'custom_report'         => 'Laporan Penyesuaian Perangkat Keras',
+    'custom_report'         => 'Laporan Perangkat Keras',
     'dashboard'				=> 'Beranda',
     'days'      			=> 'Hari',
     'days_to_next_audit'    => 'Hari ke Audit Berikutnya',

@@ -35,6 +35,7 @@ class LocationsTransformer
 
             $array = [
                 'id' => (int) $location->id,
+                'koderuang' => e($location->koderuang),
                 'name' => e($location->name),
                 'image' =>   ($location->image) ? Storage::disk('public')->url('locations/'.e($location->image)) : null,
                 'address' =>  ($location->address) ? e($location->address) : null,

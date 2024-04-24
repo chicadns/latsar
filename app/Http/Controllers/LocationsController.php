@@ -67,6 +67,7 @@ class LocationsController extends Controller
     {
         $this->authorize('create', Location::class);
         $location = new Location();
+        $location->koderuang = $request->input('koderuang');
         $location->name = $request->input('name');
         $location->parent_id = $request->input('parent_id', null);
         $location->currency = $request->input('currency', '$');
@@ -132,6 +133,7 @@ class LocationsController extends Controller
         }
 
         // Update the location data
+        $location->koderuang = $request->input('koderuang');
         $location->name = $request->input('name');
         $location->parent_id = $request->input('parent_id', null);
         $location->currency = $request->input('currency', '$');

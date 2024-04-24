@@ -25,6 +25,7 @@ class Location extends SnipeModel
 
     protected $table = 'locations';
     protected $rules = [
+        'koderuang'     => 'required|max:5|unique',
         'name'          => 'required|min:2|max:255|unique_undeleted',
         'address'       => 'max:191|nullable',
         'address2'      => 'max:191|nullable',
@@ -59,6 +60,7 @@ class Location extends SnipeModel
      */
     protected $fillable = [
         'name',
+        'koderuang',
         'parent_id',
         'address',
         'address2',
@@ -82,7 +84,7 @@ class Location extends SnipeModel
      *
      * @var array
      */
-    protected $searchableAttributes = ['name', 'address', 'city', 'state', 'zip', 'created_at', 'ldap_ou', 'phone', 'fax'];
+    protected $searchableAttributes = ['koderuang', 'name', 'address', 'city', 'state', 'zip', 'created_at', 'ldap_ou'];
 
     /**
      * The relations and their attributes that should be included when searching the model.

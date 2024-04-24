@@ -8,19 +8,19 @@
 
 {{-- Page content --}}
 @section('inputFields')
+
+<div class="form-group {{ $errors->has('id') ? ' has-error' : '' }}">
+    {{ Form::label('koderuang', trans('admin/locations/table.id'), array('class' => 'col-md-3 control-label')) }}
+    <div class="col-md-7{{  (Helper::checkIfRequired($item, 'koderuang')) ? ' required' : '' }}">
+    {{Form::text('koderuang', old('koderuang', $item->koderuang), array('class' => 'form-control', 'aria-label'=>'koderuang')) }}
+        {!! $errors->first('koderuang', '<span class="alert-msg" aria-hidden="true"><i class="fas fa-times" aria-hidden="true"></i> :message</span>') !!}
+
+    </div>
+</div>
 @include ('partials.forms.edit.name', ['translated_name' => trans('admin/locations/table.name')])
 
-<!-- parent -->
-@include ('partials.forms.edit.location-select', ['translated_name' => trans('admin/locations/table.parent'), 'fieldname' => 'parent_id'])
-
-<!-- Manager-->
-@include ('partials.forms.edit.user-select', ['translated_name' => trans('admin/users/table.manager'), 'fieldname' => 'manager_id'])
-
-@include ('partials.forms.edit.phone')
-@include ('partials.forms.edit.fax')
-
 <!-- Currency -->
-<div class="form-group {{ $errors->has('currency') ? ' has-error' : '' }}">
+<!-- <div class="form-group {{ $errors->has('currency') ? ' has-error' : '' }}">
     <label for="currency" class="col-md-3 control-label">
         {{ trans('admin/locations/table.currency') }}
     </label>
@@ -28,9 +28,32 @@
         {{ Form::text('currency', old('currency', $item->currency), array('class' => 'form-control','placeholder' => 'USD', 'maxlength'=>'3', 'style'=>'width: 60px;', 'aria-label'=>'currency')) }}
         {!! $errors->first('currency', '<span class="alert-msg" aria-hidden="true">:message</span>') !!}
     </div>
+</div> -->
+
+<div class="form-group {{ $errors->has('address') ? ' has-error' : '' }}">
+    {{ Form::label('address', trans('admin/locations/table.address'), array('class' => 'col-md-3 control-label')) }}
+    <div class="col-md-7">
+        {{Form::text('address', old('address', $item->address), array('class' => 'form-control', 'aria-label'=>'address')) }}
+        {!! $errors->first('address', '<span class="alert-msg" aria-hidden="true"><i class="fas fa-times" aria-hidden="true"></i> :message</span>') !!}
+    </div>
 </div>
 
-@include ('partials.forms.edit.address')
+<div class="form-group {{ $errors->has('city') ? ' has-error' : '' }}">
+    {{ Form::label('city', trans('admin/locations/table.city'), array('class' => 'col-md-3 control-label')) }}
+    <div class="col-md-7">
+    {{Form::text('city', old('city', $item->city), array('class' => 'form-control', 'aria-label'=>'city')) }}
+        {!! $errors->first('city', '<span class="alert-msg" aria-hidden="true"><i class="fas fa-times" aria-hidden="true"></i> :message</span>') !!}
+    </div>
+</div>
+
+<div class="form-group {{ $errors->has('state') ? ' has-error' : '' }}">
+    {{ Form::label('state', trans('admin/locations/table.state'), array('class' => 'col-md-3 control-label')) }}
+    <div class="col-md-7">
+    {{Form::text('state', old('state', $item->state), array('class' => 'form-control', 'aria-label'=>'state')) }}
+        {!! $errors->first('state', '<span class="alert-msg" aria-hidden="true"><i class="fas fa-times" aria-hidden="true"></i> :message</span>') !!}
+
+    </div>
+</div>
 
 <!-- LDAP Search OU -->
 @if ($snipeSettings->ldap_enabled == 1)

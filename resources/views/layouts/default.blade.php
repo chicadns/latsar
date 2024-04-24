@@ -509,7 +509,7 @@
                                         </a>
                                     </li> -->
 
-                                    @can('audit', \App\Models\Asset::class)
+                                    <!-- @can('audit', \App\Models\Asset::class)
                                         <li{!! (Request::is('hardware/audit/due') ? ' class="active"' : '') !!}>
                                             <a href="{{ route('assets.audit.due') }}">
                                                 <i class="fas fa-history text-yellow fa-fw"></i> {{ trans('general.audit_due') }}
@@ -520,18 +520,18 @@
                                                 <i class="fas fa-exclamation-triangle text-red fa-fw"></i> {{ trans('general.audit_overdue') }}
                                             </a>
                                         </li>
-                                    @endcan
+                                    @endcan -->
 
-                                    <li class="divider">&nbsp;</li>
+                                    <!-- <li class="divider">&nbsp;</li>
                                     @can('checkin', \App\Models\Asset::class)
                                         <li{!! (Request::is('hardware/quickscancheckin') ? ' class="active"' : '') !!}>
                                             <a href="{{ route('hardware/quickscancheckin') }}">
                                                 {{ trans('general.quickscan_checkin') }}
                                             </a>
                                         </li>
-                                    @endcan
+                                    @endcan -->
 
-                                    @can('checkout', \App\Models\Asset::class)
+                                    <!-- @can('checkout', \App\Models\Asset::class)
                                         <li{!! (Request::is('hardware/bulkcheckout') ? ' class="active"' : '') !!}>
                                             <a href="{{ route('hardware.bulkcheckout.show') }}">
                                                 {{ trans('general.bulk_checkout') }}
@@ -541,21 +541,21 @@
                                             <a href="{{ route('assets.requested') }}">
                                                 {{ trans('general.requested') }}</a>
                                         </li>
-                                    @endcan
+                                    @endcan -->
 
                                     @can('create', \App\Models\Asset::class)
-                                        <li{!! (Request::query('Deleted') ? ' class="active"' : '') !!}>
+                                        <!-- <li{!! (Request::query('Deleted') ? ' class="active"' : '') !!}>
                                             <a href="{{ url('hardware?status=Deleted') }}">
                                                 {{ trans('general.deleted') }}
                                             </a>
-                                        </li>
+                                        </li> -->
                                         <li>
                                             <a href="{{ route('maintenances.index') }}">
                                                 {{ trans('general.asset_maintenances') }}
                                             </a>
                                         </li>
                                     @endcan
-                                    @can('admin')
+                                    <!-- @can('admin')
                                         <li>
                                             <a href="{{ url('hardware/history') }}">
                                                 {{ trans('general.import-history') }}
@@ -568,7 +568,7 @@
                                                 {{ trans('general.bulkaudit') }}
                                             </a>
                                         </li>
-                                    @endcan
+                                    @endcan -->
                                 </ul>
                             </li>
                         @endcan
@@ -580,14 +580,14 @@
                                 </a>
                             </li>
                         @endcan
-                        @can('index', \App\Models\Accessory::class)
+                        <!-- @can('index', \App\Models\Accessory::class)
                             <li{!! (Request::is('accessories*') ? ' class="active"' : '') !!}>
                                 <a href="{{ route('accessories.index') }}">
                                     <i class="far fa-keyboard fa-fw"></i>
                                     <span>{{ trans('general.accessories') }}</span>
                                 </a>
                             </li>
-                        @endcan
+                        @endcan -->
                         @can('view', \App\Models\Consumable::class)
                             <li{!! (Request::is('consumables*') ? ' class="active"' : '') !!}>
                                 <a href="{{ url('consumables') }}">
@@ -645,14 +645,18 @@
                                     </a>
                                 </li>
 
-                                <li><a href="{{ route('reports.audit') }}" {{ (Request::is('reports.audit') ? ' class="active"' : '') }}>
-                                        {{ trans('general.audit_report') }}</a>
+                                <li>
+                                    <a href="{{ url('reports/custom') }}" {{ (Request::is('reports/custom') ? ' class="active"' : '') }}>
+                                        {{ trans('general.custom_report') }}
+                                    </a>
                                 </li>
+            
+                                <!-- <li><a href="{{ route('reports.audit') }}" {{ (Request::is('reports.audit') ? ' class="active"' : '') }}>            
                                 <li>
                                     <a href="{{ url('reports/depreciation') }}" {{ (Request::is('reports/depreciation') ? ' class="active"' : '') }}>
                                         {{ trans('general.depreciation_report') }}
                                     </a>
-                                </li>
+                                </li> -->
                                 <li>
                                     <a href="{{ url('reports/licenses') }}" {{ (Request::is('reports/licenses') ? ' class="active"' : '') }}>
                                         {{ trans('general.license_report') }}
@@ -663,7 +667,7 @@
                                         {{ trans('general.asset_maintenance_report') }}
                                     </a>
                                 </li>
-                                <li>
+                                <!-- <li>
                                     <a href="{{ url('reports/unaccepted_assets') }}" {{ (Request::is('reports/unaccepted_assets') ? ' class="active"' : '') }}>
                                         {{ trans('general.unaccepted_asset_report') }}
                                     </a>
@@ -672,12 +676,7 @@
                                     <a href="{{ url('reports/accessories') }}" {{ (Request::is('reports/accessories') ? ' class="active"' : '') }}>
                                         {{ trans('general.accessory_report') }}
                                     </a>
-                                </li>
-                                <li>
-                                    <a href="{{ url('reports/custom') }}" {{ (Request::is('reports/custom') ? ' class="active"' : '') }}>
-                                        {{ trans('general.custom_report') }}
-                                    </a>
-                                </li>
+                                </li> -->
                             </ul>
                         </li>
                         @endcan
@@ -764,13 +763,13 @@
                                         </li>
                                     @endcan
 
-                                    @can('view', \App\Models\Depreciation::class)
+                                    <!-- @can('view', \App\Models\Depreciation::class)
                                         <li>
                                             <a href="{{ route('depreciations.index') }}" {{ (Request::is('/depreciations') ? ' class="active"' : '') }}>
                                                 {{ trans('general.depreciation') }}
                                             </a>
                                         </li>
-                                    @endcan
+                                    @endcan -->
                                 </ul>
                             </li>
                         @endcan

@@ -25,12 +25,13 @@ class LocationsController extends Controller
     {
         $this->authorize('view', Location::class);
         $allowed_columns = [
-            'id', 'name', 'address', 'address2', 'city', 'state', 'country', 'zip', 'created_at',
+            'id', 'koderuang', 'name', 'address', 'address2', 'city', 'state', 'country', 'zip', 'created_at',
             'updated_at', 'manager_id', 'image',
             'assigned_assets_count', 'users_count', 'assets_count','assigned_assets_count', 'assets_count', 'rtd_assets_count', 'currency', 'ldap_ou', ];
 
         $locations = Location::with('parent', 'manager', 'children')->select([
             'locations.id',
+            'locations.koderuang',
             'locations.name',
             'locations.address',
             'locations.address2',
@@ -54,6 +55,10 @@ class LocationsController extends Controller
 
         if ($request->filled('search')) {
             $locations = $locations->TextSearch($request->input('search'));
+        }
+
+        if ($request->filled('koderuang')) {
+            $locations->where('locations.koderuang', '=', $request->input('koderuang'));
         }
 
         if ($request->filled('name')) {
@@ -145,6 +150,7 @@ class LocationsController extends Controller
         $location = Location::with('parent', 'manager', 'children')
             ->select([
                 'locations.id',
+                'locations.koderuang',
                 'locations.name',
                 'locations.address',
                 'locations.address2',
