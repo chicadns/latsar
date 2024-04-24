@@ -27,14 +27,13 @@ class AssetPresenter extends Presenter
                 'sortable' => true,
                 'switchable' => true,
                 'title' => 'No. Urut',
-                'visible' => false,
             ], [
                 'field' => 'company',
                 'searchable' => true,
                 'sortable' => true,
                 'switchable' => true,
                 'title' => trans('general.company'),
-                'visible' => false,
+                'visible' => true,
                 'formatter' => 'assetCompanyObjFilterFormatter',
             ], [
                 'field' => 'name',
@@ -48,7 +47,7 @@ class AssetPresenter extends Presenter
                 'searchable' => true,
                 'sortable' => true,
                 'title' => trans('admin/hardware/table.asset_tag'),
-                'visible' => true,
+                'visible' => false,
                 'formatter' => 'hardwareLinkFormatter',
             ], [
                 'field' => 'image',
@@ -56,7 +55,7 @@ class AssetPresenter extends Presenter
                 'sortable' => true,
                 'switchable' => true,
                 'title' => trans('admin/hardware/table.image'),
-                'visible' => true,
+                'visible' => false,
                 'formatter' => 'imageFormatter',
             ], [
                 "field" => "bmn",
@@ -77,7 +76,7 @@ class AssetPresenter extends Presenter
                 'searchable' => true,
                 'sortable' => true,
                 'title' => trans('general.manufacturer'),
-                'visible' => false,
+                'visible' => true,
                 'formatter' => 'manufacturersLinkObjFormatter',
             ], [
                 'field' => 'model',
@@ -118,7 +117,7 @@ class AssetPresenter extends Presenter
                 'searchable' => false,
                 'sortable' => true,
                 'title' => trans('general.employee_number'),
-                'visible' => false,
+                'visible' => true,
                 'formatter' => 'employeeNumFormatter',
             ], [
                 "field" => "nip_baru",
@@ -140,7 +139,7 @@ class AssetPresenter extends Presenter
                 'searchable' => true,
                 'sortable' => true,
                 'title' => trans('admin/hardware/table.location'),
-                'visible' => true,
+                'visible' => false,
                 'formatter' => 'deployedLocationFormatter',
             ], [
                 'field' => 'rtd_location',
@@ -176,11 +175,12 @@ class AssetPresenter extends Presenter
                 "title" => trans('admin/hardware/table.book_value'),
                 "footerFormatter" => 'sumFormatter',
                 "class" => "text-right",
+                'visible' => false,
             ],[
                 'field' => 'order_number',
                 'searchable' => true,
                 'sortable' => true,
-                'visible' => false,
+                'visible' => true,
                 'title' => trans('admin/hardware/form.order_number'),
                 'formatter' => 'orderNumberObjFilterFormatter',
             ], [

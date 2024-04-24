@@ -20,7 +20,6 @@ class LicensePresenter extends Presenter
                 'sortable' => true,
                 'switchable' => true,
                 'title' => trans('admin/licenses/table.id'),
-                'visible' => false,
             ], [
                 'field' => 'company',
                 'searchable' => true,

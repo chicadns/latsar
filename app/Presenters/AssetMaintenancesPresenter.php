@@ -20,7 +20,6 @@ class AssetMaintenancesPresenter extends Presenter
                 'sortable' => true,
                 'switchable' => true,
                 'title' => 'No. Urut',
-                'visible' => false,
             ], [
                 'field' => 'company',
                 'searchable' => true,
@@ -41,6 +40,7 @@ class AssetMaintenancesPresenter extends Presenter
                 'sortable' => true,
                 'title' => trans('admin/hardware/table.asset_tag'),
                 'formatter' => 'assetTagLinkFormatter',
+                'visible' => false,
             ], [
                 "field" => "pemegang",
                 "searchable" => true,
@@ -61,7 +61,7 @@ class AssetMaintenancesPresenter extends Presenter
                 "sortable" => true,
                 "switchable" => true,
                 "title" => 'NIP Baru',
-                "visible" => true,
+                "visible" => false,
                 "formatter" => "nipBaruLinkFormatter"
             ], [
                 "field" => "bmn",
@@ -151,6 +151,7 @@ class AssetMaintenancesPresenter extends Presenter
                 'sortable' => true,
                 'title' => trans('admin/asset_maintenances/form.cost'),
                 'class' => 'text-right',
+                'visible' => false,
             ], [
                 'field' => 'user_id',
                 'searchable' => true,
