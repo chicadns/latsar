@@ -101,9 +101,8 @@
     </div>
   </div><!-- ./col -->
 
-  <div class="col-lg-2 col-xs-6">
+  <!-- <div class="col-lg-2 col-xs-6">
     <a href="{{ route('components.index') }}">
-   <!-- small box -->
    <div class="small-box bg-yellow">
      <div class="inner">
        <h3>{{ number_format($counts['component']) }}</h3>
@@ -117,7 +116,7 @@
        @endcan
    </div>
     </a>
- </div><!-- ./col -->
+ </div> -->
 
  <div class="col-lg-2 col-xs-6">
     <a href="{{ route('users.index') }}">
