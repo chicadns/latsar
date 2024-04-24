@@ -375,7 +375,7 @@
                                     <span class="sr-only">{{ trans('general.accessories_count') }}</span>
                                 </th>
                                 <th class="col-sm-1" data-visible="true" data-field="consumables_count" data-sortable="true">
-                                    <i class="fas fa-dolly-flatbed" data-toggle="tooltip" title="Barang Stok/Penyimpanan" aria-hidden="true"></i>
+                                    <i class="fas fa-dolly-flatbed" data-toggle="tooltip" title="Barang Persediaan" aria-hidden="true"></i>
                                     <span class="sr-only">{{ trans('general.consumables_count') }}</span>
                                 </th>
                                 <th class="col-sm-1" data-visible="true" data-field="components_count" data-sortable="true">
