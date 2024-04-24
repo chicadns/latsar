@@ -15,14 +15,22 @@ class AssetsTransformer
     {
         $array = [];
         foreach ($assets as $asset) {
-            /**
-             * Edited by [Rihan Yosral], for simplified assets information
-             * comes from SIMPEG integration with SIMPATI/MANIA
-             * to fulfilled the requirement for merit systems (by merely API integration)
-             * @since [v6.0.9]
-             */
-            //Don't delete this commented code!
-            // $array[] = self::transformAsset($asset);
+            $array[] = self::transformAsset($asset);
+        }
+
+        return (new DatatablesTransformer)->transformDatatables($array, $total);
+    }
+
+    /**
+    * Created by [Rihan Yosral], for simplified assets information
+    * comes from SIMPEG integration with SIMPATI/MANIA
+    * to fulfilled the requirement for merit systems (by merely API integration)
+    * @since [v6.0.9]
+    */
+    public function transformAssetsSimplified(Collection $assets, $total)
+    {
+        $array = [];
+        foreach ($assets as $asset) {
             $array[] = self::transformAssetSimplified($asset);
         }
 
@@ -200,6 +208,8 @@ class AssetsTransformer
 
         $array = [
             'nama_barang' => e($asset->name),
+            'tanggal_perolehan' => Helper::getFormattedDateObject($asset->purchase_date, 'date'),
+            'kondisi' =>  e($asset->notes),
             'serial_number' => e($asset->serial),
             'nama_model' => ($asset->model) ? e($asset->model->name) : null,
             'masa_pakai' => ($asset->purchase_date != '') ? Helper::getFormattedDateObject($asset->present()->eol_date(), 'date') : null,

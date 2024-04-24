@@ -559,12 +559,12 @@ class UsersController extends Controller
         $this->$id = $id;
         $this->authorize('view', User::class);
         $this->authorize('view', Asset::class);
-        if (strlen($id) == 18){
-            $this->id = User::where('nip_baru', '=', $id)->first()->id;
+        if (strlen($id) == 18 || strlen($id) == 9){
+            $this->id = User::where('nip_baru', '=', $id)->orWhere('employee_num', '=', $id)->first()->id;
         } 
         $assets = Asset::where('assigned_to', '=', $this->id)->where('assigned_type', '=', User::class)->with('model')->get();
 
-        return (new AssetsTransformer)->transformAssets($assets, $assets->count(), $request);
+        return (new AssetsTransformer)->transformAssetsSimplified($assets, $assets->count(), $request);
     }
 
     /**

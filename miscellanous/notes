@@ -1,0 +1,12 @@
++++ASSETS+++
+
+- ketika `employee_num` duplikat pada table `users`, maka assets yang akan diperoleh dari API adalah kepemilikan barang dari ID user yang urutannya paling pertama (misal 1 (admin) vs 340060041 (dayanti.kharisma), yang diambil ID 1 dengan assets `assigned_to` 1, bukan ke 340060041)
+- `assigned_to` dan `assigned_type` (minimal App\Models\User) pada table Assets harus terisi, terutama ketika mendapatkan data import dari pihak Biro Umum/IPP
+
++++USERS+++
+- Tabel `users` dan `users_groups` harus 'synced' ketika diinput (lihat app/Http/Controllers/Auth/SamlController.php)
+- Input user via login SAML SSO BPS masih ada banyak TODO, pastikan sudah dikerjakan sebelum salah logika
+
+
+++COMPANIES++
+- Ketergantungan/dependensi antara user, scope company, department, dan lokasi (terutama ketika login SSO) masih perlu banyak penyesuaian

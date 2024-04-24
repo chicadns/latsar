@@ -36,7 +36,7 @@ class RouteServiceProvider extends ServiceProvider
          * @return [user's model by id or nip_baru]
          */
         Route::bind('user', function ($value) {
-            return User::where('id', $value)->orWhere('nip_baru', $value)->firstOrFail();
+            return User::where('id', $value)->orWhere('nip_baru', $value)->orWhere('employee_num', $value)->firstOrFail();
         });
     }
 
