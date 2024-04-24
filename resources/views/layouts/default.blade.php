@@ -740,6 +740,14 @@
                                         </li>
                                     @endcan
 
+                                    @can('view', \App\Models\Company::class)
+                                        <li>
+                                            <a href="{{ route('companies.index') }}" {{ (Request::is('/companies') ? ' class="active"' : '') }}>
+                                                {{ trans('general.companies') }}
+                                            </a>
+                                        </li>
+                                    @endcan
+
                                     @can('view', \App\Models\Department::class)
                                         <li>
                                             <a href="{{ route('departments.index') }}" {{ (Request::is('/departments') ? ' class="active"' : '') }}>
@@ -752,14 +760,6 @@
                                         <li>
                                             <a href="{{ route('locations.index') }}" {{ (Request::is('/locations') ? ' class="active"' : '') }}>
                                                 {{ trans('general.locations') }}
-                                            </a>
-                                        </li>
-                                    @endcan
-
-                                    @can('view', \App\Models\Company::class)
-                                        <li>
-                                            <a href="{{ route('companies.index') }}" {{ (Request::is('/companies') ? ' class="active"' : '') }}>
-                                                {{ trans('general.companies') }}
                                             </a>
                                         </li>
                                     @endcan
