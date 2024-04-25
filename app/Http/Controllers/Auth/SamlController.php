@@ -8,6 +8,7 @@ use App\Models\Company;
 use App\Models\Department;
 use App\Models\Location;
 use App\Models\User;
+use App\Models\Asset;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 use Log;
@@ -184,6 +185,7 @@ class SamlController extends Controller
             ]
             );
             
+        $update_assets_company_id = Asset::where('assigned_to', $id_nip)->update(['company_id' => $company_id]);
         // $user_saml->saveOrFail();
         $hasPenggunaRole = DB::table('users_groups')->where('user_id', $id_nip)->where('group_id', '4')->exists();
         
@@ -191,6 +193,7 @@ class SamlController extends Controller
             $user_saml->groups()->sync(['4' => ['user_id' => $id_nip]], false);    
         }
         } catch (\Exception $e){
+            echo $e->getMessage();
             echo $e->errors();
         }
 
