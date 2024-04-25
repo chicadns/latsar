@@ -139,8 +139,14 @@
                     <div class="navbar-custom-menu">
                         <ul class="nav navbar-nav">
                             @if (isset(Auth::user()->company->name))
-                                <li class="navbar-form fas" style="color:white">{{ Auth::user()->company->name }}</li>
+                                <li class="dropdown user">
+                                    <a href="#">
+                                        <i class="fa fa-location-pin" aria-hidden="true"></i>
+                                        <span>{{ Auth::user()->company->name }}</span>
+                                    </a>
+                                </li>        
                             @endif
+
                             <!-- @can('index', \App\Models\Asset::class)
                                 <li aria-hidden="true"
                                     {!! (Request::is('hardware*') ? ' class="active"' : '') !!} tabindex="-1">
@@ -186,7 +192,7 @@
                             @endcan -->
 
                             <!-- seacrh perangkat -->
-                            @can('index', \App\Models\Asset::class)
+                            <!-- @can('index', \App\Models\Asset::class)
                                 <li>
                                     <form class="navbar-form navbar-left form-horizontal hidden-xs" role="search"
                                           action="{{ route('findbytag/hardware') }}" method="get">
@@ -207,14 +213,14 @@
                                         </div>
                                     </form>
                                 </li>
-                            @endcan
+                            @endcan -->
 
                             <!-- create new assets -->
                             @can('admin')
                                 <li class="dropdown" aria-hidden="true">
                                     <a href="#" class="dropdown-toggle" data-toggle="dropdown" tabindex="-1">
-                                        {{ trans('general.create') }}
-                                        <strong class="caret"></strong>
+                                        <!-- <span>{{ trans('general.create') }}</span> -->
+                                        <i class="fas fa-circle-plus"></i>
                                     </a>
                                     <ul class="dropdown-menu">
                                         @can('create', \App\Models\Asset::class)
@@ -280,7 +286,7 @@
 
                                     <li class="dropdown tasks-menu">
                                         <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-                                            <i class="far fa-flag" aria-hidden="true"></i>
+                                            <i class="far fa-bell" aria-hidden="true"></i>
                                             <span class="sr-only">{{ trans('general.alerts') }}</span>
                                             @if (count($alert_items))
                                                 <span class="label label-danger">{{ count($alert_items) }}</span>
