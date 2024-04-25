@@ -157,7 +157,7 @@ return [
     'unaccepted_image_type'  => 'Pilihan file gambar ini tidak dapat dibaca. Jenis file yang diterima adalah jpg, webp, png, gif, dan svg. Tipe file ini adalah :mimetype.',
     'import'         	    => 'Impor',
     'importing'         	=> 'Pengimporan',
-    'importing_help'        => 'Anda dapat mengimpor perangkat keras, aksesori, perangkat lunak, komponen, bahan persediaan, dan pengguna melalui file CSV. <br><br> CSV harus dibatasi koma dan diformat dengan header yang cocok dengan header di <a href="https://snipe-it.readme.io/docs/importing" target="_new"> contoh CSV dalam dokumentasi</a>.',
+    'importing_help'        => 'Anda dapat mengimpor perangkat keras, aksesori, perangkat lunak, komponen, bahan persediaan, dan pengguna melalui file CSV. <br><br> CSV harus dibatasi koma dan diformat dengan header yang cocok dengan header di <a href="http://s.bps.go.id/template-impor-aset-mania" target="_new"> contoh CSV dalam dokumentasi</a>.',
     'import-history'        => 'Sejarah Impor',
     'asset_maintenance'        => 'Pemeliharaan Perangkat TI',
     'asset_maintenance_report' => 'Laporan Pemeliharaan Perangkat TI',
