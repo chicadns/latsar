@@ -4,10 +4,11 @@ namespace App\Presenters;
 
 use App\Helpers\Helper;
 use App\Models\Setting;
-use Illuminate\Support\Facades\Auth;
+// use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
+use Auth;
 
 /**
  * Class UserPresenter
@@ -355,18 +356,195 @@ class UserPresenter extends Presenter
                 'visible' => false,
                 'formatter' => 'dateDisplayFormatter',
             ],
-            // [
-            //     'field' => 'actions',
-            //     'searchable' => false,
-            //     'sortable' => false,
-            //     'switchable' => false,
-            //     'title' => trans('table.actions'),
-            //     'visible' => true,
-            //     'formatter' => 'usersActionsFormatter',
-            // ],
+
         ];
 
-        return json_encode($layout);
+        $layoutadmin = [
+            [
+                'field' => 'checkbox',
+                'checkbox' => true,
+            ],
+            [
+                'field' => 'id',
+                'searchable' => false,
+                'sortable' => true,
+                'switchable' => true,
+                'title' => 'No. Urut',
+                'visible' => false,
+            ],
+            [
+                'field' => 'avatar',
+                'searchable' => false,
+                'sortable' => false,
+                'switchable' => true,
+                'title' => 'Foto Pegawai',
+                'visible' => false,
+                'formatter' => 'imageFormatter',
+            ],
+            [
+                'field' => 'name',
+                'searchable' => true,
+                'sortable' => true,
+                'title' => trans('admin/users/table.name'),
+                'visible' => true,
+                'formatter' => 'usersLinkFormatter',
+            ],
+            [
+                'field' => 'employee_num',
+                'searchable' => true,
+                'sortable' => true,
+                'switchable' => true,
+                'title' => trans('general.employee_number'),
+                'visible' => false,
+                'formatter' => 'usersLinkFormatter',
+            ],
+            [
+                'field' => 'nip_baru',
+                'searchable' => true,
+                'sortable' => true,
+                'switchable' => true,
+                'title' => 'NIP Baru',
+                'visible' => false,
+                'formatter' => 'usersLinkFormatter',
+            ],
+            [
+                'field' => 'company',
+                'searchable' => true,
+                'sortable' => true,
+                'switchable' => true,
+                'title' => trans('admin/companies/table.title'),
+                'visible' => false,
+                'formatter' => 'companiesLinkObjFormatter',
+            ],
+            [
+                'field' => 'department',
+                'searchable' => true,
+                'sortable' => true,
+                'switchable' => true,
+                'title' => trans('general.department'),
+                'visible' => true,
+                'formatter' => 'departmentsLinkObjFormatter',
+            ],
+            [
+                'field' => 'jobtitle',
+                'searchable' => true,
+                'sortable' => true,
+                'switchable' => true,
+                'title' => trans('admin/users/table.title'),
+                'visible' => true,
+                'formatter' => 'usersLinkFormatter',
+            ],
+            [
+                'field' => 'email',
+                'searchable' => true,
+                'sortable' => true,
+                'switchable' => true,
+                'title' => trans('admin/users/table.email'),
+                'visible' => true,
+                'formatter' => 'emailFormatter',
+            ],
+            [
+                'field' => 'username',
+                'searchable' => true,
+                'sortable' => true,
+                'switchable' => true,
+                'title' => trans('admin/users/table.username'),
+                'visible' => true,
+                'formatter' => 'usersLinkFormatter',
+            ],
+            [
+                'field' => 'assets_count',
+                'searchable' => false,
+                'sortable' => true,
+                'switchable' => true,
+                'escape' => true,
+                'title' => '<span class="hidden-xs" data-toggle="tooltip" title="Jumlah Perangkat Keras"><i class="fas fa-barcode" aria-hidden="true"></i></span><span class="hidden-md hidden-lg">'.trans('general.assets').'</span>',
+                'visible' => true,
+            ],
+            [
+                'field' => 'licenses_count',
+                'searchable' => false,
+                'sortable' => true,
+                'switchable' => true,
+                'title' => '<span class="hidden-xs" data-toggle="tooltip" title="Jumlah Perangkat Lunak"><i class="far fa-save"></i></span><span class="hidden-md hidden-lg">'.trans('general.licenses').'</span>',
+                'visible' => true,
+            ],
+            [
+                'field' => 'consumables_count',
+                'searchable' => false,
+                'sortable' => true,
+                'switchable' => true,
+                'title' => '<span class="hidden-xs" data-toggle="tooltip" title="Jumlah Barang Stok"><i class="fas fa-dolly-flatbed"></i></span><span class="hidden-md hidden-lg">'.trans('general.consumables').'</span>',
+                'visible' => true,
+            ],
+            [
+                'field' => 'accessories_count',
+                'searchable' => false,
+                'sortable' => true,
+                'switchable' => true,
+                'title' => '<span class="hidden-xs" data-toggle="tooltip" title="Jumlah Aksesori"><i class="far fa-keyboard"></i></span><span class="hidden-md hidden-lg">'.trans('general.accessories').'</span>',
+                'visible' => true,
+            ],
+            [
+                'field' => 'notes',
+                'searchable' => true,
+                'sortable' => true,
+                'switchable' => true,
+                'title' => trans('general.notes'),
+                'visible' => true,
+            ],
+            [
+                'field' => 'groups',
+                'searchable' => false,
+                'sortable' => false,
+                'switchable' => true,
+                'title' => trans('general.groups'),
+                'visible' => true,
+                'formatter' => 'groupsFormatter',
+            ],
+            [
+                'field' => 'created_by',
+                'searchable' => false,
+                'sortable' => true,
+                'title' => trans('general.created_by'),
+                'visible' => false,
+                'formatter' => 'usersLinkObjFormatter',
+            ],
+            [
+                'field' => 'created_at',
+                'searchable' => true,
+                'sortable' => true,
+                'switchable' => true,
+                'title' => trans('general.created_at'),
+                'visible' => false,
+                'formatter' => 'dateDisplayFormatter',
+            ],
+            [
+                'field' => 'last_login',
+                'searchable' => false,
+                'sortable' => true,
+                'switchable' => true,
+                'title' => trans('general.last_login'),
+                'visible' => false,
+                'formatter' => 'dateDisplayFormatter',
+            ],
+
+            [
+                'field' => 'actions',
+                'searchable' => false,
+                'sortable' => false,
+                'switchable' => false,
+                'title' => trans('table.actions'),
+                'visible' => true,
+                'formatter' => 'usersActionsFormatter',
+            ],
+        ];
+
+        if (!Auth::user()->isSuperUser()) {
+            return json_encode($layout);
+        } else {
+            return json_encode($layoutadmin);
+        }
     }
 
     public function emailLink()

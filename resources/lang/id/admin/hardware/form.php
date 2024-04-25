@@ -14,7 +14,7 @@ return [
     'bulk_update_model_prefix' => 'On Models', 
     'bulk_update_custom_field_unique' => 'This is a unique field and can not be bulk edited.',
     'checkedout_to'		=> 'Dialokasikan kepada',
-    'checkout_date'		=> 'Tanggal Pemberian',
+    'checkout_date'		=> 'Tanggal Alokasi',
     'checkin_date'		=> 'Tanggal Pengembalian',
     'checkout_to'		=> 'Diberikan kepada',
     'cost'				=> 'Harga Pembelian',
@@ -53,7 +53,7 @@ return [
     'asset_deployable' => 'Perangkat keras tersebut bisa dialokasikan.',
     'processing_spinner' => 'Memproses...',
     'optional_infos'  => 'Informasi Opsional',
-    'order_details'   => 'Informasi Terkait Pemesanan',
+    'order_details'   => 'Informasi Pengadaan Perangkat',
     //tambahan dari v5.4.4 (versi dayanti, not tested)
     'order_number'      => 'Nomor BAST',
     'bmn'               => 'Nomor BMN (Kode Barang - NUP)',

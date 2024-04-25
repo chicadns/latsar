@@ -47,6 +47,7 @@
           </a>
         </li>
 
+        @can('superadmin')
         <li>
           <a href="#accessories" data-toggle="tab">
             <span class="hidden-lg hidden-md">
@@ -68,6 +69,7 @@
             </span>
           </a>
         </li>
+        @endcan
 
         <li>
           <a href="#files" data-toggle="tab">
@@ -100,6 +102,7 @@
         </li>
         @endif
 
+        @can('superadmin')
         @can('update', $user)
           <li class="dropdown pull-right">
             <a class="dropdown-toggle" data-toggle="dropdown" href="#">
@@ -119,6 +122,7 @@
               @endif
             </ul>
           </li>
+        @endcan
         @endcan
 
         @can('update', \App\Models\User::class)
@@ -161,11 +165,10 @@
                 
               </div>
               <div class="col-md-12 text-center">
-                <img src="{{ $user->present()->gravatar() }}"  class=" img-thumbnail hidden-print" style="margin-bottom: 20px;" alt="{{ $user->present()->fullName() }}">  
+                <img width="100" height="100"  src="{{ $user->present()->gravatar() }}"  class=" img-thumbnail hidden-print" style="margin-bottom: 15px;" alt="{{ $user->present()->fullName() }}">
                </div>
                
-          
-
+              @can('superadmin')
               @can('update', $user)
                 <div class="col-md-12">
                   <a href="{{ route('users.edit', $user->id) }}" style="width: 100%;" class="btn btn-sm btn-primary hidden-print">{{ trans('admin/users/general.edit') }}</a>
@@ -177,7 +180,9 @@
                   <a href="{{ route('users.clone.show', $user->id) }}" style="width: 100%;" class="btn btn-sm btn-primary hidden-print">{{ trans('admin/users/general.clone') }}</a>
                 </div>
                @endcan
+              @endcan
 
+                @can('superadmin')
                 @can('view', $user)
                 <div class="col-md-12" style="padding-top: 5px;">
                 @if($user->allAssignedCount() != '0') 
@@ -187,8 +192,9 @@
                 @endif
                 </div>
                 @endcan
+                @endcan
 
-                @can('view', $user)
+                <!-- @can('view', $user)
                   <div class="col-md-12" style="padding-top: 5px;">
                   @if(!empty($user->email) && ($user->allAssignedCount() != '0'))
                     <form action="{{ route('users.email',['userId'=> $user->id]) }}" method="POST">
@@ -201,7 +207,7 @@
                       <button style="width: 100%;" class="btn btn-sm btn-primary hidden-print" rel="noopener" disabled title="{{ trans('admin/users/message.user_has_no_email') }}">{{ trans('admin/users/general.email_assigned') }}</button>
                   @endif
                   </div>
-                @endcan
+                @endcan -->
 
                 @can('update', $user)
                   @if (($user->activated == '1') && ($user->ldap_import == '0'))
@@ -220,13 +226,15 @@
 
                 @can('delete', $user)
                   @if ($user->deleted_at=='')
+                  @can('superadmin')
                     <div class="col-md-12" style="padding-top: 30px;">
                       <form action="{{route('users.destroy',$user->id)}}" method="POST">
                         {{csrf_field()}}
                         {{ method_field("DELETE")}}
-                        <button style="width: 100%;" class="btn btn-sm btn-warning hidden-print">{{ trans('button.delete')}}</button>
+                        <button style="width: 100%;" class="btn btn-sm btn-warning hidden-print">{{ trans('button.deleteuser')}}</button>
                       </form>
                     </div>
+                    @endcan
                     <div class="col-md-12" style="padding-top: 5px;">
                       <form action="{{ route('users/bulkedit') }}" method="POST">
                         <!-- CSRF Token -->
@@ -238,12 +246,14 @@
                       </form>
                     </div>
                   @else
+                  @can('superadmin')
                     <div class="col-md-12" style="padding-top: 5px;">
                         <form method="POST" action="{{ route('users.restore.store', $user->id) }}">
                             @csrf
                             <button style="width: 100%;" class="btn btn-sm btn-warning hidden-print">{{ trans('button.restore') }}</button>
                         </form>
                     </div>
+                  @endcan
                   @endif
                 @endcan
                 <br><br>
@@ -355,7 +365,7 @@
                       </div>
 
                    <!-- start date -->
-                   @if ($user->start_date)
+                   {{-- @if ($user->start_date)
                        <div class="row">
                            <div class="col-md-3">
                                {{ trans('general.start_date') }}
@@ -376,7 +386,7 @@
                                {{ \App\Helpers\Helper::getFormattedDateObject($user->end_date, 'date', false) }}
                            </div>
                        </div>
-                   @endif
+                   @endif --}}
 
                     @if ($user->jobtitle)
                      <!-- jobtitle -->
@@ -521,48 +531,48 @@
                     @endif
 
                     <!-- vip -->
-                    <div class="row">
+                    {{-- <div class="row">
                       <div class="col-md-3">
                         {{ trans('admin/users/general.vip_label') }}
                       </div>
                       <div class="col-md-9">
                         {!! ($user->vip=='1') ? '<i class="fas fa-check fa-fw fa-fw text-success" aria-hidden="true"></i> '.trans('general.yes') : '<i class="fas fa-times fa-fw text-danger" aria-hidden="true"></i> '.trans('general.no')  !!}
                       </div>
-                    </div> 
+                    </div>  --}}
                     
                     <!-- remote -->
-                     <div class="row">
+                     <!-- <div class="row">
                       <div class="col-md-3">
                         {{ trans('admin/users/general.remote') }}
                       </div>
                       <div class="col-md-9">
                         {!! ($user->remote=='1') ? '<i class="fas fa-check fa-fw text-success" aria-hidden="true"></i> '.trans('general.yes') : '<i class="fas fa-times fa-fw text-danger" aria-hidden="true"></i> '.trans('general.no')  !!}
                       </div>
-                    </div>
+                    </div> -->
 
                     <!-- login enabled -->
-                    <div class="row">
+                    <!-- <div class="row">
                       <div class="col-md-3">
                         {{ trans('general.login_enabled') }}
                       </div>
                       <div class="col-md-9">
                         {!! ($user->activated=='1') ? '<i class="fas fa-check fa-fw text-success" aria-hidden="true"></i> '.trans('general.yes') : '<i class="fas fa-times fa-fw text-danger" aria-hidden="true"></i> '.trans('general.no')  !!}
                       </div>
-                    </div>
+                    </div> -->
 
                    <!-- auto assign license -->
-                   <div class="row">
+                   {{-- <div class="row">
                        <div class="col-md-3">
                            {{ trans('general.autoassign_licenses') }}
                        </div>
                        <div class="col-md-9">
                            {!! ($user->autoassign_licenses=='1') ? '<i class="fas fa-check fa-fw text-success" aria-hidden="true"></i> '.trans('general.yes') : '<i class="fas fa-times fa-fw text-danger" aria-hidden="true"></i> '.trans('general.no')  !!}
                        </div>
-                   </div>
+                   </div> --}}
 
 
                    <!-- LDAP -->
-                    <div class="row">
+                    <!-- <div class="row">
                       <div class="col-md-3">
                           LDAP
                       </div>
@@ -570,12 +580,12 @@
                         {!! ($user->ldap_import=='1') ? '<i class="fas fa-check fa-fw text-success" aria-hidden="true"></i> '.trans('general.yes') : '<i class="fas fa-times fa-fw text-danger" aria-hidden="true"></i> '.trans('general.no')  !!}
 
                       </div>
-                    </div>
+                    </div> -->
 
                     @if ($user->activated == '1')
 
                           <!-- 2FA active -->
-                          <div class="row">
+                          <!-- <div class="row">
                             <div class="col-md-3">
                               {{ trans('admin/users/general.two_factor_active') }}
                             </div>
@@ -584,10 +594,10 @@
                               {!! ($user->two_factor_active()) ? '<i class="fas fa-check fa-fw text-success" aria-hidden="true"></i> '.trans('general.yes') : '<i class="fas fa-times fa-fw text-danger" aria-hidden="true"></i> '.trans('general.no')  !!}
                           
                             </div>
-                          </div>
+                          </div> -->
                           
                           <!-- 2FA enrolled -->
-                          <div class="row two_factor_resetrow">
+                          <!-- <div class="row two_factor_resetrow">
                             <div class="col-md-3">
                               {{ trans('admin/users/general.two_factor_enrolled') }}
                             </div>
@@ -595,12 +605,12 @@
                               {!! ($user->two_factor_active_and_enrolled()) ? '<i class="fas fa-check fa-fw text-success" aria-hidden="true"></i> '.trans('general.yes') : '<i class="fas fa-times fa-fw text-danger" aria-hidden="true"></i> '.trans('general.no')  !!}
 
                             </div>
-                          </div>
+                          </div> -->
                           
                           @if ((Auth::user()->isSuperUser()) && ($snipeSettings->two_factor_enabled!='0') && ($snipeSettings->two_factor_enabled!=''))
                           
                             <!-- 2FA reset -->
-                            <div class="row">
+                            <!-- <div class="row">
                               <div class="col-md-3">
 
                               </div>
@@ -620,7 +630,7 @@
                           
                                 
                               </div>
-                            </div>
+                            </div> -->
                             @endif 
                   @endif
                     

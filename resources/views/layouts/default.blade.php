@@ -138,6 +138,9 @@
                     <!-- Navbar Menu Atas -->
                     <div class="navbar-custom-menu">
                         <ul class="nav navbar-nav">
+                            @if (isset(Auth::user()->company->name))
+                                <li >{{ Auth::user()->company->name }}</li>
+                            @endif
                             <!-- @can('index', \App\Models\Asset::class)
                                 <li aria-hidden="true"
                                     {!! (Request::is('hardware*') ? ' class="active"' : '') !!} tabindex="-1">
@@ -230,13 +233,14 @@
                                                 </a>
                                             </li>
                                         @endcan
-                                        @can('create', \App\Models\Accessory::class)
+                                        <!-- @can('create', \App\Models\Accessory::class)
                                             <li {!! (Request::is('accessories/create') ? 'class="active"' : '') !!}>
                                                 <a href="{{ route('accessories.create') }}" tabindex="-1">
                                                     <i class="far fa-keyboard fa-fw" aria-hidden="true"></i>
                                                     {{ trans('general.accessory') }}</a>
                                             </li>
-                                        @endcan
+                                        @endcan -->
+                                        @can('superadmin')
                                         @can('create', \App\Models\Consumable::class)
                                             <li {!! (Request::is('consunmables/create') ? 'class="active"' : '') !!}>
                                                 <a href="{{ route('consumables.create') }}" tabindex="-1">
@@ -244,6 +248,7 @@
                                                     {{ trans('general.consumable') }}
                                                 </a>
                                             </li>
+                                        @endcan
                                         @endcan
                                         <!-- @can('create', \App\Models\Component::class)
                                             <li {!! (Request::is('components/create') ? 'class="active"' : '') !!}>
@@ -253,6 +258,7 @@
                                                 </a>
                                             </li>
                                         @endcan -->
+                                        @can('superadmin')
                                         @can('create', \App\Models\User::class)
                                             <li {!! (Request::is('users/create') ? 'class="active"' : '') !!}>
                                                 <a href="{{ route('users.create') }}" tabindex="-1">
@@ -260,6 +266,7 @@
                                                     {{ trans('general.user') }}
                                                 </a>
                                             </li>
+                                        @endcan
                                         @endcan
                                     </ul>
                                 </li>
@@ -543,6 +550,7 @@
                                         </li>
                                     @endcan -->
 
+                                    @can('superadmin')
                                     @can('create', \App\Models\Asset::class)
                                         <!-- <li{!! (Request::query('Deleted') ? ' class="active"' : '') !!}>
                                             <a href="{{ url('hardware?status=Deleted') }}">
@@ -554,6 +562,7 @@
                                                 {{ trans('general.asset_maintenances') }}
                                             </a>
                                         </li>
+                                    @endcan
                                     @endcan
                                     <!-- @can('admin')
                                         <li>
