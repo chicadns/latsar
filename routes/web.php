@@ -272,13 +272,13 @@ Route::group(['prefix' => 'account', 'middleware' => ['auth']], function () {
     // View Assets
     Route::get('view-assets', [ViewAssetsController::class, 'getIndex'])->name('view-assets');
 
-    Route::get('requested', [ViewAssetsController::class, 'getRequestedAssets'])->name('account.requested');
+    Route::get('requested', [ViewAssetsController::class, 'getRequestedAssets'])->name('account.requested')->middleware('authorize:superuser');
 
     // Profile
     Route::get(
         'requestable-assets',
         [ViewAssetsController::class, 'getRequestableIndex']
-    )->name('requestable-assets');
+    )->name('requestable-assets')->middleware('authorize:superuser');
     Route::post(
         'request-asset/{assetId}',
         [ViewAssetsController::class, 'getRequestAsset']
