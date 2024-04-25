@@ -30,16 +30,17 @@ class Location extends SnipeModel
         'address'       => 'max:191|nullable',
         'address2'      => 'max:191|nullable',
         'city'          => 'max:191|nullable',
-        'state'         => 'min:2|max:191|nullable',
         'country'       => 'min:2|max:191|nullable',
         'zip'           => 'max:10|nullable',
         'manager_id'    => 'exists:users,id|nullable',
         'parent_id'     => 'non_circular:locations,id',
+        'company_id'    => 'integer|nullable'
     ];
 
     protected $casts = [
         'parent_id'     => 'integer',
         'manager_id'    => 'integer',
+        'company_id'    => 'integer',
     ];
 
     /**
@@ -68,12 +69,11 @@ class Location extends SnipeModel
         'state',
         'country',
         'zip',
-        'phone',
-        'fax',
         'ldap_ou',
         'currency',
         'manager_id',
         'image',
+        'company_id',
     ];
     protected $hidden = ['user_id'];
 
@@ -93,6 +93,7 @@ class Location extends SnipeModel
      */
     protected $searchableRelations = [
       'parent' => ['name'],
+      'company' => ['name']
     ];
 
 
@@ -195,6 +196,18 @@ class Location extends SnipeModel
     public function accessories()
     {
         return $this->hasMany(\App\Models\Accessory::class, 'location_id');
+    }
+
+    /**
+     * Establishes the locations -> company relationship
+     *
+     * @author [T. Regnery] [<tobias.regnery@gmail.com>]
+     * @since [v6.0]
+     * @return \Illuminate\Database\Eloquent\Relations\Relation
+     */
+    public function company()
+    {
+        return $this->belongsTo('\App\Models\Company', 'company_id');
     }
 
     /**
@@ -308,5 +321,18 @@ class Location extends SnipeModel
     public function scopeOrderManager($query, $order)
     {
         return $query->leftJoin('users as location_user', 'locations.manager_id', '=', 'location_user.id')->orderBy('location_user.first_name', $order)->orderBy('location_user.last_name', $order);
+    }
+
+    /**
+    * Query builder scope to order on company
+    *
+    * @param  \Illuminate\Database\Query\Builder  $query  Query builder instance
+    * @param  text                              $order       Order
+    *
+    * @return \Illuminate\Database\Query\Builder          Modified query builder
+    */
+    public function scopeOrderCompany($query, $order)
+    {
+        return $query->leftJoin('companies as company_sort', 'locations.company_id', '=', 'company_sort.id')->orderBy('company_sort.name', $order);
     }
 }

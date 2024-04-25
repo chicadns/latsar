@@ -24,6 +24,19 @@ class LocationPresenter extends Presenter
             //     'visible' => false,
             // ],
             [
+                "field" => "checkbox",
+                "checkbox" => true
+            ],
+            [
+                'field' => 'company',
+                'searchable' => true,
+                'sortable' => true,
+                'switchable' => true,
+                'title' => trans('general.company'),
+                'visible' => false,
+                'formatter' => 'locationCompanyObjFilterFormatter'
+            ],
+            [
                 'field' => 'koderuang',
                 'searchable' => true,
                 'sortable' => true,

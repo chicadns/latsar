@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Helpers\Helper;
 use App\Http\Requests\ImageUploadRequest;
 use App\Http\Controllers\Controller;
+use App\Models\Company;
 use App\Http\Transformers\LocationsTransformer;
 use App\Http\Transformers\SelectlistTransformer;
 use App\Models\Location;
@@ -25,36 +26,36 @@ class LocationsController extends Controller
     {
         $this->authorize('view', Location::class);
         $allowed_columns = [
-            'id', 'koderuang', 'name', 'address', 'address2', 'city', 'state', 'country', 'zip', 'created_at',
-            'updated_at', 'manager_id', 'image',
-            'assigned_assets_count', 'users_count', 'assets_count','assigned_assets_count', 'assets_count', 'rtd_assets_count', 'currency', 'ldap_ou', ];
+            'id', 'name',
+            'address',
+            'address2',
+            'city',
+            'state',
+            'country',
+            'zip',
+            'created_at',
+            'updated_at',
+            'manager_id',
+            'image',
+            'assigned_assets_count',
+            'users_count','assets_count',
+            'currency',
+            'ldap_ou',
+            'company'];
 
-        $locations = Location::with('parent', 'manager', 'children')->select([
-            'locations.id',
-            'locations.koderuang',
-            'locations.name',
-            'locations.address',
-            'locations.address2',
-            'locations.city',
-            'locations.state',
-            'locations.zip',
-            'locations.phone',
-            'locations.fax',
-            'locations.country',
-            'locations.parent_id',
-            'locations.manager_id',
-            'locations.created_at',
-            'locations.updated_at',
-            'locations.image',
-            'locations.ldap_ou',
-            'locations.currency',
-        ])->withCount('assignedAssets as assigned_assets_count')
+        $locations = Company::scopeCompanyables(Location::Select('locations.*'), 'company_id', 'locations', true)
+            ->with('parent', 'manager', 'children', 'company')
+            ->withCount('assignedAssets as assigned_assets_count')
             ->withCount('assets as assets_count')
-            ->withCount('rtd_assets as rtd_assets_count')
+            // ->withCount('rtd_assets as rtd_assets_count')
             ->withCount('users as users_count');
 
         if ($request->filled('search')) {
             $locations = $locations->TextSearch($request->input('search'));
+        }
+
+        if ($request->filled('company_id')) {
+            $locations->where('locations.company_id', '=', $request->input('company_id'));
         }
 
         if ($request->filled('koderuang')) {
@@ -100,6 +101,9 @@ class LocationsController extends Controller
                 break;
             case 'manager':
                 $locations->OrderManager($order);
+                break;
+            case 'company':
+                $locations->OrderCompany($order);
                 break;
             default:
                 $locations->orderBy($sort, $order);
@@ -147,7 +151,7 @@ class LocationsController extends Controller
     public function show($id)
     {
         $this->authorize('view', Location::class);
-        $location = Location::with('parent', 'manager', 'children')
+        $location = Location::with('parent', 'manager', 'children', 'company')
             ->select([
                 'locations.id',
                 'locations.koderuang',
@@ -167,7 +171,7 @@ class LocationsController extends Controller
             ])
             ->withCount('assignedAssets as assigned_assets_count')
             ->withCount('assets as assets_count')
-            ->withCount('rtd_assets as rtd_assets_count')
+            // ->withCount('rtd_assets as rtd_assets_count')
             ->withCount('users as users_count')
             ->findOrFail($id);
 
