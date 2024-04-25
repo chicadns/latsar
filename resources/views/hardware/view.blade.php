@@ -391,14 +391,14 @@
                                     </div>
 
                                     <!-- byod -->
-                                    <div class="row">
+                                    {{-- <div class="row">
                                         <div class="col-md-2">
                                             <strong>{{ trans('general.byod') }}</strong>
                                         </div>
                                         <div class="col-md-6">
                                             {!! ($asset->byod=='1') ? '<i class="fas fa-check text-success" aria-hidden="true"></i> '.trans('general.yes') : '<i class="fas fa-times text-danger" aria-hidden="true"></i> '.trans('general.no')  !!}
                                         </div>
-                                    </div>
+                                    </div> --}}
 
                                     @if (($asset->model) && ($asset->model->fieldset))
                                         @foreach($asset->model->fieldset->fields as $field)

@@ -86,7 +86,7 @@ class AssetImporter extends ItemImporter
         $asset->requestable = $this->item['requestable'];
         $this->item['warranty_months'] = intval($this->findCsvMatch($row, 'warranty_months'));
         $this->item['model_id'] = $this->createOrFetchAssetModel($row);
-        $this->item['byod'] = ($this->fetchHumanBoolean($this->findCsvMatch($row, 'byod')) == 1) ? '1' : 0;
+        // $this->item['byod'] = ($this->fetchHumanBoolean($this->findCsvMatch($row, 'byod')) == 1) ? '1' : 0;
 
 
         // If no status ID is found

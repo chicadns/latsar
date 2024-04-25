@@ -199,7 +199,7 @@ class Importer extends Component
             'item_name' => trans('general.item_name_var', ['item' => trans('general.asset')]),
             'asset_tag' => trans('general.asset_tag'),
             'asset_model' => trans('general.model_name'),
-            'byod' => trans('general.byod'),
+            // 'byod' => trans('general.byod'),
             'model_number' => trans('general.model_no'),
             'status' => trans('general.status'),
             'warranty_months' => trans('admin/hardware/form.warranty'),

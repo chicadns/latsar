@@ -139,7 +139,7 @@
                     <div class="navbar-custom-menu">
                         <ul class="nav navbar-nav">
                             @if (isset(Auth::user()->company->name))
-                                <li >{{ Auth::user()->company->name }}</li>
+                                <li class="navbar-form fas" style="color:white">{{ Auth::user()->company->name }}</li>
                             @endif
                             <!-- @can('index', \App\Models\Asset::class)
                                 <li aria-hidden="true"
