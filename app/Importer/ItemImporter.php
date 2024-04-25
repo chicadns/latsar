@@ -104,6 +104,7 @@ class ItemImporter extends Importer
         $this->item['requestable'] = $this->findCsvMatch($row, 'requestable');
         $this->item['user_id'] = $this->user_id;
         $this->item['serial'] = $this->findCsvMatch($row, 'serial');
+        $this->item['bmn'] = $this->findCsvMatch($row, 'bmn');
         // NO need to call this method if we're running the user import.
         // TODO: Merge these methods.
         $this->item['checkout_class'] = $this->findCsvMatch($row, 'checkout_class');
@@ -125,7 +126,12 @@ class ItemImporter extends Importer
             return;
         }
 
-        if (strtolower($this->item['checkout_class']) === 'location' && $this->findCsvMatch($row, 'checkout_location') != null ) {
+        // We only support checkout-to-location for asset, so short circuit otherwise.
+        if (get_class($this) != AssetImporter::class) {
+            return $this->createOrFetchUser($row);
+        }
+
+        if ($this->findCsvMatch($row, 'checkout_location') != null ) {
             return Location::findOrFail($this->createOrFetchLocation($this->findCsvMatch($row, 'checkout_location')));
         }
 

@@ -25,7 +25,7 @@ class Location extends SnipeModel
 
     protected $table = 'locations';
     protected $rules = [
-        'koderuang'     => 'required|max:5|unique',
+        'koderuang'     => 'max:5|unique',
         'name'          => 'required|min:2|max:255|unique_undeleted',
         'address'       => 'max:191|nullable',
         'address2'      => 'max:191|nullable',

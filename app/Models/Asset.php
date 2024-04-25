@@ -350,8 +350,6 @@ class Asset extends Depreciable
         if ($this->save()) {
             if (is_int($admin)) {
                 $checkedOutBy = User::findOrFail($admin);
-            } elseif (get_class($admin) === \App\Models\User::class) {
-                $checkedOutBy = $admin;
             } else {
                 $checkedOutBy = Auth::user();
             }
