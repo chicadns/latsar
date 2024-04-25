@@ -12,6 +12,8 @@ mix
   .less("./resources/assets/less/app.less", "css/build")
   .less("./resources/assets/less/overrides.less", "css/build")
   .less("./resources/assets/less/treeview.less", "css/build")
+  .less("./resources/assets/less/AdminLTE.less", "css/build")
+
   .styles(
     [
 

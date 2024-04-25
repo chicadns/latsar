@@ -117,7 +117,7 @@
                                     <span class="sr-only">{{ $snipeSettings->site_name }}</span>
                                 </a>
                             @else
-                                <a class="logo navbar-brand no-hover hidden-xs" href="{{ config('app.url') }}">
+                                <a class="logo navbar-brand no-hover hidden-xs" style="padding-left: 50px;" href="{{ url('/') }}">
                                     <span class="logo-lg" style="font-style: bold; font-size: 18pt;"> <img src="{{ url(asset('bpslogo.ico')) }}" style="width: 45px; height:45px;"> &nbsp MANIA &nbsp</span>
                                 </a>
                             @endif
