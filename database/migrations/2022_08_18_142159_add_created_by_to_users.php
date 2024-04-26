@@ -23,7 +23,7 @@ class AddCreatedByToUsers extends Migration
                 $table->integer('created_by')->unsigned()->nullable();
             });
         }
-
+        
     }
 
     /**

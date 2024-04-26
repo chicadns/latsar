@@ -37,7 +37,7 @@ class ReCreateLicensesTable extends Migration
      */
     public function down()
     {
-        // This was most likely handled in 2013_11_17_054359_drop_licenses_table.php
-        Schema::dropIfExists('licenses');
+        //
+        Schema::drop('licenses');
     }
 }

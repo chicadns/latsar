@@ -66,10 +66,6 @@ class User extends SnipeModel implements AuthenticatableContract, AuthorizableCo
         'username',
         'zip',
         'remote',
-        // 'start_date',
-        // 'end_date',
-        'scim_externalid',
-        'gravatar',
         /**
          * Add new fillable fields
          * by Rihan Y. (yosral@bps.go.id) (10/10/2022)
@@ -79,7 +75,6 @@ class User extends SnipeModel implements AuthenticatableContract, AuthorizableCo
         'avatar',
         'permissions',
         'created_by',
-        // 'autoassign_licenses',
     ];
 
     protected $casts = [
@@ -106,17 +101,11 @@ class User extends SnipeModel implements AuthenticatableContract, AuthorizableCo
         'website'                 => 'url|nullable|max:191',
         'manager_id'              => 'nullable|exists:users,id|cant_manage_self',
         'location_id'             => 'exists:locations,id|nullable',
-        // 'start_date'              => 'nullable|date_format:Y-m-d',
-        // 'end_date'                => 'nullable|date_format:Y-m-d|after_or_equal:start_date',
-        // 'autoassign_licenses'     => 'boolean',
         'address'                 => 'max:191|nullable',
         'city'                    => 'max:191|nullable',
         'state'                   => 'min:2|max:191|nullable',
         'country'                 => 'min:2|max:191|nullable',
-        'zip'                     => 'max:10|nullable',
-        'vip'                     => 'boolean',
-        'remote'                  => 'boolean',
-        'activated'               => 'boolean',
+        'zip'                     => 'max:10|nullable'
     ];
 
     /**

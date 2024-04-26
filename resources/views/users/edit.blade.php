@@ -368,7 +368,7 @@
 
                           <!-- VIP checkbox -->
 
-                          <div class="form-group">
+                          <!-- <div class="form-group">
                               <div class="col-md-7 col-md-offset-3">
 
                                   <label class="form-control" for="vip">
@@ -378,7 +378,7 @@
 
                                   <p class="help-block">{{ trans('admin/users/general.vip_help') }}</p>
                               </div>
-                          </div>
+                          </div> -->
 
                           <!-- Auto assign checkbox -->
 

@@ -36,6 +36,7 @@ class License extends Depreciable
         'purchase_date' => 'date',
         'expiration_date' => 'date',
         'termination_date' => 'date',
+        'seats'   => 'integer',
         'category_id'  => 'integer',
         'company_id'   => 'integer',
     ];
@@ -63,6 +64,7 @@ class License extends Depreciable
         'company_id',
         'depreciation_id',
         'expiration_date',
+        'mulaiberlaku',
         'license_email',
         'license_name', //actually licensed_to
         'maintained',

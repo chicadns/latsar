@@ -69,14 +69,9 @@ class UsersController extends Controller
             'users.zip',
             'users.remote',
             'users.ldap_import',
-            // 'users.start_date',
-            // 'users.end_date',
-            // 'users.vip',
-            // 'users.autoassign_licenses',
 
         ])->with('manager', 'groups', 'userloc', 'company', 'department', 'assets', 'licenses', 'accessories', 'consumables', 'createdBy',)
             ->withCount('assets as assets_count', 'licenses as licenses_count', 'accessories as accessories_count', 'consumables as consumables_count');
-
 
         if ($request->filled('activated')) {
             $users = $users->where('users.activated', '=', $request->input('activated'));
@@ -150,26 +145,6 @@ class UsersController extends Controller
             $users = $users->where('remote', '=', $request->input('remote'));
         }
 
-        if ($request->filled('vip')) {
-            $users = $users->where('vip', '=', $request->input('vip'));
-        }
-
-        if ($request->filled('two_factor_enrolled')) {
-            $users = $users->where('two_factor_enrolled', '=', $request->input('two_factor_enrolled'));
-        }
-
-        if ($request->filled('two_factor_optin')) {
-            $users = $users->where('two_factor_optin', '=', $request->input('two_factor_optin'));
-        }
-
-        if ($request->filled('start_date')) {
-            $users = $users->where('users.start_date', '=', $request->input('start_date'));
-        }
-
-        if ($request->filled('end_date')) {
-            $users = $users->where('users.end_date', '=', $request->input('end_date'));
-        }
-
         if ($request->filled('assets_count')) {
            $users->has('assets', '=', $request->input('assets_count'));
         }
@@ -184,10 +159,6 @@ class UsersController extends Controller
 
         if ($request->filled('accessories_count')) {
             $users->has('accessories', '=', $request->input('accessories_count'));
-        }
-
-        if ($request->filled('autoassign_licenses')) {
-            $users->where('autoassign_licenses', '=', $request->input('autoassign_licenses'));
         }
 
         if ($request->filled('search')) {
@@ -217,53 +188,14 @@ class UsersController extends Controller
             case 'company':
                 $users = $users->OrderCompany($order);
                 break;
-            case 'first_name':
-                $users->orderBy('first_name', $order);
-                $users->orderBy('last_name', $order);
-                break;
-            case 'last_name':
-                $users->orderBy('last_name', $order);
-                $users->orderBy('first_name', $order);
-                break;
             default:
                 $allowed_columns =
                     [
-                        'last_name',
-                        'first_name',
-                        'email',
-                        'jobtitle',
-                        'username',
-                        'employee_num',
-                        'nip_baru',
-                        'assets',
-                        'accessories',
-                        'consumables',
-                        'licenses',
-                        'groups',
-                        'activated',
-                        'created_at',
-                        'two_factor_enrolled',
-                        'two_factor_optin',
-                        'last_login',
-                        'assets_count',
-                        'licenses_count',
-                        'consumables_count',
-                        'accessories_count',
-                        'phone',
-                        'address',
-                        'city',
-                        'state',
-                        'country',
-                        'zip',
-                        'id',
-                        'ldap_import',
-                        'two_factor_optin',
-                        'two_factor_enrolled',
-                        'remote',
-                        'vip',
-                        // 'start_date',
-                        // 'end_date',
-                        // 'autoassign_licenses',
+                        'last_name', 'first_name', 'email', 'jobtitle', 'username', 'employee_num', 'nip_baru',
+                        'assets', 'accessories', 'consumables', 'licenses', 'groups', 'activated', 'created_at',
+                        'two_factor_enrolled', 'two_factor_optin', 'last_login', 'assets_count', 'licenses_count',
+                        'consumables_count', 'accessories_count', 'phone', 'address', 'city', 'state',
+                        'country', 'zip', 'id', 'ldap_import', 'remote',
                     ];
 
                 $sort = in_array($request->get('sort'), $allowed_columns) ? $request->get('sort') : 'first_name';

@@ -36,7 +36,7 @@ class AssetMaintenancesController extends Controller
     {
         $this->authorize('view', Asset::class);
 
-        $maintenances = AssetMaintenance::select('asset_maintenances.*')->with('asset', 'asset.model', 'asset.location', 'asset.defaultLoc', 'supplier', 'asset.company', 'asset.pemegang', 'admin');
+        $maintenances = AssetMaintenance::select('asset_maintenances.*')->with('asset', 'asset.model', 'asset.location', 'supplier', 'asset.company', 'asset.pemegang', 'admin');
 
         if ($request->filled('search')) {
             $maintenances = $maintenances->TextSearch($request->input('search'));
@@ -56,7 +56,7 @@ class AssetMaintenancesController extends Controller
 
 
         // Make sure the offset and limit are actually integers and do not exceed system limits
-        $offset = ($request->input('offset') > $maintenances->count()) ? $maintenances->count() : abs($request->input('offset'));
+        $offset = (($maintenances) && ($request->get('offset') > $maintenances->count())) ? $maintenances->count() : abs($request->input('offset'));
         $limit = app('api_limit_value');
 
         $allowed_columns = [
@@ -64,6 +64,7 @@ class AssetMaintenancesController extends Controller
                                 'title',
                                 'asset_maintenance_time',
                                 'asset_maintenance_type',
+                                'lokasi_barang',
                                 'tiket',
                                 'cost',
                                 'start_date',
@@ -71,9 +72,10 @@ class AssetMaintenancesController extends Controller
                                 'notes',
                                 'asset_tag',
                                 'asset_name',
+                                'bmn',
+                                'serial',
                                 'user_id',
-                                'supplier',
-                                'is_warranty',
+                                'supplier'
                             ];
         $order = $request->input('order') === 'asc' ? 'asc' : 'desc';
         $sort = in_array($request->input('sort'), $allowed_columns) ? e($request->input('sort')) : 'created_at';
@@ -120,7 +122,7 @@ class AssetMaintenancesController extends Controller
         $assetMaintenance = new AssetMaintenance();
         $assetMaintenance->supplier_id = $request->input('supplier_id');
         $assetMaintenance->is_warranty = $request->input('is_warranty');
-        $assetMaintenance->cost =  $request->input('cost');
+        $assetMaintenance->cost =  Helper::ParseCurrency($request->input('cost'));
         $assetMaintenance->notes = e($request->input('notes'));
         $asset = Asset::find(e($request->input('asset_id')));
 
@@ -179,7 +181,7 @@ class AssetMaintenancesController extends Controller
 
         $assetMaintenance->supplier_id = e($request->input('supplier_id'));
         $assetMaintenance->is_warranty = e($request->input('is_warranty'));
-        $assetMaintenance->cost =  $request->input('cost');
+        $assetMaintenance->cost =  Helper::ParseCurrency($request->input('cost'));
         $assetMaintenance->notes = e($request->input('notes'));
 
         $asset = Asset::find(request('asset_id'));

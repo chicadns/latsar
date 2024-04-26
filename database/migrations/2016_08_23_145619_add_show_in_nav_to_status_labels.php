@@ -25,7 +25,7 @@ class AddShowInNavToStatusLabels extends Migration
     public function down()
     {
         Schema::table('status_labels', function (Blueprint $table) {
-            $table->dropColumn('show_in_nav');
+            $table->dropColumn('show_in_nav', 'field_encrypted');
         });
     }
 }

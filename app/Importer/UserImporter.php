@@ -55,8 +55,6 @@ class UserImporter extends ItemImporter
         $this->item['city'] = $this->findCsvMatch($row, 'city');
         $this->item['state'] = $this->findCsvMatch($row, 'state');
         $this->item['country'] = $this->findCsvMatch($row, 'country');
-        // $this->item['start_date'] = $this->findCsvMatch($row, 'start_date');
-        // $this->item['end_date'] = $this->findCsvMatch($row, 'end_date');
         $this->item['zip'] = $this->findCsvMatch($row, 'zip');
         $this->item['activated'] = ($this->fetchHumanBoolean($this->findCsvMatch($row, 'activated')) == 1) ? '1' : 0;
         $this->item['employee_num'] = $this->findCsvMatch($row, 'employee_num');
@@ -64,9 +62,6 @@ class UserImporter extends ItemImporter
         $this->item['department_id'] = $this->createOrFetchDepartment($this->findCsvMatch($row, 'department'));
         $this->item['manager_id'] = $this->fetchManager($this->findCsvMatch($row, 'manager_first_name'), $this->findCsvMatch($row, 'manager_last_name'));
         $this->item['remote'] =($this->fetchHumanBoolean($this->findCsvMatch($row, 'remote')) ==1 ) ? '1' : 0;
-        // $this->item['vip'] = ($this->fetchHumanBoolean($this->findCsvMatch($row, 'vip')) ==1 ) ? '1' : 0;
-        // $this->item['autoassign_licenses'] = ($this->fetchHumanBoolean($this->findCsvMatch($row, 'autoassign_licenses')) ==1 ) ? '1' : 0;
-
 
         $user_department = $this->findCsvMatch($row, 'department');
         if ($this->shouldUpdateField($user_department)) {

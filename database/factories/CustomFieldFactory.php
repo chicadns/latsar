@@ -2,7 +2,6 @@
 
 namespace Database\Factories;
 
-use App\Models\CustomField;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 class CustomFieldFactory extends Factory
@@ -12,7 +11,7 @@ class CustomFieldFactory extends Factory
      *
      * @var string
      */
-    protected $model = CustomField::class;
+    protected $model = \App\Models\CustomField::class;
 
     /**
      * Define the model's default state.
@@ -22,10 +21,9 @@ class CustomFieldFactory extends Factory
     public function definition()
     {
         return [
-            'name' => $this->faker->unique()->catchPhrase(),
+            'name' => $this->faker->catchPhrase,
             'format' => '',
             'element' => 'text',
-            'auto_add_to_fieldsets' => '0',
         ];
     }
 

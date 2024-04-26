@@ -29,7 +29,6 @@ class CompanyPresenter extends Presenter
                 "title" => 'Kode Wilayah',
                 "visible" => true
             ],[
-
                 'field' => 'name',
                 'searchable' => true,
                 'sortable' => true,
@@ -37,30 +36,6 @@ class CompanyPresenter extends Presenter
                 'title' => trans('admin/companies/table.name'),
                 'visible' => true,
                 'formatter' => 'companiesLinkFormatter',
-            ], [
-                'field' => 'phone',
-                'searchable' => true,
-                'sortable' => true,
-                'switchable' => true,
-                'title' => trans('admin/users/table.phone'),
-                'visible' => false,
-                'formatter'    => 'phoneFormatter',
-            ], [
-                'field' => 'fax',
-                'searchable' => true,
-                'sortable' => true,
-                'switchable' => true,
-                'title' => trans('admin/suppliers/table.fax'),
-                'visible' => false,
-                'formatter'    => 'phoneFormatter',
-            ], [
-                'field' => 'email',
-                'searchable' => true,
-                'sortable' => true,
-                'switchable' => true,
-                'title' => trans('admin/suppliers/table.email'),
-                'visible' => true,
-				'formatter' => 'emailFormatter',
             ], [
                 'field' => 'image',
                 'searchable' => false,

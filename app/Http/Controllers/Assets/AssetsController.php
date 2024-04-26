@@ -136,14 +136,12 @@ class AssetsController extends Controller
             $asset->depreciate              = '0';
             $asset->status_id               = request('status_id');
             $asset->warranty_months         = request('warranty_months', null);
-            $asset->purchase_cost           = request('purchase_cost');
+            $asset->purchase_cost           = Helper::ParseCurrency($request->get('purchase_cost'));
             $asset->purchase_date           = request('purchase_date', null);
-            $asset->asset_eol_date          = request('asset_eol_date', $asset->present()->eol_date());
             $asset->assigned_to             = request('assigned_to', null);
             $asset->supplier_id             = request('supplier_id', null);
             $asset->requestable             = request('requestable', 0);
             $asset->rtd_location_id         = request('rtd_location_id', null);
-            // $asset->byod                    = request('byod', 0);
 
             if (! empty($settings->audit_interval)) {
                 $asset->next_audit_date = Carbon::now()->addMonths($settings->audit_interval)->toDateString();
@@ -308,31 +306,14 @@ class AssetsController extends Controller
 
         $asset->status_id = $request->input('status_id', null);
         $asset->warranty_months = $request->input('warranty_months', null);
-        $asset->purchase_cost = $request->input('purchase_cost', null);
-        $asset->purchase_date = $request->input('purchase_date', null); 
-        if ($request->filled('purchase_date') && !$request->filled('asset_eol_date') && $asset->model->eol) {
-            $asset->purchase_date = $request->input('purchase_date', null); 
-            $asset->asset_eol_date = Carbon::parse($request->input('purchase_date'))->addMonths($asset->model->eol)->format('Y-m-d');
-        } elseif ($request->filled('asset_eol_date')) {
-           $asset->asset_eol_date = $request->input('asset_eol_date', null);
-           $months = Carbon::parse($asset->asset_eol_date)->diffInMonths($asset->purchase_date);
-           if($asset->model->eol) {
-               if($months != $asset->model->eol) {
-                   $asset->eol_explicit = true;
-               } else {
-                   $asset->eol_explicit = false;
-               }
-           } else {
-               $asset->eol_explicit = true;
-           }
-        }
+        $asset->purchase_cost = Helper::ParseCurrency($request->input('purchase_cost', null));
+        $asset->purchase_date = $request->input('purchase_date', null);
         $asset->supplier_id = $request->input('supplier_id', null);
         $asset->expected_checkin = $request->input('expected_checkin', null);
 
         // If the box isn't checked, it's not in the request at all.
         $asset->requestable = $request->filled('requestable');
         $asset->rtd_location_id = $request->input('rtd_location_id', null);
-        // $asset->byod = $request->input('byod', 0);
 
         $status = Statuslabel::find($asset->status_id);
 

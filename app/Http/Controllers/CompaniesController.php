@@ -61,9 +61,6 @@ final class CompaniesController extends Controller
         $company = new Company;
         $company->name = $request->input('name');
         $company->kode_wil = $request->input('kode_wil');
-        $company->phone = $request->input('phone');
-        $company->fax = $request->input('fax');
-        $company->email = $request->input('email');
 
         $company = $request->handleImages($company);
 
@@ -116,9 +113,6 @@ final class CompaniesController extends Controller
 
         $company->name = $request->input('name');
         $company->kode_wil = $request->input('kode_wil');
-        $company->phone = $request->input('phone');
-        $company->fax = $request->input('fax');
-        $company->email = $request->input('email');
 
         $company = $request->handleImages($company);
 

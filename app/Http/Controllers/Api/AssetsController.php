@@ -102,7 +102,7 @@ class AssetsController extends Controller
             'checkin_counter',
             'requests_counter',
             // 'byod',
-            'asset_eol_date',
+            //'asset_eol_date',
         ];
 
         $filter = [];
@@ -116,21 +116,21 @@ class AssetsController extends Controller
             $allowed_columns[] = $field->db_column_name();
         }
 
-        $assets = Asset::select('assets.*')
+        $assets = Company::scopeCompanyables(Asset::select('assets.*'), 'company_id', 'assets')
             ->with('location', 'assetstatus', 'company', 'defaultLoc','assignedTo',
                 'model.category', 'model.manufacturer', 'model.fieldset','supplier'); //it might be tempting to add 'assetlog' here, but don't. It blows up update-heavy users.
 
 
         if ($filter_non_deprecable_assets) {
             $non_deprecable_models = AssetModel::select('id')->whereNotNull('depreciation_id')->get();
+
             $assets->InModelList($non_deprecable_models->toArray());
         }
-
-
 
         // These are used by the API to query against specific ID numbers.
         // They are also used by the individual searches on detail pages like
         // locations, etc.
+
 
         // Search custom fields by column name
         foreach ($all_custom_fields as $field) {
@@ -156,6 +156,7 @@ class AssetsController extends Controller
                     break;
             }
         }
+
 
 
         // This is used by the sidenav, mostly
@@ -209,11 +210,6 @@ class AssetsController extends Controller
                 // more sad, horrible workarounds for laravel bugs when doing full text searches
                 $assets->whereNotNull('assets.assigned_to');
                 break;
-            // case 'byod':
-            //     // This is kind of redundant, since we already check for byod=1 above, but this keeps the
-            //     // sidebar nav links a little less chaotic
-            //     $assets->where('assets.byod', '=', '1');
-            //     break;
             default:
 
                 if ((! $request->filled('status_id')) && ($settings->show_archived_in_list != '1')) {
@@ -555,8 +551,7 @@ class AssetsController extends Controller
         $asset->depreciate              = '0';
         $asset->status_id               = $request->get('status_id', 0);
         $asset->warranty_months         = $request->get('warranty_months', null);
-        $asset->purchase_cost           = $request->get('purchase_cost');
-        $asset->asset_eol_date          = $request->get('asset_eol_date', $asset->present()->eol_date());
+        $asset->purchase_cost           = Helper::ParseCurrency($request->get('purchase_cost'));
         $asset->purchase_date           = $request->get('purchase_date', null);
         $asset->assigned_to             = $request->get('assigned_to', null);
         $asset->supplier_id             = $request->get('supplier_id');
@@ -927,14 +922,9 @@ class AssetsController extends Controller
         }
         
         $checkin_at = $request->filled('checkin_at') ? $request->input('checkin_at').' '. date('H:i:s') : date('Y-m-d H:i:s');
-        $originalValues = $asset->getRawOriginal();
-
-        if (($request->filled('checkin_at')) && ($request->get('checkin_at') != date('Y-m-d'))) {
-            $originalValues['action_date'] = $checkin_at;
-        }
 
         if ($asset->save()) {
-            event(new CheckoutableCheckedIn($asset, $target, Auth::user(), $request->input('note'), $checkin_at, $originalValues));
+            event(new CheckoutableCheckedIn($asset, $target, Auth::user(), $request->input('note'), $checkin_at));
 
             return response()->json(Helper::formatStandardApiResponse('success', ['asset'=> e($asset->asset_tag)], trans('admin/hardware/message.checkin.success')));
         }
@@ -1040,10 +1030,9 @@ class AssetsController extends Controller
     {
         $this->authorize('viewRequestable', Asset::class);
 
-        $assets = Asset::select('assets.*')
+        $assets = Company::scopeCompanyables(Asset::select('assets.*'), 'company_id', 'assets')
             ->with('location', 'assetstatus', 'assetlog', 'company', 'defaultLoc','assignedTo',
-                'model.category', 'model.manufacturer', 'model.fieldset', 'supplier')
-            ->requestableAssets();
+                'model.category', 'model.manufacturer', 'model.fieldset', 'supplier')->requestableAssets();
 
         $offset = request('offset', 0);
         $limit = $request->input('limit', 50);

@@ -106,10 +106,7 @@ class CustomFieldsController extends Controller
             "field_values" => $request->get("field_values"),
             "field_encrypted" => $request->get("field_encrypted", 0),
             "show_in_email" => $show_in_email,
-            // "is_unique" => $request->get("is_unique", 0),
-            "display_in_user_view" => $display_in_user_view,
-            "auto_add_to_fieldsets" => $request->get("auto_add_to_fieldsets", 0),
-            "show_in_listview" => $request->get("show_in_listview", 0),
+            "is_unique" => $request->get("is_unique", 0),
             "user_id" => Auth::id()
         ]);
 
@@ -163,7 +160,8 @@ class CustomFieldsController extends Controller
                 ->with('success', trans('admin/custom_fields/message.field.delete.success'));
             } else {
                 return redirect()->back()->withErrors(['message' => "Field is in use and cannot be deleted."]);
-            }
+            }  
+
         }
 
         return redirect()->back()->withErrors(['message' => "Error deleting field from fieldset"]);
@@ -263,10 +261,7 @@ class CustomFieldsController extends Controller
         $field->user_id       = Auth::id();
         $field->help_text     = $request->get("help_text");
         $field->show_in_email = $show_in_email;
-        // $field->is_unique     = $request->get("is_unique", 0);
-        $field->display_in_user_view = $display_in_user_view;
-        $field->auto_add_to_fieldsets = $request->get("auto_add_to_fieldsets", 0);
-        $field->show_in_listview = $request->get("show_in_listview", 0);
+        $field->is_unique     = $request->get("is_unique", 0);
 
         if ($request->get('format') == 'CUSTOM REGEX') {
             $field->format = e($request->get('custom_format'));

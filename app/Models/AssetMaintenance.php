@@ -57,7 +57,6 @@ class AssetMaintenance extends Model implements ICompanyableChild
         'asset.model'     => ['name', 'model_number'],
         'asset.company' => ['name'],
         'asset.pemegang' => ['first_name', 'last_name','employee_num', 'nip_baru'],
-
     ];
 
     public function getCompanyableParents()

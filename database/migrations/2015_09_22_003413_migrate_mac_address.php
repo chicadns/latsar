@@ -48,19 +48,13 @@ class MigrateMacAddress extends Migration
      */
     public function down()
     {
+        //
         $f = \App\Models\CustomFieldset::where(['name' => 'Asset with MAC Address'])->first();
-
-        if ($f) {
-            $f->fields()->delete();
-            $f->delete();
-        }
-
+        $f->fields()->delete();
+        $f->delete();
         Schema::table('models', function (Blueprint $table) {
             $table->renameColumn('deprecated_mac_address', 'show_mac_address');
         });
-
-        if (Schema::hasColumn('assets', '_snipeit_mac_address')) {
-            DB::statement('ALTER TABLE assets CHANGE _snipeit_mac_address mac_address varchar(255)');
-        }
+        DB::statement('ALTER TABLE assets CHANGE _snipeit_mac_address mac_address varchar(255)');
     }
 }

@@ -561,6 +561,7 @@ class Helper
         else
         return $category_types;
     }
+
     /**
      * Get the list of custom fields in an array to make a dropdown menu
      *

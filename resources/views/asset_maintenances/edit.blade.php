@@ -128,6 +128,7 @@
             {!! $errors->first('tiket', '<span class="alert-msg" aria-hidden="true"><i class="fa fa-times" aria-hidden="true"></i> :message</span>') !!}
           </div>
         </div>
+
         <!-- lokasi barang -->
         <div class="form-group {{ $errors->has('lokasi_barang') ? ' has-error' : '' }}">
           <label for="lokasi_barang" class="col-md-3 control-label">Lokasi Barang</label>

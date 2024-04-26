@@ -98,7 +98,6 @@ class Category extends SnipeModel
      */
     public function isDeletable()
     {
-
         return Gate::allows('delete', $this)
                 && ($this->itemCount() == 0);
     }

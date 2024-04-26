@@ -30,7 +30,7 @@ class AssetMaintenancesTransformer
                 'asset_tag'=> e($assetmaintenance->asset->asset_tag),
                 'bmn' => e($assetmaintenance->asset->bmn),
                 'serial' => e($assetmaintenance->asset->serial),
-
+                
             ] : null,
             'model' => (($assetmaintenance->asset) && ($assetmaintenance->asset->model)) ? [
                 'id' => (int) $assetmaintenance->asset->model->id,

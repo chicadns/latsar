@@ -92,13 +92,6 @@ class CategoryPresenter extends Presenter
                 'visible' => false,
                 'title' => trans('general.updated_at'),
                 'formatter' => 'dateDisplayFormatter',
-            ], [
-                'field' => 'actions',
-                'searchable' => false,
-                'sortable' => false,
-                'switchable' => false,
-                'title' => trans('table.actions'),
-		        'formatter' => 'categoriesActionsFormatter',
             ],
         ];
 

@@ -156,25 +156,12 @@ class AssetPresenter extends Presenter
                 'title' => trans('general.purchase_date'),
                 'formatter' => 'dateDisplayFormatter',
             ], [
-                'field' => 'age',
-                'searchable' => false,
-                'sortable' => false,
-                'visible' => false,
-                'title' => trans('general.age'),
-            ], [
                 'field' => 'purchase_cost',
                 'searchable' => true,
                 'sortable' => true,
                 'title' => trans('general.purchase_cost'),
                 'footerFormatter' => 'sumFormatter',
                 'class' => 'text-right',
-            ], [
-                "field" => "book_value",
-                "searchable" => false,
-                "sortable" => false,
-                "title" => trans('admin/hardware/table.book_value'),
-                "footerFormatter" => 'sumFormatter',
-                "class" => "text-right",
                 'visible' => false,
             ],[
                 'field' => 'order_number',
@@ -186,16 +173,9 @@ class AssetPresenter extends Presenter
             ], [
                 'field' => 'eol',
                 'searchable' => false,
-                'sortable' => true,
+                'sortable' => false,
                 'visible' => false,
                 'title' => trans('general.eol'),
-            ],
-            [
-                'field' => 'asset_eol_date',
-                'searchable' => true,
-                'sortable' => true,
-                'visible' => false,
-                'title' => trans('admin/hardware/form.eol_date'),
                 'formatter' => 'dateDisplayFormatter',
             ], [
                 'field' => 'warranty_months',
@@ -283,15 +263,6 @@ class AssetPresenter extends Presenter
             //     'visible' => false,
             //     'title' => trans('general.next_audit_date'),
             //     'formatter' => 'dateDisplayFormatter',
-            // ], 
-            // [
-            //     'field' => 'byod',
-            //     'searchable' => false,
-            //     'sortable' => true,
-            //     'visible' => false,
-            //     'title' => trans('general.byod'),
-            //     'formatter' => 'trueFalseFormatter',
-
             // ],
         ];
 

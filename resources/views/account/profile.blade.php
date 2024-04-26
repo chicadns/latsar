@@ -46,7 +46,7 @@
         <!-- Language -->
         <div class="form-group {{ $errors->has('locale') ? 'has-error' : '' }}">
           <label class="col-md-3 control-label" for="locale">{{ trans('general.language') }}</label>
-          <div class="col-md-7">
+          <div class="col-md-9">
 
             @if (!config('app.lock_passwords'))
               {!! Form::locales('locale', old('locale', $user->locale), 'select2') !!}
@@ -144,7 +144,8 @@
         @endif
 
 
-        @includeWhen(!($user->created_by == '0' || ($user->isSuperUser() && strlen($user->id) == 9)), 'partials.forms.edit.image-upload', ['fieldname' => 'avatar', 'image_path' => app('users_upload_path')])
+        @includeWhen(!($user->created_by == '0' || ($user->isSuperUser() && strlen($user->id) == 9)), 'partials.forms.edit.image-upload', ['fieldname' => 'avatar'])
+
 
 
         <!-- Two factor opt in -->

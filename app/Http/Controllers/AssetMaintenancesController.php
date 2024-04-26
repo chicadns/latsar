@@ -81,14 +81,13 @@ class AssetMaintenancesController extends Controller
 
         $lokasiBarang = [
                             '' => 'Pilih Lokasi Barang',
-                        ] + AssetMaintenance::getLokasiBarang();
+                            ] + AssetMaintenance::getLokasiBarang();
 
         return view('asset_maintenances/edit')
                    ->with('asset', $asset)
                    ->with('assetMaintenanceType', $assetMaintenanceType)
                    ->with('lokasiBarang', $lokasiBarang)
-                   ->with('item', new AssetMaintenance);
-
+                   ->with('item', new AssetMaintenance); 
     }
 
     /**
@@ -107,7 +106,7 @@ class AssetMaintenancesController extends Controller
         $assetMaintenance = new AssetMaintenance();
         $assetMaintenance->supplier_id = $request->input('supplier_id');
         $assetMaintenance->is_warranty = $request->input('is_warranty');
-        $assetMaintenance->cost = $request->input('cost');
+        $assetMaintenance->cost = Helper::ParseCurrency($request->input('cost'));
         $assetMaintenance->notes = $request->input('notes');
         $asset = Asset::find($request->input('asset_id'));
 
@@ -224,7 +223,7 @@ class AssetMaintenancesController extends Controller
 
         $assetMaintenance->supplier_id = $request->input('supplier_id');
         $assetMaintenance->is_warranty = $request->input('is_warranty');
-        $assetMaintenance->cost =  $request->input('cost');
+        $assetMaintenance->cost =  Helper::ParseCurrency($request->input('cost'));
         $assetMaintenance->notes = $request->input('notes');
 
         $asset = Asset::find(request('asset_id'));

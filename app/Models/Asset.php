@@ -71,13 +71,11 @@ class Asset extends Depreciable
     protected $injectUniqueIdentifier = true;
 
     protected $casts = [
-        'purchase_date' => 'date',
-        'eol_explicit' => 'boolean',
+        'purchase_date' => 'datetime',
         'last_checkout' => 'datetime',
-        'last_checkin' => 'datetime',
-        'expected_checkin' => 'date',
+        'expected_checkin' => 'datetime',
         'last_audit_date' => 'datetime',
-        'next_audit_date' => 'date',
+        'next_audit_date' => 'datetime',
         'model_id'       => 'integer',
         'status_id'      => 'integer',
         'company_id'     => 'integer',
@@ -105,9 +103,6 @@ class Asset extends Depreciable
         'serial'          => 'unique_serial|nullable',
         'purchase_cost'   => 'numeric|nullable|gte:0',
         'supplier_id'     => 'exists:suppliers,id|nullable',
-        'asset_eol_date'  => 'date|nullable',
-        'eol_explicit'    => 'boolean|nullable',
-        // 'byod'            => 'boolean',
     ];
 
   /**
@@ -137,12 +132,6 @@ class Asset extends Depreciable
         'requestable',
         'last_checkout',
         'expected_checkin',
-        // 'byod',
-        'asset_eol_date',
-        'eol_explicit', 
-        'last_audit_date',
-        'next_audit_date',
-        'asset_eol_date',
     ];
 
     use Searchable;
@@ -166,7 +155,6 @@ class Asset extends Depreciable
       'expected_checkin', 
       'next_audit_date', 
       'last_audit_date',
-      'asset_eol_date',
     ];
 
     /**
@@ -180,7 +168,7 @@ class Asset extends Depreciable
         'company'            => ['name'],
         'defaultLoc'         => ['name'],
         'location'           => ['name'],
-        'model'              => ['name', 'model_number', 'eol'],
+        'model'              => ['name', 'model_number'],
         'model.category'     => ['name'],
         'model.manufacturer' => ['name'],
         'pemegang'           => ['first_name', 'last_name', 'employee_num', 'nip_baru'],

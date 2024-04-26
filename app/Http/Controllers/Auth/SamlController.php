@@ -184,7 +184,7 @@ class SamlController extends Controller
                 'department_id' => $department_id,
             ]
             );
-            
+        
         $update_assets_company_id = Asset::where('assigned_to', $id_nip)->update(['company_id' => $company_id]);
         // $user_saml->saveOrFail();
         $hasPenggunaRole = DB::table('users_groups')->where('user_id', $id_nip)->where('group_id', '4')->exists();
@@ -196,7 +196,6 @@ class SamlController extends Controller
             echo $e->getMessage();
             echo $e->errors();
         }
-
         return redirect()->route('login')->with('saml_login', $samlData);
     }
 

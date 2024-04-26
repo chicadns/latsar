@@ -78,15 +78,6 @@ class ManufacturerPresenter extends Presenter
                 'visible' => true,
                 'formatter' => 'emailFormatter',
             ],
-            [
-                'field' => 'warranty_lookup_url',
-                'searchable' => true,
-                'sortable' => true,
-                'switchable' => true,
-                'title' => trans('admin/manufacturers/table.warranty_lookup_url'),
-                'visible' => false,
-                'formatter' => 'externalLinkFormatter',
-            ],
 
             [
                 'field' => 'assets_count',

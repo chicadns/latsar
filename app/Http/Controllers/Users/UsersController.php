@@ -74,6 +74,7 @@ class UsersController extends Controller
         $permissions = $this->filterDisplayable($permissions);
 
         $user = new User;
+        $user->activated = 1;
 
         return view('users/edit', compact('groups', 'userGroups', 'permissions', 'userPermissions'))
             ->with('user', $user);
@@ -119,9 +120,6 @@ class UsersController extends Controller
         $user->remote = $request->input('remote', 0);
         $user->website = $request->input('website', null);
         $user->created_by = Auth::user()->id;
-        $user->start_date = $request->input('start_date', null);
-        $user->end_date = $request->input('end_date', null);
-        $user->autoassign_licenses = $request->input('autoassign_licenses', 0);
 
         // Strip out the superuser permission if the user isn't a superadmin
         $permissions_array = $request->input('permission');
@@ -211,6 +209,7 @@ class UsersController extends Controller
      */
     public function update(SaveUserRequest $request, $id = null)
     {
+
         // We need to reverse the UI specific logic for our
         // permissions here before we update the user.
         $permissions = $request->input('permissions', []);
@@ -273,11 +272,7 @@ class UsersController extends Controller
         $user->activated = $request->input('activated', $request->user()->is($user) ? 1 : 0);
         $user->zip = $request->input('zip', null);
         $user->remote = $request->input('remote', 0);
-        // $user->vip = $request->input('vip', 0);
         $user->website = $request->input('website', null);
-        // $user->start_date = $request->input('start_date', null);
-        // $user->end_date = $request->input('end_date', null);
-        // $user->autoassign_licenses = $request->input('autoassign_licenses', 0);
 
         // Update the location of any assets checked out to this user
         Asset::where('assigned_type', User::class)

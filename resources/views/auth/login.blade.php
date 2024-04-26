@@ -23,7 +23,7 @@
 
                     <div class="box" style="margin-top:25px">
                         <div class="box-header with-border">
-                            <h1 class="box-title"> {{ trans('auth/general.login_prompt')  }}</h1>
+                            <h1 class="box-title"> {{ trans('auth/general.login_prompt') }}</h1>
                         </div>
 
 

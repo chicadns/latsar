@@ -1,8 +1,4 @@
-@extends('layouts/default', [
-    'helpText' => trans('admin/custom_fields/general.about_fieldsets_text'),
-    'helpPosition' => 'right',
-])
-
+@extends('layouts/default')
 
 {{-- Page title --}}
 @section('title')
@@ -42,10 +38,10 @@
 
           <!-- Name -->
           <div class="form-group {{ $errors->has('name') ? ' has-error' : '' }}">
-            <label for="name" class="col-md-3 control-label">
+            <label for="name" class="col-md-4 control-label">
               {{ trans('admin/custom_fields/general.field_name') }}
             </label>
-            <div class="col-md-8 required">
+            <div class="col-md-6 required">
                 {{ Form::text('name', old('name', $field->name), array('class' => 'form-control', 'aria-label'=>'name')) }}
                 {!! $errors->first('name', '<span class="alert-msg" aria-hidden="true"><i class="fas fa-times" aria-hidden="true"></i> :message</span>') !!}
             </div>
@@ -53,10 +49,10 @@
 
           <!-- Element Type -->
           <div class="form-group {{ $errors->has('element') ? ' has-error' : '' }}">
-            <label for="element" class="col-md-3 control-label">
+            <label for="element" class="col-md-4 control-label">
               {{ trans('admin/custom_fields/general.field_element') }}
             </label>
-            <div class="col-md-8 required">
+            <div class="col-md-6 required">
 
             {!! Form::customfield_elements('element', old('element', $field->element), 'field_element select2 form-control') !!}
             {!! $errors->first('element', '<span class="alert-msg" aria-hidden="true"><i class="fas fa-times" aria-hidden="true"></i> :message</span>') !!}
@@ -66,10 +62,10 @@
 
           <!-- Element values -->
           <div class="form-group {{ $errors->has('field_values') ? ' has-error' : '' }}" id="field_values_text" style="display:none;">
-            <label for="field_values" class="col-md-3 control-label">
+            <label for="field_values" class="col-md-4 control-label">
               {{ trans('admin/custom_fields/general.field_values') }}
             </label>
-            <div class="col-md-8 required">
+            <div class="col-md-6 required">
               {!! Form::textarea('field_values', old('name', $field->field_values), ['style' => 'width: 100%', 'rows' => 4, 'class' => 'form-control', 'aria-label'=>'field_values']) !!}
               {!! $errors->first('field_values', '<span class="alert-msg" aria-hidden="true"><i class="fas fa-times" aria-hidden="true"></i> :message</span>') !!}
               <p class="help-block">{{ trans('admin/custom_fields/general.field_values_help') }}</p>
@@ -78,7 +74,7 @@
 
           <!-- Format -->
           <div class="form-group {{ $errors->has('format') ? ' has-error' : '' }}" id="format_values">
-            <label for="format" class="col-md-3 control-label">
+            <label for="format" class="col-md-4 control-label">
               {{ trans('admin/custom_fields/general.field_format') }}
             </label>
               @php
@@ -87,17 +83,17 @@
                 $field_format = 'CUSTOM REGEX';
               }
               @endphp
-            <div class="col-md-8 required">
+            <div class="col-md-6 required">
               {{ Form::select("format",Helper::predefined_formats(), ($field_format == '') ? $field->format : $field_format, array('class'=>'format select2 form-control', 'aria-label'=>'format')) }}
               {!! $errors->first('format', '<span class="alert-msg" aria-hidden="true"><i class="fas fa-times" aria-hidden="true"></i> :message</span>') !!}
             </div>
           </div>
           <!-- Custom Format -->
           <div class="form-group {{ $errors->has('custom_format') ? ' has-error' : '' }}" id="custom_regex" style="display:none;">
-            <label for="custom_format" class="col-md-3 control-label">
+            <label for="custom_format" class="col-md-4 control-label">
               {{ trans('admin/custom_fields/general.field_custom_format') }}
             </label>
-            <div class="col-md-8 required">
+            <div class="col-md-6 required">
                 {{ Form::text('custom_format', old('custom_format', (($field->format!='') && (stripos($field->format,'regex')===0)) ? $field->format : ''), array('class' => 'form-control', 'id' => 'custom_format','aria-label'=>'custom_format', 'placeholder'=>'regex:/^[0-9]{15}$/')) }}
                 <p class="help-block">{!! trans('admin/custom_fields/general.field_custom_format_help') !!}</p>
 
@@ -122,14 +118,14 @@
 
               <!-- Auto-Add to Future Fieldsets  -->
           <div class="form-group {{ $errors->has('auto_add_to_fieldsets') ? ' has-error' : '' }}"  id="auto_add_to_fieldsets">
-              <div class="col-md-9 col-md-offset-3">
+              <div class="col-md-8 col-md-offset-4">
                   <label class="form-control">
                       <input type="checkbox" name="auto_add_to_fieldsets" aria-label="auto_add_to_fieldsets" value="1"{{ (old('auto_add_to_fieldsets') || $field->auto_add_to_fieldsets) ? ' checked="checked"' : '' }}>
                       {{ trans('admin/custom_fields/general.auto_add_to_fieldsets') }}
                   </label>
               </div>
 
-              <div class="col-md-9 col-md-offset-3">
+              <div class="col-md-8 col-md-offset-4">
                   <label class="form-control">
                       <input type="checkbox" name="show_in_listview" aria-label="show_in_listview" value="1"{{ (old('show_in_listview') || $field->show_in_listview) ? ' checked="checked"' : '' }}>
                       {{ trans('admin/custom_fields/general.show_in_listview') }}
