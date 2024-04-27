@@ -4,7 +4,9 @@
 
 
 @if (Request::get('status'))
-  @if (Request::get('status')=='Pending')
+  @if (Request::get('status')=='Allitems')
+    {{ trans('general.all') }} {{ trans('general.assets') }}
+  @elseif (Request::get('status')=='Pending')
     {{ trans('general.assets') }} - {{ trans('general.pending') }}
   @elseif (Request::get('status')=='RTD')
     {{ trans('general.assets') }} - {{ trans('general.ready_to_deploy') }}
@@ -21,8 +23,6 @@
   @elseif (Request::get('status')=='Deleted')
     {{ trans('general.assets') }} - {{ trans('general.deleted') }}
   @endif
-@else
-{{ trans('general.all') }} {{ trans('general.assets') }}
 @endif
 
 @if ((Request::get('company_id')) && ($company))
