@@ -28,6 +28,7 @@
 
 <div class="row">
   <!-- panel -->
+  <!-- PERANGKAT KERAS -->
   <div class="col-lg-2 col-xs-6">
       <a href="{{ route('hardware.index') }}">
     <!-- small box -->
@@ -46,6 +47,24 @@
       </a>
   </div><!-- ./col -->
 
+  <div class="col-lg-2 col-xs-6">
+      <a href="{{ route('accessories.index') }}">
+    <div class="small-box bg-orange">
+      <div class="inner">
+        <h3> {{ number_format($counts['accessory']) }}</h3>
+        <p>{{ strtolower(trans('general.accessories')) }}</p>
+      </div>
+      <div class="icon" aria-hidden="true">
+        <i class="far fa-file-alt"></i>
+      </div>
+      @can('index', \App\Models\Accessory::class)
+          <a href="{{ route('accessories.index') }}" class="small-box-footer">{{ trans('general.view_all') }} <i class="fa fa-arrow-circle-right" aria-hidden="true"></i></a>
+      @endcan
+    </div>
+      </a>
+  </div>
+
+  <!-- PERANGKAT LUNAK -->
   <div class="col-lg-2 col-xs-6">
      <a href="{{ route('licenses.index') }}">
     <!-- small box -->
@@ -82,7 +101,8 @@
       </a>
   </div> -->
 
-  @can('superadmin')
+  <!-- BARANG PERSEDIAAN -->
+  {{-- @can('superadmin') --}}
   <div class="col-lg-2 col-xs-6">
     <!-- small box -->
 
@@ -100,7 +120,7 @@
       @endcan
     </div>
   </div><!-- ./col -->
-  @endcan
+  {{-- @endcan --}}
 
   <!-- <div class="col-lg-2 col-xs-6">
     <a href="{{ route('components.index') }}">
@@ -120,6 +140,7 @@
  </div> -->
 
  @can('superadmin')
+ <!-- PENGGUNA -->
  <div class="col-lg-2 col-xs-6">
     <a href="{{ route('users.index') }}">
    <!-- small box -->
@@ -217,7 +238,7 @@
 
                 <table
                     data-cookie-id-table="dashActivityReport"
-                    data-height="350"
+                    data-height="260"
                     data-pagination="false"
                     data-id-table="dashActivityReport"
                     data-side-pagination="server"
@@ -267,7 +288,7 @@
                 <div class="row">
                     <div class="col-md-12">
                         <div class="chart-responsive">
-                            <canvas id="statusPieChart" height="260"></canvas>
+                            <canvas id="statusPieChart" height="290"></canvas>
                         </div> <!-- ./chart-responsive -->
                     </div> <!-- /.col -->
                 </div> <!-- /.row -->
@@ -307,7 +328,9 @@
 
                             <thead>
                             <tr>
-                                <th class="col-sm-3" data-visible="true" data-field="name" data-formatter="locationsLinkFormatter" data-sortable="true">{{ trans('general.locations') }}</th>
+                                <th class="col-sm-3" data-visible="true" data-field="name" data-formatter="locationsLinkFormatter" data-sortable="true">
+                                    {{ trans('general.locations') }}
+                                </th>
                                 <th class="col-sm-1" data-visible="true" data-field="assets_count" data-sortable="true">
                                     {{ trans('general.asset_count') }}
                                 </th>

@@ -1,15 +1,24 @@
 @push('css')
-    <link rel="stylesheet" href="{{ url(mix('css/dist/bootstrap-table.css')) }}">
+<link rel="stylesheet" href="{{ url(mix('css/dist/bootstrap-table.css')) }}">
+
 @endpush
 
 @push('js')
 
 <script src="{{ url(mix('js/dist/bootstrap-table.js')) }}"></script>
-
 <script nonce="{{ csrf_token() }}">
     $(function () {
-
         var locale = '{{ config('app.locale') }}';
+
+        var stickyHeaderOffsetY = 0;
+
+        if ( $('.navbar-fixed-top').css('height') ) {
+            stickyHeaderOffsetY = +$('.navbar-fixed-top').css('height').replace('px','');
+        }
+        if ( $('.navbar-fixed-top').css('margin-bottom') ) {
+            stickyHeaderOffsetY += +$('.navbar-fixed-top').css('margin-bottom').replace('px','');
+        }
+
         var blockedFields = "searchable,sortable,switchable,title,visible,formatter,class".split(",");
 
         var keyBlocked = function(key) {
@@ -22,7 +31,6 @@
         }
 
         $('.snipe-table').bootstrapTable('destroy').each(function () {
-
             data_export_options = $(this).attr('data-export-options');
             export_options = data_export_options ? JSON.parse(data_export_options) : {};
             export_options['htmlContent'] = false; // this is already the default; but let's be explicit about it
@@ -70,6 +78,9 @@
                         newParams[i] = params[i];
                     }
                 }
+                if (typeof selectedOptions !== 'undefined') {
+                    newParams['selectedOptions'] = selectedOptions;
+                }
                 return newParams;
             },
             formatLoadingMessage: function () {
@@ -93,7 +104,6 @@
             }
 
             });
-
         });
     });
 
@@ -117,6 +127,12 @@
         $(buttonName).removeAttr('disabled');
         $(buttonName).after('<input id="' + tableId + '_checkbox_' + $element.id + '" type="hidden" name="ids[]" value="' + $element.id + '">');
     });
+
+    $('.snipe-table').on('uncheck.bs.table .btSelectItem', function (row, $element) {
+        var tableId =  $(this).data('id-table');
+        $( "#" + tableId + "_checkbox_" + $element.id).remove();
+    });
+
 
     $('.snipe-table').on('check-all.bs.table', function (event, rowsAfter) {
 
@@ -172,6 +188,48 @@
                 return '<a href="{{ config('app.url') }}/' + destination + '/' + row.id + '">' + value + '</a>';
             }
         };
+    }
+
+    function genericColumnObjStateFormatter(destination) {
+        return function (value, row) {
+            if ((value)) {
+
+                var text_color;
+                var icon_style;
+
+                switch (value) {
+                    case 'Entri Data':
+                        text_color = 'yellow';
+                        icon_style = 'fa-plus-circle';
+                    break;
+                    case 'Disubmit':
+                        text_color = 'info';
+                        icon_style = 'fa-info-circle';
+                    break;
+                    case 'Disetujui':
+                        text_color = 'success';
+                        icon_style = 'fa-check-circle';
+                    break;
+                    case 'Ditolak':
+                        text_color = 'danger';
+                        icon_style = 'fa-times-circle';
+                    break;
+                    case 'Selesai':
+                        text_color = 'secondary';
+                        icon_style = 'fa-circle';
+                    break;
+                    case 'Pemasukkan':
+                        text_color = 'secondary';
+                        icon_style = 'fa-caret-square-up';
+                    break;
+                    case 'Pengeluaran':
+                        text_color = 'secondary';
+                        icon_style = 'fa-caret-square-down';
+                }
+
+                return '<nobr><i class="fa ' + icon_style + ' text-' + text_color + '"></i> ' + value + '</nobr>';
+            }
+        }
     }
 
     // Use this when we're introspecting into a column object and need to link
@@ -260,6 +318,10 @@
                 actions += '<a href="{{ config('app.url') }}/' + dest + '/' + row.id + '/clone" class="actions btn btn-sm btn-info" data-tooltip="true" title="{{ trans('general.clone_item') }}"><i class="far fa-clone" aria-hidden="true"></i><span class="sr-only">Clone</span></a>&nbsp;';
             }
 
+            if ((row.available_actions) && (row.available_actions.history === true)) {
+                actions += '<a href="{{ url('/') }}/' + dest + '/' + row.id + '" class="btn btn-sm btn-default" data-tooltip="true" title="Catatan Transaksi"><i class="fas fa-history" aria-hidden="true"></i><span class="sr-only">Catatan Transaksi</span></a>&nbsp;';
+            }
+
             if ((row.available_actions) && (row.available_actions.update === true)) {
                 actions += '<a href="{{ config('app.url') }}/' + dest + '/' + row.id + '/edit" class="actions btn btn-sm btn-warning" data-tooltip="true" title="{{ trans('general.update') }}"><i class="fas fa-pencil-alt" aria-hidden="true"></i><span class="sr-only">{{ trans('general.update') }}</span></a>&nbsp;';
             }
@@ -268,8 +330,11 @@
 
                 // use the asset tag if no name is provided
                 var name_for_box = row.name
+
                 if (row.name=='') {
                     var name_for_box = row.asset_tag
+                } else if (!row.name) {
+                    var name_for_box = "transaksi dari " + row.company_id.name + " pada tanggal " + row.purchase_date.date;
                 }
                 
                 actions += '<a href="{{ config('app.url') }}/' + dest + '/' + row.id + '" '
@@ -286,7 +351,7 @@
             if ((row.available_actions) && (row.available_actions.restore === true)) {
                 actions += '<form style="display: inline;" method="POST" action="{{ config('app.url') }}/' + dest + '/' + row.id + '/restore"> ';
                 actions += '@csrf';
-                actions += '<button class="btn btn-sm btn-warning" data-tooltip="true" title="{{ trans('general.restore') }}"><i class="fas fa-retweet"></i></button>&nbsp;';
+                actions += '<button class="btn btn-sm btn-warning" data-tooltip="true" title="{{ trans('general.restore') }}"><i class="far fa-retweet"></i></button>&nbsp;';
             }
 
             actions +='</nobr>';
@@ -427,6 +492,7 @@
         'hardware',
         'accessories',
         'consumables',
+        'consumablestransaction',
         'components',
         'locations',
         'users',
@@ -450,6 +516,7 @@
         window[formatters[i] + 'LinkObjFormatter'] = genericColumnObjLinkFormatter(formatters[i]);
         window[formatters[i] + 'ActionsFormatter'] = genericActionsFormatter(formatters[i]);
         window[formatters[i] + 'InOutFormatter'] = genericCheckinCheckoutFormatter(formatters[i]);
+        window[formatters[i] + 'StateObjFormatter'] = genericColumnObjStateFormatter(formatters[i]);
     }
 
     var child_formatters = [
@@ -663,6 +730,14 @@
         }
     }
 
+    function locationCompanyObjFilterFormatter(value, row) {
+        if (value) {
+            return '<a href="{{ url('/') }}/locations/?company_id=' + row.company.id + '">' + row.company.name + '</a>';
+        } else {
+            return value;
+        }
+    }
+
     function employeeNumFormatter(value, row) {
 
         if ((row) && (row.assigned_to) && ((row.assigned_to.employee_number))) {
@@ -671,6 +746,7 @@
     }
 
     function nipBaruFormatter(value, row) {
+
         if ((row) && (row.assigned_to) && ((row.assigned_to.nip_baru))) {
             return '<a href="{{ url('/') }}/users/' + row.assigned_to.id + '"> ' + row.assigned_to.nip_baru + '</a>';
         }
@@ -690,6 +766,8 @@
 
 
    function imageFormatter(value, row) {
+
+
 
         if (value) {
 

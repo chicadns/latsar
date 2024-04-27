@@ -54,14 +54,6 @@ class ConsumablePresenter extends Presenter
                 'title' => trans('general.category'),
                 'formatter' => 'categoriesLinkObjFormatter',
             ], [
-                'field' => 'supplier',
-                'searchable' => true,
-                'sortable' => true,
-                'switchable' => true,
-                'title' => trans('general.supplier'),
-                'visible' => false,
-                'formatter' => 'suppliersLinkObjFormatter',
-            ], [
                 'field' => 'model_number',
                 'searchable' => true,
                 'sortable' => true,
@@ -83,13 +75,15 @@ class ConsumablePresenter extends Presenter
                 'sortable' => false,
                 'title' => trans('admin/components/general.remaining'),
                 'visible' => true,
-            ], [
-                'field' => 'min_amt',
-                'searchable' => false,
-                'sortable' => false,
-                'title' => trans('general.min_amt'),
-                'visible' => true,
-            ],  [
+            ], 
+            // [
+            //     'field' => 'min_amt',
+            //     'searchable' => false,
+            //     'sortable' => false,
+            //     'title' => trans('general.min_amt'),
+            //     'visible' => true,
+            // ],  
+            [
                 'field' => 'location',
                 'searchable' => true,
                 'sortable' => true,
@@ -130,13 +124,6 @@ class ConsumablePresenter extends Presenter
                 'visible' => false,
                 'title' => trans('general.notes'),
                 'formatter' => 'notesFormatter',
-            ], [
-                'field' => 'change',
-                'searchable' => false,
-                'sortable' => false,
-                'visible' => true,
-                'title' => trans('general.change'),
-                'formatter' => 'consumablesInOutFormatter',
             ], [
                 'field' => 'actions',
                 'searchable' => false,

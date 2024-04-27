@@ -2,8 +2,8 @@
 
 {{-- Page title --}}
 @section('title')
+ {{ trans('general.consumable') }} -
  {{ $consumable->name }}
- {{ trans('general.consumable') }}
 @parent
 @stop
 
@@ -98,93 +98,46 @@
         @can('consumables.files', $consumable)
           <div class="tab-pane" id="files">
 
-            <div class="table-responsive">
+            <div class="table table-responsive">
+              <div style="position: absolute; margin-top: 10px; display: flex;">
+                <div style="margin-right: 10px;">
+                  <select style="width: 150px" class="select2" name="seltype" id="seltype">
+                    <option value="">Semua Jenis</option>
+                    <option value="Pemasukkan">Pemasukkan</option>
+                    <option value="Pengeluaran">Pengeluaran</option>
+                  </select>
+                </div>
+                <div>
+                  <select style="width: 150px" class="select2" name="selstate" id="selstate">
+                    <option value="">Semua Status</option>
+                    <option value="Entri Data">Entri Data</option>
+                    <option value="Disubmit">Disubmit</option>
+                    <option value="Disetujui" class="out">Disetujui</option>
+                    <option value="Ditolak" class="out">Ditolak</option>
+                    <option value="Selesai">Selesai</option>
+                  </select>
+                </div>
+              </div>
               <table
-                      data-cookie-id-table="consumableUploadsTable"
-                      data-id-table="consumableUploadsTable"
-                      id="consumableUploadsTable"
-                      data-search="true"
+                      data-columns="{{ \App\Presenters\ConsumableBasedOnNamePresenter::dataTableLayout() }}"
+                      data-cookie-id-table="consumablesCheckedoutTable"
                       data-pagination="true"
-                      data-side-pagination="client"
-                      data-show-columns="true"
+                      data-id-table="consumablesCheckedoutTable"
+                      data-search="false"
+                      data-side-pagination="server"
+                      data-show-columns="false"
                       data-show-export="true"
                       data-show-footer="true"
-                      data-toolbar="#upload-toolbar"
                       data-show-refresh="true"
                       data-sort-order="asc"
-                      data-sort-name="name"
+                      data-sort-name="id"
+                      id="consumablesCheckedoutTable"
                       class="table table-striped snipe-table"
+                      data-url="{{route('api.consumables.showUsers', ['consumable_id' => $consumable->id])}}"
                       data-export-options='{
-                    "fileName": "export-consumables-uploads-{{ str_slug($consumable->name) }}-{{ date('Y-m-d') }}",
-                    "ignoreColumn": ["actions","image","change","checkbox","checkincheckout","delete","download","icon"]
-                    }'>
-                <thead>
-                <tr>
-                  <th data-visible="true" data-field="icon" data-sortable="true">{{trans('general.file_type')}}</th>
-                  <th class="col-md-2" data-searchable="true" data-visible="true" data-field="image">{{ trans('general.image') }}</th>
-                  <th class="col-md-2" data-searchable="true" data-visible="true" data-field="filename" data-sortable="true">{{ trans('general.file_name') }}</th>
-                  <th class="col-md-1" data-searchable="true" data-visible="true" data-field="filesize">{{ trans('general.filesize') }}</th>
-                  <th class="col-md-2" data-searchable="true" data-visible="true" data-field="notes" data-sortable="true">{{ trans('general.notes') }}</th>
-                  <th class="col-md-1" data-searchable="true" data-visible="true" data-field="download">{{ trans('general.download') }}</th>
-                  <th class="col-md-2" data-searchable="true" data-visible="true" data-field="created_at" data-sortable="true">{{ trans('general.created_at') }}</th>
-                  <th class="col-md-1" data-searchable="true" data-visible="true" data-field="actions">{{ trans('table.actions') }}</th>
-                </tr>
-                </thead>
-                <tbody>
-                @if ($consumable->uploads->count() > 0)
-                  @foreach ($consumable->uploads as $file)
-                    <tr>
-                      <td>
-                        <i class="{{ Helper::filetype_icon($file->filename) }} icon-med" aria-hidden="true"></i>
-                        <span class="sr-only">{{ Helper::filetype_icon($file->filename) }}</span>
-
-                      </td>
-                      <td>
-                        @if ($file->filename)
-                          @if ( Helper::checkUploadIsImage($file->get_src('consumables')))
-                            <a href="{{ route('show.consumablefile', ['consumableId' => $consumable->id, 'fileId' => $file->id, 'download' => 'false']) }}" data-toggle="lightbox" data-type="image"><img src="{{ route('show.consumablefile', ['consumableId' => $consumable->id, 'fileId' => $file->id]) }}" class="img-thumbnail" style="max-width: 50px;"></a>
-                          @endif
-                        @endif
-                      </td>
-                      <td>
-                        {{ $file->filename }}
-                      </td>
-                      <td data-value="{{ (Storage::exists('private_uploads/consumables/'.$file->filename) ? Storage::size('private_uploads/consumables/'.$file->filename) : '') }}">
-                        {{ @Helper::formatFilesizeUnits(Storage::exists('private_uploads/consumables/'.$file->filename) ? Storage::size('private_uploads/consumables/'.$file->filename) : '') }}
-                      </td>
-
-                      <td>
-                        @if ($file->note)
-                          {!! nl2br(Helper::parseEscapedMarkedownInline($file->note)) !!}
-                        @endif
-                      </td>
-                      <td>
-                        @if ($file->filename)
-                          <a href="{{ route('show.consumablefile', [$consumable->id, $file->id]) }}" class="btn btn-sm btn-default">
-                            <i class="fas fa-download" aria-hidden="true"></i>
-                            <span class="sr-only">{{ trans('general.download') }}</span>
-                          </a>
-
-                          <a href="{{ route('show.consumablefile', [$consumable->id, $file->id, 'inline' => 'true']) }}" class="btn btn-sm btn-default" target="_blank">
-                            <i class="fa fa-external-link" aria-hidden="true"></i>
-                          </a>
-                        @endif
-                      </td>
-                      <td>{{ $file->created_at }}</td>
-                      <td>
-                        <a class="btn delete-asset btn-danger btn-sm" href="{{ route('delete/consumablefile', [$consumable->id, $file->id]) }}" data-content="{{ trans('general.delete_confirm', ['item' => $file->filename]) }}" data-title="{{ trans('general.delete') }}">
-                          <i class="fas fa-trash icon-white" aria-hidden="true"></i>
-                          <span class="sr-only">{{ trans('general.delete') }}</span>
-                        </a>
-                      </td>
-                    </tr>
-                  @endforeach
-                @else
-                  <tr>
-                    <td colspan="8">{{ trans('general.no_results') }}</td>
-                  </tr>
-                @endif
-                </tbody>
+                "fileName": "export-consumables-{{ str_slug($consumable->name) }}-transaction-{{ date('Y-m-d') }}",
+                "ignoreColumn": ["actions","image","change"]
+                }'>
               </table>
             </div>
           </div> <!-- /.tab-pane -->
@@ -206,21 +159,21 @@
 
                 @if ($consumable->image!='')
                 <div class="col-md-12 text-center">
-                  <a href="{{ Storage::disk('public')->url('consumables/'.e($consumable->image)) }}" data-toggle="lightbox">
+                  <a href="{{ Storage::disk('public')->url('consumables/'.e($consumable->image)) }}" data-toggle="lightbox"><br>
                       <img src="{{ Storage::disk('public')->url('consumables/'.e($consumable->image)) }}" class="img-responsive img-thumbnail" alt="{{ $consumable->name }}"></a>
                 </div>
                 @endif
 
                 @if ($consumable->purchase_date)
                   <div class="col-md-12">
-                    <strong>{{ trans('general.purchase_date') }}: </strong>
+                    <strong>{{ trans('general.purchase_date') }}: </strong><br>
                     {{ Helper::getFormattedDateObject($consumable->purchase_date, 'date', false) }}
                   </div>
                 @endif
 
                 @if ($consumable->purchase_cost)
                   <div class="col-md-12">
-                    <strong>{{ trans('general.purchase_cost') }}:</strong>
+                    <strong>{{ trans('general.purchase_cost') }}:</strong><br>
                     {{ $snipeSettings->default_currency }}
                     {{ Helper::formatCurrencyOutput($consumable->purchase_cost) }}
                   </div>
@@ -228,33 +181,40 @@
 
                 @if ($consumable->item_no)
                   <div class="col-md-12">
-                    <strong>{{ trans('admin/consumables/general.item_no') }}:</strong>
+                    <strong>{{ trans('admin/consumables/general.item_no') }}:</strong><br>
                     {{ $consumable->item_no }}
                   </div>
                 @endif
 
                 @if ($consumable->model_number)
                   <div class="col-md-12">
-                    <strong>{{ trans('general.model_no') }}:</strong>
+                    <strong>{{ trans('general.model_no') }}:</strong><br>
                     {{ $consumable->model_number }}
                   </div>
                 @endif
 
                 @if ($consumable->manufacturer)
                   <div class="col-md-12">
-                    <strong>{{ trans('general.manufacturer') }}:</strong>
+                    <strong>{{ trans('general.manufacturer') }}:</strong><br>
                     <a href="{{ route('manufacturers.show', $consumable->manufacturer->id) }}">{{ $consumable->manufacturer->name }}</a>
                   </div>
                 @endif
 
                 @if ($consumable->order_number)
                   <div class="col-md-12">
-                    <strong>{{ trans('general.order_number') }}:</strong>
+                    <strong>{{ trans('general.order_number') }}:</strong><br>
                     {{ $consumable->order_number }}
                   </div>
                 @endif
 
-    @can('checkout', \App\Models\Consumable::class)
+                @if ($consumable->company_id)
+                  <div class="col-md-12">
+                    <strong>{{ trans('general.company') }}:</strong><br>
+                    <a href="{{ route('companies.show', $consumable->company->id) }}">{{ $consumable->company->name }}</a>
+                  </div>
+                @endif
+
+    <!-- @can('checkout', \App\Models\Consumable::class)
 
       <div class="col-md-12">
         <br><br>
@@ -269,10 +229,10 @@
         @endif
       </div>
 
-    @endcan
+    @endcan -->
 
     @if ($consumable->notes)
-
+       
     <div class="col-md-12">
       <strong>
         {{ trans('general.notes') }}:
@@ -285,7 +245,7 @@
   @endif
 
     </div>
-
+    
   </div> <!-- /.col-md-3-->
 </div> <!-- /.row-->
 
@@ -297,5 +257,17 @@
 @stop
 
 @section('moar_scripts')
+<script>
+  var selectedOptions = {
+    type: null,
+    state: null
+  };
+  $('.select2').select2({minimumResultsForSearch: -1});
+  $('.select2').change(function() {
+    selectedOptions.type = $('#seltype').val();
+    selectedOptions.state = $('#selstate').val();
+    $('#consumablesCheckedoutTable').bootstrapTable('refresh');
+  });
+</script>
 @include ('partials.bootstrap-table', ['exportFile' => 'consumable' . $consumable->name . '-export', 'search' => false])
 @stop

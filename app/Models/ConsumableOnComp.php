@@ -2,7 +2,6 @@
 
 namespace App\Models;
 
-use App\Helpers\Helper;
 use App\Models\Traits\Acceptable;
 use App\Models\Traits\Searchable;
 use App\Presenters\Presentable;
@@ -11,12 +10,10 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\Storage;
 use Watson\Validating\ValidatingTrait;
 
-class Consumable extends SnipeModel
+class ConsumableOnComp extends SnipeModel
 {
     use HasFactory;
 
-    protected $presenter = \App\Presenters\ConsumablePresenter::class;
-    use CompanyableTrait;
     use Loggable, Presentable;
     use SoftDeletes;
     use Acceptable;
@@ -97,24 +94,6 @@ class Consumable extends SnipeModel
         'manufacturer' => ['name'],
     ];
 
-
-    /**
-     * Establishes the components -> action logs -> uploads relationship
-     *
-     * @author A. Gianotto <snipe@snipe.net>
-     * @since [v6.1.13]
-     * @return \Illuminate\Database\Eloquent\Relations\Relation
-     */
-    public function uploads()
-    {
-        return $this->hasMany(\App\Models\Actionlog::class, 'item_id')
-            ->where('item_type', '=', self::class)
-            ->where('action_type', '=', 'uploaded')
-            ->whereNotNull('filename')
-            ->orderBy('created_at', 'desc');
-    }
-
-
     /**
      * Sets the attribute of whether or not the consumable is requestable
      *
@@ -149,18 +128,6 @@ class Consumable extends SnipeModel
     }
 
     /**
-     * Establishes the component -> assignments relationship
-     *
-     * @author [A. Gianotto] [<snipe@snipe.net>]
-     * @since [v3.0]
-     * @return \Illuminate\Database\Eloquent\Relations\Relation
-     */
-    public function consumableAssignments()
-    {
-        return $this->hasMany(\App\Models\ConsumableAssignment::class);
-    }
-
-    /**
      * Establishes the component -> company relationship
      *
      * @author [A. Gianotto] [<snipe@snipe.net>]
@@ -172,28 +139,9 @@ class Consumable extends SnipeModel
         return $this->belongsTo(\App\Models\Company::class, 'company_id');
     }
 
-    /**
-     * Establishes the component -> manufacturer relationship
-     *
-     * @author [A. Gianotto] [<snipe@snipe.net>]
-     * @since [v3.0]
-     * @return \Illuminate\Database\Eloquent\Relations\Relation
-     */
-    public function manufacturer()
+    public function consumablesdetails()
     {
-        return $this->belongsTo(\App\Models\Manufacturer::class, 'manufacturer_id');
-    }
-
-    /**
-     * Establishes the component -> location relationship
-     *
-     * @author [A. Gianotto] [<snipe@snipe.net>]
-     * @since [v3.0]
-     * @return \Illuminate\Database\Eloquent\Relations\Relation
-     */
-    public function location()
-    {
-        return $this->belongsTo(\App\Models\Location::class, 'location_id');
+        return $this->hasMany(\App\Models\ConsumableDetails::class, 'consumable_id');
     }
 
     /**
@@ -206,35 +154,6 @@ class Consumable extends SnipeModel
     public function category()
     {
         return $this->belongsTo(\App\Models\Category::class, 'category_id');
-    }
-
-
-    /**
-     * Establishes the component -> action logs relationship
-     *
-     * @author [A. Gianotto] [<snipe@snipe.net>]
-     * @since [v3.0]
-     * @return \Illuminate\Database\Eloquent\Relations\Relation
-     */
-    public function assetlog()
-    {
-        return $this->hasMany(\App\Models\Actionlog::class, 'item_id')->where('item_type', self::class)->orderBy('created_at', 'desc')->withTrashed();
-    }
-
-    /**
-     * Gets the full image url for the consumable
-     *
-     * @author [A. Gianotto] [<snipe@snipe.net>]
-     * @since [v3.0]
-     * @return string | false
-     */
-    public function getImageUrl()
-    {
-        if ($this->image) {
-            return Storage::disk('public')->url(app('consumables_upload_path').$this->image);
-        }
-        return false;
-
     }
 
     /**
@@ -250,44 +169,6 @@ class Consumable extends SnipeModel
     }
 
     /**
-     * Establishes the item -> supplier relationship
-     *
-     * @author [A. Gianotto] [<snipe@snipe.net>]
-     * @since [v6.1.1]
-     * @return \Illuminate\Database\Eloquent\Relations\Relation
-     */
-    public function supplier()
-    {
-        return $this->belongsTo(\App\Models\Supplier::class, 'supplier_id');
-    }
-
-
-    /**
-     * Determine whether to send a checkin/checkout email based on
-     * asset model category
-     *
-     * @author [A. Gianotto] [<snipe@snipe.net>]
-     * @since [v4.0]
-     * @return bool
-     */
-    public function checkin_email()
-    {
-        return $this->category->checkin_email;
-    }
-
-    /**
-     * Determine whether this asset requires acceptance by the assigned user
-     *
-     * @author [A. Gianotto] [<snipe@snipe.net>]
-     * @since [v4.0]
-     * @return bool
-     */
-    public function requireAcceptance()
-    {
-        return $this->category->require_acceptance;
-    }
-
-    /**
      * Checks for a category-specific EULA, and if that doesn't exist,
      * checks for a settings level EULA
      *
@@ -297,10 +178,13 @@ class Consumable extends SnipeModel
      */
     public function getEula()
     {
+        $Parsedown = new \Parsedown();
+        $Parsedown->setSafeMode(true);
+
         if ($this->category->eula_text) {
-            return  Helper::parseEscapedMarkedown($this->category->eula_text);
+            return $Parsedown->text(e($this->category->eula_text));
         } elseif ((Setting::getSettings()->default_eula_text) && ($this->category->use_default_eula == '1')) {
-            return  Helper::parseEscapedMarkedown(Setting::getSettings()->default_eula_text);
+            return $Parsedown->text(e(Setting::getSettings()->default_eula_text));
         } else {
             return null;
         }
@@ -387,18 +271,5 @@ class Consumable extends SnipeModel
     public function scopeOrderCompany($query, $order)
     {
         return $query->leftJoin('companies', 'consumables.company_id', '=', 'companies.id')->orderBy('companies.name', $order);
-    }
-
-    /**
-     * Query builder scope to order on supplier
-     *
-     * @param  \Illuminate\Database\Query\Builder  $query  Query builder instance
-     * @param  text                              $order       Order
-     *
-     * @return \Illuminate\Database\Query\Builder          Modified query builder
-     */
-    public function scopeOrderSupplier($query, $order)
-    {
-        return $query->leftJoin('suppliers', 'consumables.supplier_id', '=', 'suppliers.id')->orderBy('suppliers.name', $order);
     }
 }

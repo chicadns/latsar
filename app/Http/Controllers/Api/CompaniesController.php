@@ -10,6 +10,7 @@ use App\Models\Company;
 use Illuminate\Http\Request;
 use App\Http\Requests\ImageUploadRequest;
 use Illuminate\Support\Facades\Storage;
+use Auth;
 
 class CompaniesController extends Controller
 {
@@ -27,9 +28,6 @@ class CompaniesController extends Controller
         $allowed_columns = [
             'id',
             'name',
-            'phone',
-            'fax',
-            'email',
             'created_at',
             'updated_at',
             'users_count',
@@ -179,6 +177,48 @@ class CompaniesController extends Controller
 
         if ($request->filled('search')) {
             $companies = $companies->where('companies.name', 'LIKE', '%'.$request->get('search').'%');
+        }
+    
+        $companies = $companies->orderBy('name', 'ASC')->paginate(50);
+
+        // Loop through and set some custom properties for the transformer to use.
+        // This lets us have more flexibility in special cases like assets, where
+        // they may not have a ->name value but we want to display something anyway
+        foreach ($companies as $company) {
+            $company->use_image = ($company->image) ? Storage::disk('public')->url('companies/'.$company->image, $company->image) : null;
+        }
+
+        return (new SelectlistTransformer)->transformSelectlist($companies);
+    }
+
+    public function selectlist2(Request $request)
+    {
+        $companies = Company::select([
+            'companies.id',
+            'companies.name',
+        ]);
+
+        $current_user = Auth::user();
+        $companyNamePattern = "BPS Propinsi";
+        $unikerja = Company::where('id', $current_user->company_id)->value('name');
+        $isBPSPropinsi = strpos($unikerja, $companyNamePattern) !== false;
+
+        if ($isBPSPropinsi) {
+            $kode_wil = Company::where('id', $current_user->company_id)->value('kode_wil');
+            $kodeProv = substr($kode_wil, 0, 2);
+            $provdanturunan = Company::where('kode_wil', 'like', $kodeProv . '%')->pluck('id')->toArray();
+            if ($request->filled('search')) {
+                $companies = $companies->where('companies.name', 'LIKE', '%'.$request->get('search').'%')->whereIn('companies.id', $provdanturunan);
+            } else {
+                $companies = $companies->whereIn('companies.id', $provdanturunan);
+            }
+        } else {
+            if ($request->filled('search')) {
+                $companies = $companies->where('companies.name', 'LIKE', '%'.$request->get('search').'%')->whereIn('companies.id', [5, 6, 7])
+                                ->orWhere('companies.name', 'LIKE', '%'.$request->get('search').'%')->where('companies.id', '>', 25);
+            } else {
+                $companies = $companies->wherein('companies.id', [5, 6, 7])->orWhere('companies.id', '>', 25);
+            }
         }
 
         $companies = $companies->orderBy('name', 'ASC')->paginate(50);

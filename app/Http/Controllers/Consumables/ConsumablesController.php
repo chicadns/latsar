@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Consumables;
 use App\Helpers\Helper;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\ImageUploadRequest;
+use App\Models\Category;
 use App\Models\Company;
 use App\Models\Consumable;
 use Illuminate\Support\Facades\Auth;
@@ -68,17 +69,16 @@ class ConsumablesController extends Controller
         $consumable = new Consumable();
         $consumable->name                   = $request->input('name');
         $consumable->category_id            = $request->input('category_id');
-        $consumable->supplier_id            = $request->input('supplier_id');
         $consumable->location_id            = $request->input('location_id');
         $consumable->company_id             = Company::getIdForCurrentUser($request->input('company_id'));
         $consumable->order_number           = $request->input('order_number');
-        $consumable->min_amt                = $request->input('min_amt');
+        $consumable->min_amt                = 0;
         $consumable->manufacturer_id        = $request->input('manufacturer_id');
         $consumable->model_number           = $request->input('model_number');
         $consumable->item_no                = $request->input('item_no');
         $consumable->purchase_date          = $request->input('purchase_date');
-        $consumable->purchase_cost          = $request->input('purchase_cost');
-        $consumable->qty                    = $request->input('qty');
+        $consumable->purchase_cost          = Helper::ParseCurrency($request->input('purchase_cost'));
+        $consumable->qty                    = 0;
         $consumable->user_id                = Auth::id();
         $consumable->notes                  = $request->input('notes');
 
@@ -130,32 +130,31 @@ class ConsumablesController extends Controller
             return redirect()->route('consumables.index')->with('error', trans('admin/consumables/message.does_not_exist'));
         }
 
-        $min = $consumable->numCheckedOut();
-        $validator = Validator::make($request->all(), [
-            "qty" => "required|numeric|min:$min"
-        ]);
+        // $min = $consumable->numCheckedOut();
+        // $validator = Validator::make($request->all(), [
+        //     "qty" => "required|numeric|min:$min"
+        // ]);
 
-        if ($validator->fails()) {
-            return redirect()->back()
-                ->withErrors($validator)
-                ->withInput();
-        }
+        // if ($validator->fails()) {
+        //     return redirect()->back()
+        //         ->withErrors($validator)
+        //         ->withInput();
+        // }
 
         $this->authorize($consumable);
 
         $consumable->name                   = $request->input('name');
         $consumable->category_id            = $request->input('category_id');
-        $consumable->supplier_id            = $request->input('supplier_id');
         $consumable->location_id            = $request->input('location_id');
         $consumable->company_id             = Company::getIdForCurrentUser($request->input('company_id'));
         $consumable->order_number           = $request->input('order_number');
-        $consumable->min_amt                = $request->input('min_amt');
+        // $consumable->min_amt                = $request->input('min_amt');
         $consumable->manufacturer_id        = $request->input('manufacturer_id');
         $consumable->model_number           = $request->input('model_number');
         $consumable->item_no                = $request->input('item_no');
         $consumable->purchase_date          = $request->input('purchase_date');
-        $consumable->purchase_cost          = $request->input('purchase_cost');
-        $consumable->qty                    = Helper::ParseFloat($request->input('qty'));
+        $consumable->purchase_cost          = Helper::ParseCurrency($request->input('purchase_cost'));
+        // $consumable->qty                    = Helper::ParseFloat($request->input('qty'));
         $consumable->notes                  = $request->input('notes');
 
         $consumable = $request->handleImages($consumable);

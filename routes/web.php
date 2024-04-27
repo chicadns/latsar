@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Account;
 use App\Http\Controllers\ActionlogController;
+use App\Http\Controllers\BulkLocationsController;
 use App\Http\Controllers\CategoriesController;
 use App\Http\Controllers\CompaniesController;
 use App\Http\Controllers\DashboardController;
@@ -69,6 +70,17 @@ Route::group(['middleware' => 'auth'], function () {
             [LocationsController::class, 'print_all_assigned']
         )->name('locations.print_all_assigned');
     });
+
+    Route::post(
+        'locations/bulkedit',
+        [BulkLocationsController::class, 'edit']
+    )->name('locations/bulkedit');
+
+    Route::post(
+        'locations/bulkeditsave',
+        [BulkLocationsController::class, 'update']
+    )->name('locations/bulkeditsave');
+
 
     Route::resource('locations', LocationsController::class, [
         'parameters' => ['location' => 'location_id'],

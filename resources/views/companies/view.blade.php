@@ -59,6 +59,16 @@
                     </li>
 
                     <li>
+                        <a href="#consumablestransaction_tab" data-toggle="tab">
+                            <span class="hidden-lg hidden-md">
+                            <i class="fas fa-tint"></i></span>
+                            <span class="hidden-xs hidden-sm">Transaksi Barang
+                                {!! (($company->consumablesdetails) && ($company->consumablesdetails->count() > 0 )) ? '<badge class="badge badge-secondary">'.number_format($company->consumablesdetails->count()).'</badge>' : '' !!}
+                            </span>
+                        </a>
+                    </li>
+
+                    <li>
                         <a href="#components_tab" data-toggle="tab">
                             <span class="hidden-lg hidden-md">
                             <i class="far fa-hdd"></i></span>
@@ -193,6 +203,32 @@
                         </div>
                     </div><!-- /consumables-tab -->
 
+                    <div class="tab-pane" id="consumablestransaction_tab">
+                        <div class="table-responsive">
+
+                            <table
+                                    data-columns="{{ \App\Presenters\ConsumableDetailsPresenter::dataTableLayout() }}"
+                                    data-cookie-id-table="consumablesTransactionTable"
+                                    data-pagination="true"
+                                    data-id-table="consumablesTransactionTable"
+                                    data-search="true"
+                                    data-side-pagination="server"
+                                    data-show-columns="true"
+                                    data-show-export="true"
+                                    data-show-refresh="true"
+                                    data-sort-order="asc"
+                                    id="consumablesTransactionTable"
+                                    class="table table-striped snipe-table"
+                                    data-url="{{route('api.consumablesdetails.index',['company_id' => $company->id]) }}"
+                                    data-export-options='{
+                              "fileName": "export-companies-{{ str_slug($company->name) }}-consumables-{{ date('Y-m-d') }}",
+                              "ignoreColumn": ["actions","image","change","checkbox","checkincheckout","icon"]
+                              }'>
+                            </table>
+
+                        </div>
+                    </div><!-- /consumables-tab -->
+
                     <div class="tab-pane" id="components_tab">
                         <div class="table-responsive">
 
@@ -217,7 +253,7 @@
 
                             </table>
                         </div>
-                    </div><!-- /consumables-tab -->
+                    </div><!-- /components-tab -->
 
                     <div class="tab-pane" id="users_tab">
                         <div class="table-responsive">
@@ -243,7 +279,7 @@
 
                             </table>
                         </div>
-                    </div><!-- /consumables-tab -->
+                    </div><!-- /users-tab -->
 
 
 

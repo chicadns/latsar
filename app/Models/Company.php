@@ -89,15 +89,50 @@ final class Company extends SnipeModel
             $column = 'company_id';
         }
 
+        $groups = json_decode($current_user['groups'], true);
+        $groupName = $groups[0]['name'];
+        
         if ($current_user->company_id != null) {
-            $query = $query->where($table.$column, $current_user->company_id);
-            if ($includenullcompanyid) {
-                $query = $query->orWhereNull($table.$column);
+            $companyNamePattern = "BPS Propinsi";
+            $unikerja = Company::where('id', $current_user->company_id)->value('name');
+            $isBPSPropinsi = strpos($unikerja, $companyNamePattern) !== false;
+            if ($table == 'consumables_transaction.') {
+                if ($groupName == 'Pengguna') {
+                    $query = $query->where($table.'company_user', $current_user->company_id)
+                                   ->where($table.'assigned_to', $current_user->id);
+                } elseif ($groupName == 'Admin Pusat' && $current_user->company_id <= 25 && $current_user->company_id != 6 && $current_user->company_id != 7) {
+                    $query = $query->where($table.$column, 5);
+                } else {
+                    $query = $query->where($table.'company_user', $current_user->company_id)
+                                   ->orWhere($table.$column, $current_user->company_id);
+                }
+            } elseif ($table == 'consumables.') {
+                if ($current_user->company_id <= 25 && $current_user->company_id != 6 && $current_user->company_id != 7) {
+                    $query = $query->where($table.$column, 5);
+                } else {
+                    $query = $query->where($table.$column, $current_user->company_id);
+                }
+            } elseif ($table == 'consumables_details.' && $current_user->company_id <= 25 && $current_user->company_id != 6 && $current_user->company_id != 7) {
+                if ($groupName == 'Admin Pusat') {
+                    $query = $query;
+                }
+            } elseif ($isBPSPropinsi) {
+                $kode_wil = Company::where('id', $current_user->company_id)->value('kode_wil');
+                $kodeProv = substr($kode_wil, 0, 2);
+                $provdanturunan = Company::where('kode_wil', 'like', $kodeProv . '%')->pluck('id')->toArray();
+                
+                $query->whereIn($table . $column, $provdanturunan);
+            } else {
+                $query = $query->where($table.$column, $current_user->company_id);
             }
-            return $query;
         } else {
-            return $query->where($table.$column, '=', null);
+            $query->where($table . $column, '=', null);
         }
+    
+        if ($includenullcompanyid) {
+            $query->orWhereNull($table . $column);
+        }
+        return $query;
     }
 
     public static function getIdFromInput($unescaped_input)
@@ -147,7 +182,7 @@ final class Company extends SnipeModel
                 $current_user_company_id = Auth::user()->company_id;
                 $companyable_company_id = $companyable->company_id;
 
-                return $current_user_company_id == null || $current_user_company_id == $companyable_company_id || Auth::user()->isSuperUser();
+                return $current_user_company_id == null || $current_user_company_id == $companyable_company_id || Auth::user()->isSuperUser() || $current_user_company_id == $companyable->company_user || ($current_user_company_id < 26 && $current_user_company_id != 6 && $current_user_company_id != 7);
             }
         }
     }
@@ -245,6 +280,16 @@ final class Company extends SnipeModel
     public function consumables()
     {
         return $this->hasMany(Consumable::class, 'company_id');
+    }
+
+    public function consumablestransaction()
+    {
+        return $this->hasMany(ConsumableTransaction::class, 'company_id');
+    }
+
+    public function consumablesdetails()
+    {
+        return $this->hasMany(ConsumableDetails::class, 'company_id');
     }
 
     public function components()

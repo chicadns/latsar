@@ -64,7 +64,7 @@ class CustomFieldsController extends Controller
      * @return \Illuminate\Support\Facades\View
      * @throws \Illuminate\Auth\Access\AuthorizationException
      */
-    public function create(Request $request)
+    public function create()
     {
         $this->authorize('create', CustomField::class);
         $fieldsets = CustomFieldset::get();
@@ -203,7 +203,7 @@ class CustomFieldsController extends Controller
      * @return \Illuminate\Support\Facades\View
      * @throws \Illuminate\Auth\Access\AuthorizationException
      */
-    public function edit(Request $request, $id)
+    public function edit($id)
     {
         if ($field = CustomField::find($id)) {
 

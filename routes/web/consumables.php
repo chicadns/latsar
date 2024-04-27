@@ -3,8 +3,6 @@
 use App\Http\Controllers\Consumables;
 use Illuminate\Support\Facades\Route;
 
-
-
 Route::group(['prefix' => 'consumables', 'middleware' => ['auth']], function () {
     Route::get(
         '{consumablesID}/checkout',
@@ -31,10 +29,29 @@ Route::group(['prefix' => 'consumables', 'middleware' => ['auth']], function () 
         [Consumables\ConsumablesFilesController::class, 'show']
     )->name('show.consumablefile');
 
+    Route::get(
+        '{consumablesID}/history',
+        [Consumables\ConsumablesController::class, 'history']
+    )->name('consumables.history');
+});
+
+Route ::group(['prefix' => 'consumablestransaction', 'middleware' => ['auth']], function() {
+
+    Route::get('{consumablesID}/getDataConsumables', [Consumables\ConsumablesTransactionController::class, 'getDataConsumables']);
 
 });
     
 Route::resource('consumables', Consumables\ConsumablesController::class, [
     'middleware' => ['auth'],
     'parameters' => ['consumable' => 'consumable_id'],
+]);
+
+Route::resource('transactiondashboard', Consumables\TransactionDashboardController::class, [
+    'middleware' => ['auth'],
+    'parameters' => ['transactiondashboard' => 'transactiondashboard'],
+]);
+
+Route::resource('consumablestransaction', Consumables\ConsumablesTransactionController::class, [
+    'middleware' => ['auth'],
+    'parameters' => ['consumabletransaction' => 'transaction_id'],
 ]);

@@ -5,7 +5,7 @@ return array(
 	'eula_text'      			=> 'EULA',
     'id'      					=> 'ID',
     'require_acceptance'      	=> 'Diterima',
-    'title'      				=> 'Nama Aksesori',
+    'title'      				=> 'Nama Barang IT',
 
 
 );
