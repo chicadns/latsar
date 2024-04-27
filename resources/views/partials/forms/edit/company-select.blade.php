@@ -3,14 +3,20 @@
     <!-- full company support is enabled and this user isn't a superadmin -->
     <div class="form-group">
     {{ Form::label($fieldname, $translated_name, array('class' => 'col-md-3 control-label')) }}
-        <div class="col-md-7 col-sm-12">
-            <select class="js-data-ajax" disabled="true" data-endpoint="companies" data-placeholder="{{ trans('general.select_company') }}" name="{{ $fieldname }}" style="width: 100%" id="company_select" aria-label="{{ $fieldname }}"{{ (isset($multiple) && ($multiple=='true')) ? " multiple='multiple'" : '' }}>
+        <div class="col-md-7 col-sm-12" @if (Auth::user()->company_id < 26 && Auth::user()->company_id != 6 && Auth::user()->company_id != 7) @else style="pointer-events: none" @endif>
+            <select class="js-data-ajax" data-endpoint="companies" data-placeholder="{{ trans('general.select_company') }}" name="{{ $fieldname }}" style="width: 100%" id="company_select" aria-label="{{ $fieldname }}"{{ (isset($multiple) && ($multiple=='true')) ? " multiple='multiple'" : '' }}>
                 @if ($company_id = old($fieldname, (isset($item)) ? $item->{$fieldname} : ''))
                     <option value="{{ $company_id }}" selected="selected" role="option" aria-selected="true"  role="option">
                         {{ (\App\Models\Company::find($company_id)) ? \App\Models\Company::find($company_id)->name : '' }}
                     </option>
                 @else
-                    <option value="" role="option">{{ trans('general.select_company') }}</option>
+                {{-- ($company_id = old($fieldname, (isset($current_user)) ? $current_user->company_id : '')) --}}
+                    {{$company_id = Auth::user()->company_id}}
+                    <option value="{{ $company_id }}" selected="selected" role="option" aria-selected="true"  role="option">
+                        {{ (\App\Models\Company::find($company_id)) ? \App\Models\Company::find($company_id)->name : '' }}
+                    </option>
+                {{-- @else
+                    <option value="" role="option">{{ trans('general.select_company') }}</option> --}}
                 @endif
             </select>
         </div>

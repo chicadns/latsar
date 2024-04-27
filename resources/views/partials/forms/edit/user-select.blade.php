@@ -2,14 +2,18 @@
 
     {{ Form::label($fieldname, $translated_name, array('class' => 'col-md-3 control-label')) }}
 
-    <div class="col-md-6{{  ((isset($required)) && ($required=='true')) ? ' required' : '' }}">
+    <div class="col-md-7{{  ((isset($required)) && ($required=='true')) ? ' required' : '' }}">
         <select class="js-data-ajax" data-endpoint="users" data-placeholder="{{ trans('general.select_user') }}" name="{{ $fieldname }}" style="width: 100%" id="assigned_user_select" aria-label="{{ $fieldname }}">
             @if ($user_id = old($fieldname, (isset($item)) ? $item->{$fieldname} : ''))
                 <option value="{{ $user_id }}" selected="selected" role="option" aria-selected="true"  role="option">
                     {{ (\App\Models\User::find($user_id)) ? \App\Models\User::find($user_id)->present()->fullName : '' }}
                 </option>
-            @else
-                <option value=""  role="option">{{ trans('general.select_user') }}</option>
+            @elseif ((!Auth::user()->isSuperUser()) && (json_decode(Auth::user()['groups'], true)[0]['name'] == 'Pengguna'))
+                {{$user_id = Auth::user()->id}}
+                <option value="{{ $user_id }}" selected="selected" role="option" aria-selected="true"  role="option">
+                    {{ (\App\Models\User::find($user_id)) ? \App\Models\User::find($user_id)->present()->fullName : '' }}
+                </option>
+                {{-- <option value=""  role="option">{{ trans('general.select_user') }}</option> --}}
             @endif
         </select>
     </div>

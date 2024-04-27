@@ -8,6 +8,8 @@ use App\Http\Transformers\ConsumablesTransformer;
 use App\Http\Transformers\SelectlistTransformer;
 use App\Models\Company;
 use App\Models\Consumable;
+use App\Models\ConsumableTransaction;
+use App\Models\ConsumableDetails;
 use App\Models\User;
 use Illuminate\Http\Request;
 use App\Http\Requests\ImageUploadRequest;
@@ -210,34 +212,44 @@ class ConsumablesController extends Controller
     * @param int $consumableId
     * @return array
      */
-    public function getDataView($consumableId)
+    public function getDataView(Request $request, $consumableId)
     {
-        $consumable = Consumable::with(['consumableAssignments'=> function ($query) {
-            $query->orderBy($query->getModel()->getTable().'.created_at', 'DESC');
-        },
-        'consumableAssignments.admin'=> function ($query) {
-        },
-        'consumableAssignments.user'=> function ($query) {
-        },
-        ])->find($consumableId);
+        $consumabledetails = ConsumableDetails::where('consumable_id', $consumableId)->get();
+        $consumabletransaction = ConsumableTransaction::whereIn('id', $consumabledetails->pluck('transaction_id'))->get();
+        $consumabletransaction->each(function ($transaction) use ($consumabledetails) {
+            $details = $consumabledetails->where('transaction_id', $transaction->id)->first();
+            $transaction->qty = $details->qty;
+        });
 
-        if (! Company::isCurrentUserHasAccess($consumable)) {
-            return ['total' => 0, 'rows' => []];
+        if ($request->filled('selectedOptions')) {
+            $selectedOptions = $request->get('selectedOptions');
+            if (isset($selectedOptions['type']) && $selectedOptions['type'] !== null) {
+                $consumabletransaction = $consumabletransaction->where('types', $selectedOptions['type']);
+            }
+
+            if (isset($selectedOptions['state']) && $selectedOptions['state'] !== null) {
+                $consumabletransaction = $consumabletransaction->where('state', $selectedOptions['state']);
+            }
         }
-        $this->authorize('view', Consumable::class);
+        
         $rows = [];
 
-        foreach ($consumable->consumableAssignments as $consumable_assignment) {
+        foreach ($consumabletransaction as $index => $transaction) {
+
             $rows[] = [
-                'avatar' => ($consumable_assignment->user) ? e($consumable_assignment->user->present()->gravatar) : '',
-                'name' => ($consumable_assignment->user) ? $consumable_assignment->user->present()->nameUrl() : 'Deleted User',
-                'created_at' => Helper::getFormattedDateObject($consumable_assignment->created_at, 'datetime'),
-                'note' => ($consumable_assignment->note) ? e($consumable_assignment->note) : null,
-                'admin' => ($consumable_assignment->admin) ? $consumable_assignment->admin->present()->nameUrl() : null,
+                'name' => ($transaction->assigned_to) ? e($transaction->users->first_name) : 'Tidak disertakan',
+                'company_user' => ($transaction->company_user) ? Company::find($transaction->company_user)->name : 'Tidak disertakan',
+                'type' => ($transaction->types),
+                'state' => ($transaction->state),
+                'qty' => ($transaction->qty),
+                'created_at' => $transaction->purchase_date->toDateString(),
+                'note' => ($transaction->notes) ? e($transaction->notes) : 'Tidak disertakan',
+                'employee_num' => ($transaction->employee_num) ? ($transaction->employee_num) : 'Tidak disertakan',
+                'admin' => ($transaction->user_id) ? $transaction->admin->present()->nameUrl() : null,
             ];
         }
 
-        $consumableCount = $consumable->users->count();
+        $consumableCount = $consumabletransaction->count();
         $data = ['total' => $consumableCount, 'rows' => $rows];
 
         return $data;

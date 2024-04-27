@@ -270,14 +270,14 @@ Rangkuman Transaksi
                 }
                 if (dpndvar == "company") {
                     myPieChartCompany = new Chart(ctxcompany,{
-                        type   : 'doughnut',
+                        type   : 'pie',
                         data   : data,
                         options: pieOptions
                     });
                     $('.closechart1').css('display', 'block');
                 } else {
                     myPieChartConsumable = new Chart(ctxconsumable,{
-                        type   : 'doughnut',
+                        type   : 'pie',
                         data   : data,
                         options: pieOptions
                     });

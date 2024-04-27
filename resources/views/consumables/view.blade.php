@@ -18,86 +18,18 @@
 
 <div class="row">
   <div class="col-md-9">
+    <div class="box box-default">
+      @if ($consumable->id)
+      <div class="box-header with-border">
+        <div class="box-heading">
+          <h2 class="box-title"> {{ $consumable->name }}</h2>
+        </div>
+      </div><!-- /.box-header -->
+      @endif
 
-    <!-- Custom Tabs -->
-    <div class="nav-tabs-custom">
-      <ul class="nav nav-tabs hidden-print">
-
-        <li class="active">
-          <a href="#checkedout" data-toggle="tab">
-            <span class="hidden-lg hidden-md">
-            <i class="fas fa-info-circle fa-2x" aria-hidden="true"></i>
-            </span>
-            <span class="hidden-xs hidden-sm">{{ trans('admin/users/general.info') }}</span>
-          </a>
-        </li>
-
-
-        @can('consumables.files', $consumable)
-          <li>
-            <a href="#files" data-toggle="tab">
-            <span class="hidden-lg hidden-md">
-            <i class="far fa-file fa-2x" aria-hidden="true"></i></span>
-              <span class="hidden-xs hidden-sm">{{ trans('general.file_uploads') }}
-                {!! ($consumable->uploads->count() > 0 ) ? '<badge class="badge badge-secondary">'.number_format($consumable->uploads->count()).'</badge>' : '' !!}
-            </span>
-            </a>
-          </li>
-        @endcan
-
-        @can('update', $consumable)
-          <li class="pull-right">
-            <a href="#" data-toggle="modal" data-target="#uploadFileModal">
-              <i class="fas fa-paperclip" aria-hidden="true"></i> {{ trans('button.upload') }}
-            </a>
-          </li>
-        @endcan
-
-      </ul>
-
-      <div class="tab-content">
-
-        <div class="tab-pane active" id="checkedout">
-              <div class="table-responsive">
-
-                <table
-                        data-cookie-id-table="consumablesCheckedoutTable"
-                        data-pagination="true"
-                        data-id-table="consumablesCheckedoutTable"
-                        data-search="false"
-                        data-side-pagination="server"
-                        data-show-columns="true"
-                        data-show-export="true"
-                        data-show-footer="true"
-                        data-show-refresh="true"
-                        data-sort-order="asc"
-                        data-sort-name="name"
-                        id="consumablesCheckedoutTable"
-                        class="table table-striped snipe-table"
-                        data-url="{{route('api.consumables.show.users', $consumable->id)}}"
-                        data-export-options='{
-                "fileName": "export-consumables-{{ str_slug($consumable->name) }}-checkedout-{{ date('Y-m-d') }}",
-                "ignoreColumn": ["actions","image","change","checkbox","checkincheckout","icon"]
-                }'>
-                  <thead>
-                  <tr>
-                    <th data-searchable="false" data-sortable="false" data-field="avatar" data-formatter="imageFormatter">{{ trans('general.image') }}</th>
-                    <th data-searchable="false" data-sortable="false" data-field="name" formatter="usersLinkFormatter">{{ trans('general.user') }}</th>
-                    <th data-searchable="false" data-sortable="false" data-field="created_at" data-formatter="dateDisplayFormatter">
-                      {{ trans('general.date') }}
-                    </th>
-                    <th data-searchable="false" data-sortable="false" data-field="note">{{ trans('general.notes') }}</th>
-                    <th data-searchable="false" data-sortable="false" data-field="admin">{{ trans('general.admin') }}</th>
-                  </tr>
-                  </thead>
-                </table>
-          </div>
-        </div> <!-- close tab-pane div -->
-
-
-        @can('consumables.files', $consumable)
-          <div class="tab-pane" id="files">
-
+      <div class="box-body">
+        <div class="row">
+          <div class="col-md-12">
             <div class="table table-responsive">
               <div style="position: absolute; margin-top: 10px; display: flex;">
                 <div style="margin-right: 10px;">
@@ -133,21 +65,19 @@
                       data-sort-name="id"
                       id="consumablesCheckedoutTable"
                       class="table table-striped snipe-table"
-                      data-url="{{route('api.consumables.showUsers', ['consumable_id' => $consumable->id])}}"
+                      data-url="{{route('api.consumables.show.transaction', $consumable->id)}}"
                       data-export-options='{
                 "fileName": "export-consumables-{{ str_slug($consumable->name) }}-transaction-{{ date('Y-m-d') }}",
                 "ignoreColumn": ["actions","image","change"]
                 }'>
               </table>
             </div>
-          </div> <!-- /.tab-pane -->
-        @endcan
+          </div> <!-- /.col-md-12-->
 
+        </div>
       </div>
-    </div>
-
-  </div>
-
+    </div> <!-- /.box.box-default-->
+  </div> <!-- /.col-md-9-->
 
   <div class="col-md-3">
 
