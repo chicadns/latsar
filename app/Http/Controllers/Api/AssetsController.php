@@ -100,9 +100,7 @@ class AssetsController extends Controller
             'warranty_months',
             'checkout_counter',
             'checkin_counter',
-            'requests_counter',
-            // 'byod',
-            //'asset_eol_date',
+            'requests_counter'
         ];
 
         $filter = [];
@@ -208,7 +206,16 @@ class AssetsController extends Controller
                 break;
             case 'Deployed':
                 // more sad, horrible workarounds for laravel bugs when doing full text searches
-                $assets->whereNotNull('assets.assigned_to');
+                $assets->where('assets.assigned_to', '>', 0);
+                break;
+            case 'Allstuff':
+                $assets->where('assets.assigned_to', '=', 0);
+                break;
+            case 'Allocated':
+                $assets->where('assets.assigned_to', '=', 0)->where('assets.status_id', '=', 4);
+                break;
+            case 'Available':
+                $assets->where('assets.assigned_to', '=', 0)->where('assets.status_id', '=', 2);
                 break;
             default:
 

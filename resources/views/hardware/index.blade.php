@@ -22,6 +22,12 @@
     {{ trans('general.assets') }} - {{ trans('general.archived') }}
   @elseif (Request::get('status')=='Deleted')
     {{ trans('general.assets') }} - {{ trans('general.deleted') }}
+  @elseif (Request::get('status')=='Allstuff')
+    {{ trans('general.all') }} {{ trans('general.accessories') }}
+  @elseif (Request::get('status')=='Allocated')
+    {{ trans('general.accessories') }} {{ trans('general.allocated') }}
+  @elseif (Request::get('status')=='Available')
+    {{ trans('general.accessories') }} {{ trans('general.available') }}
   @endif
 @endif
 

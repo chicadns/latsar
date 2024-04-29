@@ -620,46 +620,46 @@
                                 </a>
 
                                 <ul class="treeview-menu">
-                                    <li{!! (Request::query('status') == 'Allitems' ? ' class="active"' : '') !!}>
-                                        <a href="{{ url('accessories?status=Allitems') }}">
+                                    <li{!! (Request::query('status') == 'Allstuff' ? ' class="active"' : '') !!}>
+                                        <a href="{{ url('accessories?status=Allstuff') }}">
                                             <i class="fas fa-list" aria-hidden="true"></i>
                                             {{ trans('general.list_all') }}
                                         </a>
                                     </li>
-                                    <li{!! (Request::query('status') == 'Deployed' ? ' class="active"' : '') !!}>
-                                        <a href="{{ url('accessories?status=Deployed') }}">
+                                    <li{!! (Request::query('status') == 'Allocated' ? ' class="active"' : '') !!}>
+                                        <a href="{{ url('accessories?status=Allocated') }}">
                                             <i class="fas fa-check-double"></i>
                                             <!-- {{ trans('general.all') }} -->
-                                            {{ trans('general.deployed') }}
+                                            {{ trans('general.allocated') }}
                                             {{-- ({{ (isset($total_deployed_sidebar)) ? $total_deployed_sidebar : '' }}) --}}
                                         </a>
                                     </li>
-                                    <li{!! (Request::query('status') == 'RTD' ? ' class="active"' : '') !!}>
-                                        <a href="{{ url('accessories?status=RTD') }}">
+                                    <li{!! (Request::query('status') == 'Available' ? ' class="active"' : '') !!}>
+                                        <a href="{{ url('accessories?status=Available') }}">
                                             <i class="fas fa-circle-check"></i>
                                             <!-- {{ trans('general.all') }} -->
-                                            {{ trans('general.ready_to_deploy') }}
+                                            {{ trans('general.available') }}
                                             {{-- ({{ (isset($total_rtd_sidebar)) ? $total_rtd_sidebar : '' }}) --}}
                                         </a>
                                     </li>
-                                    <li{!! (Request::query('status') == 'Pending' ? ' class="active"' : '') !!}><a href="{{ url('accessories?status=Pending') }}"><i class="fas fa-wrench fa-fw"></i>
+                                    {{-- <li{!! (Request::query('status') == 'Pending' ? ' class="active"' : '') !!}><a href="{{ url('accessories?status=Pending') }}"><i class="fas fa-wrench fa-fw"></i>
                                             <!-- {{ trans('general.all') }} -->
                                             {{ trans('general.pending') }}
-                                            {{-- ({{ (isset($total_pending_sidebar)) ? $total_pending_sidebar : '' }}) --}}
+                                            ({{ (isset($total_pending_sidebar)) ? $total_pending_sidebar : '' }})
                                         </a>
                                     </li>
                                     <li{!! (Request::query('status') == 'Undeployable' ? ' class="active"' : '') !!} ><a href="{{ url('accessories?status=Undeployable') }}"><i class="fas fa-square-xmark fa-fw"></i>
                                             <!-- {{ trans('general.all') }} -->
                                             {{ trans('general.undeployable') }}
-                                            {{-- ({{ (isset($total_undeployable_sidebar)) ? $total_undeployable_sidebar : '' }}) --}}
+                                            ({{ (isset($total_undeployable_sidebar)) ? $total_undeployable_sidebar : '' }})
                                         </a>
                                     </li>
                                     <li{!! (Request::query('status') == 'Archived' ? ' class="active"' : '') !!}><a href="{{ url('accessories?status=Archived') }}"><i class="fas fa-boxes-packing fa-fw"></i>
                                             <!-- {{ trans('general.all') }} -->
                                             {{ trans('admin/hardware/general.archived') }}
-                                            {{-- ({{ (isset($total_archived_sidebar)) ? $total_archived_sidebar : '' }}) --}}
+                                            ({{ (isset($total_archived_sidebar)) ? $total_archived_sidebar : '' }})
                                             </a>
-                                    </li>
+                                    </li> --}}
                                 </ul>
                             </li>
 

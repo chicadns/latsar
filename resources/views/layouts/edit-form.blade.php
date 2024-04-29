@@ -46,18 +46,15 @@
                 <div class="col-md-12 box-title text-right" style="padding: 0px; margin: 0px;">
 
                     <div class="col-md-12" style="padding: 0px; margin: 0px;">
+                        @if ($item->id)
                         <div class="col-md-6 text-left">
-                            @if ($item->id)
                                 <h2 class="box-title text-left" style="padding-top: 8px; padding-bottom: 7px;">
                                     {{ $item->display_name }}
                                 </h2>
-                            @endif
                         </div>
+                        @endif
                         @if (isset($topSubmit) && ($topSubmit=='true'))
-                        <div class="col-md-3 text-right" style="padding-right: 10px;">
-                            <a class="btn btn-link text-left" href="{{ URL::previous() }}">
-                                {{ trans('button.cancel') }}
-                            </a>
+                        <div class="text-right" style="padding-right: 10px;">
                             <button type="submit" class="btn btn-primary pull-right">
                                 <i class="fas fa-check icon-white" aria-hidden="true"></i>
                                 {{ trans('general.save') }}

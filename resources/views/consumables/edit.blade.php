@@ -1,6 +1,7 @@
 @extends('layouts/edit-form', [
     'createText' => trans('admin/consumables/general.create') ,
     'updateText' => trans('admin/consumables/general.update'),
+    'topSubmit' => true,
     'helpPosition'  => 'right',
     'helpText' => trans('help.consumables'),
     'formAction' => (isset($item->id)) ? route('consumables.update', ['consumable' => $item->id]) : route('consumables.store'),

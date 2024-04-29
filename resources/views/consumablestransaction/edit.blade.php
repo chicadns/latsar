@@ -1,6 +1,7 @@
 @extends('layouts/edit-form', [
     'createText' => (isset($transaction)) ? ($transaction == 'pengeluaran' ? 'Menambah Transaksi Pengeluaran Barang' : 'Menambah Transaksi Pemasukkan Barang') : "",
     'updateText' => (old('types', $item->types) == 'Pengeluaran' ? 'Memperbarui Transaksi Pengeluaran Barang' : 'Memperbarui Transaksi Pemasukkan Barang'),
+    'topSubmit' => true,
     'helpPosition' => 'right',
     'helpText' => trans('help.consumables'),
     'formAction' => (isset($item->id)) ? route('consumablestransaction.update', ['consumablestransaction' => $item->id]) : route('consumablestransaction.store'),
@@ -11,7 +12,12 @@
     <!-- status transaksi -->
     <div class="form-group">
         <label for="state" class="col-md-3 control-label">{{ 'Status Transaksi' }}</label>
-        <div class="col-md-7 col-sm-12" @if ($current_user->company_id == $item->company_id || $current_user->id == $item->user_id || $current_user->id == $item->assigned_to || $current_user->isSuperUser() {{--|| json_decode($current_user['groups'], true)[0]['name'] == 'Pengguna'--}} || isset($transaction)) {{ $access_user = true }} @else {{ $access_user = false }} style="pointer-events: none" @endif>
+        <div class="col-md-7 col-sm-12 selectstate"
+            @if ($current_user->company_id == $item->company_id || $current_user->isSuperUser() || json_decode($current_user['groups'], true)[0]['name'] == 'Admin Pusat' || (($current_user->id == $item->assigned_to || $current_user->id == $item->user_id) && $item->state == 'Entri Data') || isset($transaction)) 
+            {{ $access_user = true }}
+            @else 
+            {{ $access_user = false }} style="pointer-events: none" 
+        @endif>
             <select required class="select2" style="width:100%;" name="state" id="state">
                 @if ((isset($transaction)) || (old('state', $item->state) == 'Entri Data'))
                     <option value="Entri Data" selected>Entri Data</option>
@@ -40,15 +46,15 @@
     </div>
     <!-- jenis transaksi -->
     <input class="form-control" type="hidden" value="{{ (isset($transaction)) ? ( $transaction == 'pengeluaran' ? 'Pengeluaran' : 'Pemasukkan' ) : ( old('types', $item->types) == 'Pengeluaran' ? 'Pengeluaran' : 'Pemasukkan' ) }}" name="types" id="types">
-    <!-- satuan unit kerja -->
-    @include ('partials.forms.edit.company-select-2', ['translated_name' => 'Satuan/Unit Kerja Penyedia', 'fieldname' => 'company_id', 'transcstt' => 'true'])
-    <!-- khusus pengeluaran -->
     <div @if($access_user == false) style="pointer-events: none" @endif>
-    <div @if((isset($transaction) && $transaction == 'pemasukkan') || ($item->types == 'Pemasukkan') || (!$current_user->isSuperUser() && json_decode($current_user['groups'], true)[0]['name'] == 'Pengguna')) style="display: none;" @endif>
-            @include ('partials.forms.edit.nip', ['translated_name' => 'NIP Penanggung Jawab'])
-            @include ('partials.forms.edit.company-select', ['translated_name' => 'Satuan/Unit Kerja Penerima', 'fieldname' => 'company_user'])
-            @include ('partials.forms.edit.user-select', ['translated_name' => 'Pengguna Barang', 'fieldname' => 'assigned_to', 'hide_new' => 'true', 'style_user' => 'pointer-events: none'])
-    </div>
+        <!-- satuan unit kerja -->
+        @include ('partials.forms.edit.company-select-2', ['translated_name' => 'Satuan/Unit Kerja Penyedia', 'fieldname' => 'company_id', 'transcstt' => 'true'])
+        <!-- khusus pengeluaran -->
+        <div @if((isset($transaction) && $transaction == 'pemasukkan') || ($item->types == 'Pemasukkan') || (!$current_user->isSuperUser() && json_decode($current_user['groups'], true)[0]['name'] == 'Pengguna')) style="display: none;" @endif>
+                @include ('partials.forms.edit.nip', ['translated_name' => 'NIP Penanggung Jawab'])
+                @include ('partials.forms.edit.company-select', ['translated_name' => 'Satuan/Unit Kerja Penerima', 'fieldname' => 'company_user'])
+                @include ('partials.forms.edit.user-select', ['translated_name' => 'Pengguna Barang', 'fieldname' => 'assigned_to', 'hide_new' => 'true', 'style_user' => 'pointer-events: none'])
+        </div>
     <!-- tanggal pengadaan -->
     @include ('partials.forms.edit.purchase_date')
     <!-- catatan -->
