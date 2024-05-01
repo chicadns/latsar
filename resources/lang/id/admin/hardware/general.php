@@ -3,8 +3,10 @@
 return [
     'about_assets_title'           => 'Tentang Aset',
     'about_assets_text'            => 'Aset adalah barang yang dilacak dengan nomor seri atau tanda aset. Cenderung menjadi barang dengan nilai lebih tinggi dimana identifikasi barang secara spesifik berpengaruh.',
+    'allocated'             => 'Teralokasikan/Sudah Dialokasikan',
     'archived'  				=> 'Diarsipkan',
     'asset'  					=> 'Aset',
+    'available'             => 'Tersedia/Belum Dialokasikan',
     'bulk_checkout'             => 'Alokasi',
     'bulk_checkin'              => 'Bulk Realokasi Aset',
     'checkin'  					=> 'Realokasi Aset',

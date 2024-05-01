@@ -1229,6 +1229,16 @@ class Asset extends Depreciable
         return $query->where('assigned_to', '>', '0');
     }
 
+    public function scopeAllocated($query)
+    {
+        return $query->where('assigned_to', '=', '0')->where('status_id', '=', 6);
+    }
+
+    public function scopeAvailable($query)
+    {
+        return $query->where('assigned_to', '=', '0')->where('status_id', '=', 7);
+    }
+
   /**
    * Query builder scope for Requestable assets
    *

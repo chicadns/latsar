@@ -207,7 +207,7 @@ class AssetsController extends Controller
             $minutes = 518400;
             // dd( $_POST['options']);
             // Cookie::queue(Cookie::make('optional_info', json_decode($_POST['options']), $minutes));
-            return redirect()->route('hardware.index')
+            return redirect()->route('hardware.index', ['status' => $request->get('asset_status')])
                 ->with('success', trans('admin/hardware/message.create.success'));
                
       
@@ -377,7 +377,7 @@ class AssetsController extends Controller
 
 
         if ($asset->save()) {
-            return redirect()->route('hardware.show', $assetId)
+            return redirect()->route('hardware.index', ['status' => $request->get('asset_status')])
                 ->with('success', trans('admin/hardware/message.update.success'));
         }
 

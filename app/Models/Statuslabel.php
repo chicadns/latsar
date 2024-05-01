@@ -26,6 +26,7 @@ class Statuslabel extends SnipeModel
         'deployable' => 'required',
         'pending' => 'required',
         'archived' => 'required',
+        'non_it_stuff' => 'required',
     ];
 
     protected $fillable = [
@@ -73,15 +74,19 @@ class Statuslabel extends SnipeModel
      */
     public function getStatuslabelType()
     {
-        if (($this->pending == '1') && ($this->archived == '0') && ($this->deployable == '0')) {
+        if (($this->pending == '1') && ($this->archived == '0') && ($this->deployable == '0') && ($this->non_it_stuff == '0')) {
             return 'pending';
-        } elseif (($this->pending == '0') && ($this->archived == '1') && ($this->deployable == '0')) {
+        } elseif (($this->pending == '0') && ($this->archived == '1') && ($this->deployable == '0') && ($this->non_it_stuff == '0')) {
             return 'archived';
-        } elseif (($this->pending == '0') && ($this->archived == '0') && ($this->deployable == '0')) {
+        } elseif (($this->pending == '0') && ($this->archived == '0') && ($this->deployable == '0') && ($this->non_it_stuff == '0')) {
             return 'undeployable';
+        } elseif (($this->pending == '0') && ($this->archived == '0') && ($this->deployable == '1') && ($this->non_it_stuff == '0')) {
+            return 'deployable';
+        } elseif (($this->pending == '0') && ($this->archived == '0') && ($this->deployable == '0') && ($this->non_it_stuff == '1')) {
+            return 'allocated';
+        } elseif (($this->pending == '0') && ($this->archived == '0') && ($this->deployable == '1') && ($this->non_it_stuff == '1')) {
+            return 'available';
         }
-
-        return 'deployable';
     }
 
     /**
@@ -93,7 +98,8 @@ class Statuslabel extends SnipeModel
     {
         return $this->where('pending', '=', 1)
                     ->where('archived', '=', 0)
-                    ->where('deployable', '=', 0);
+                    ->where('deployable', '=', 0)
+                    ->where('non_it_stuff', '=', 0);
     }
 
     /**
@@ -105,7 +111,8 @@ class Statuslabel extends SnipeModel
     {
         return $this->where('pending', '=', 0)
             ->where('archived', '=', 1)
-            ->where('deployable', '=', 0);
+            ->where('deployable', '=', 0)
+            ->where('non_it_stuff', '=', 0);
     }
 
     /**
@@ -117,7 +124,24 @@ class Statuslabel extends SnipeModel
     {
         return $this->where('pending', '=', 0)
             ->where('archived', '=', 0)
-            ->where('deployable', '=', 1);
+            ->where('deployable', '=', 1)
+            ->where('non_it_stuff', '=', 0);
+    }
+
+    public function scopeAllocated()
+    {
+        return $this->where('pending', '=', 0)
+            ->where('archived', '=', 0)
+            ->where('deployable', '=', 0)
+            ->where('non_it_stuff', '=', 1);
+    }
+
+    public function scopeAvailable()
+    {
+        return $this->where('pending', '=', 0)
+            ->where('archived', '=', 0)
+            ->where('deployable', '=', 1)
+            ->where('non_it_stuff', '=', 1);
     }
 
     /**
@@ -129,7 +153,8 @@ class Statuslabel extends SnipeModel
     {
         return $this->where('pending', '=', 0)
             ->where('archived', '=', 0)
-            ->where('deployable', '=', 0);
+            ->where('deployable', '=', 0)
+            ->where('non_it_stuff', '=', 0);
     }
 
     /**
@@ -144,19 +169,23 @@ class Statuslabel extends SnipeModel
         $statustype['pending'] = 0;
         $statustype['deployable'] = 0;
         $statustype['archived'] = 0;
+        $statustype['non_it_stuff'] = 0;
 
         if ($type == 'pending') {
             $statustype['pending'] = 1;
             $statustype['deployable'] = 0;
             $statustype['archived'] = 0;
+            $statustype['non_it_stuff'] = 0;
         } elseif ($type == 'deployable') {
             $statustype['pending'] = 0;
             $statustype['deployable'] = 1;
             $statustype['archived'] = 0;
+            $statustype['non_it_stuff'] = 0;
         } elseif ($type == 'archived') {
             $statustype['pending'] = 0;
             $statustype['deployable'] = 0;
             $statustype['archived'] = 1;
+            $statustype['non_it_stuff'] = 0;
         }
 
         return $statustype;

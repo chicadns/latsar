@@ -52,12 +52,19 @@ class AssetCountForSidebar
             \Log::debug($e);
         }
 
-        // try {
-        //     $total_byod_sidebar = Asset::where('byod', '=', '1')->count();
-        //     view()->share('total_byod_sidebar', $total_byod_sidebar);
-        // } catch (\Exception $e) {
-        //     \Log::debug($e);
-        // }
+        try {
+            $total_allocated_sidebar = Asset::Allocated()->count();
+            view()->share('total_allocated_sidebar', $total_allocated_sidebar);
+        } catch (\Exception $e) {
+            \Log::debug($e);
+        }
+
+        try {
+            $total_available_sidebar = Asset::Available()->count();
+            view()->share('total_available_sidebar', $total_available_sidebar);
+        } catch (\Exception $e) {
+            \Log::debug($e);
+        }
 
         return $next($request);
     }

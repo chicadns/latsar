@@ -177,10 +177,14 @@
                                                     {!!  $asset->assignedTo->present()->glyph()  !!}
                                                     {!!  $asset->assignedTo->present()->nameUrl() !!}
                                                 @else
-                                                    @if (($asset->assetstatus) && ($asset->assetstatus->deployable=='1'))
+                                                    @if (($asset->assetstatus) && ($asset->assetstatus->deployable=='1') && ($asset->assetstatus->non_it_stuff=='0'))
                                                         <i class="fas fa-circle text-green"></i>
-                                                    @elseif (($asset->assetstatus) && ($asset->assetstatus->pending=='1'))
+                                                    @elseif (($asset->assetstatus) && ($asset->assetstatus->pending=='1') && ($asset->assetstatus->non_it_stuff=='0'))
                                                         <i class="fas fa-circle text-orange"></i>
+                                                    @elseif (($asset->assetstatus) && ($asset->assetstatus->deployable=='1') && ($asset->assetstatus->non_it_stuff=='1'))
+                                                        <i class="fas fa-square text-green"></i>
+                                                    @elseif (($asset->assetstatus) && ($asset->assetstatus->deployable=='0') && ($asset->assetstatus->non_it_stuff=='1'))
+                                                        <i class="fas fa-square text-blue"></i>
                                                     @else
                                                         <i class="fas fa-times text-red"></i>
                                                     @endif

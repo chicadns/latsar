@@ -83,6 +83,7 @@ class StatuslabelsController extends Controller
         $statusLabel->color = $request->input('color');
         $statusLabel->show_in_nav = $request->input('show_in_nav', 0);
         $statusLabel->default_label = $request->input('default_label', 0);
+        $statusLabel->non_it_stuff = $request->input('non_it_stuff', 0);
 
         if ($statusLabel->save()) {
             // Redirect to the new Statuslabel  page
@@ -110,7 +111,7 @@ class StatuslabelsController extends Controller
 
         $use_statuslabel_type = $item->getStatuslabelType();
 
-        $statuslabel_types = ['' => trans('admin/hardware/form.select_statustype')] + ['undeployable' => trans('admin/hardware/general.undeployable')] + ['pending' => trans('admin/hardware/general.pending')] + ['archived' => trans('admin/hardware/general.archived')] + ['deployable' => trans('admin/hardware/general.deployable')];
+        $statuslabel_types = ['' => trans('admin/hardware/form.select_statustype')] + ['undeployable' => trans('admin/hardware/general.undeployable')] + ['pending' => trans('admin/hardware/general.pending')] + ['archived' => trans('admin/hardware/general.archived')] + ['deployable' => trans('admin/hardware/general.deployable')] + ['available' => trans('admin/hardware/general.available')] + ['allocated' => trans('admin/hardware/general.allocated')];
 
         return view('statuslabels/edit', compact('item', 'statuslabel_types'))->with('use_statuslabel_type', $use_statuslabel_type);
     }
@@ -145,6 +146,7 @@ class StatuslabelsController extends Controller
         $statuslabel->color = $request->input('color');
         $statuslabel->show_in_nav = $request->input('show_in_nav', 0);
         $statuslabel->default_label = $request->input('default_label', 0);
+        $statusLabel->non_it_stuff = $request->input('non_it_stuff', 0);
 
         // Was the asset created?
         if ($statuslabel->save()) {

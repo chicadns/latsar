@@ -517,7 +517,9 @@ class Helper
             + ['deployable' => trans('admin/hardware/general.deployable')]
             + ['pending' => trans('admin/hardware/general.pending')]
             + ['undeployable' => trans('admin/hardware/general.undeployable')]
-            + ['archived' => trans('admin/hardware/general.archived')];
+            + ['archived' => trans('admin/hardware/general.archived')]
+            + ['available' => trans('admin/hardware/general.available')]
+            + ['allocated' => trans('admin/hardware/general.allocated')];
 
         return $statuslabel_types;
     }

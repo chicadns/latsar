@@ -185,7 +185,11 @@
     function genericRowLinkFormatter(destination) {
         return function (value,row) {
             if (value) {
-                return '<a href="{{ config('app.url') }}/' + destination + '/' + row.id + '">' + value + '</a>';
+                if (destination == 'hardware') {
+                    return '<a href="{{ config('app.url') }}/' + destination + '/' + row.id + '?status={{ Request::get("status") }}">' + value + '</a>';
+                } else {
+                    return '<a href="{{ config('app.url') }}/' + destination + '/' + row.id + '">' + value + '</a>';
+                }
             }
         };
     }
@@ -244,7 +248,9 @@
                   'deployed': '{{ strtolower(trans('general.deployed')) }}',
                   'deployable': '{{ strtolower(trans('admin/hardware/general.deployable')) }}',
                   'archived': '{{ strtolower(trans('general.archived')) }}',
-                  'pending': '{{ strtolower(trans('general.pending')) }}'
+                  'pending': '{{ strtolower(trans('general.pending')) }}',
+                  'allocated': '{{ strtolower(trans('general.allocated')) }}',
+                  'available': '{{ strtolower(trans('general.available')) }}'
                 }
 
                 switch (value.status_meta) {
@@ -261,6 +267,16 @@
                     case 'pending':
                         text_color = 'orange';
                         icon_style = 'fa-circle';
+                        text_help = '';
+                        break;
+                    case 'allocated':
+                        text_color = 'blue';
+                        icon_style = 'fa-square';
+                        text_help = '';
+                        break;
+                    case 'available':
+                        text_color = 'green';
+                        icon_style = 'fa-square';
                         text_help = '';
                         break;
                     default:
@@ -323,7 +339,11 @@
             }
 
             if ((row.available_actions) && (row.available_actions.update === true)) {
-                actions += '<a href="{{ config('app.url') }}/' + dest + '/' + row.id + '/edit" class="actions btn btn-sm btn-warning" data-tooltip="true" title="{{ trans('general.update') }}"><i class="fas fa-pencil-alt" aria-hidden="true"></i><span class="sr-only">{{ trans('general.update') }}</span></a>&nbsp;';
+                if (dest == 'hardware') {
+                    actions += '<a href="{{ config('app.url') }}/' + dest + '/' + row.id + '/edit?status={{ Request::get("status") }}" class="actions btn btn-sm btn-warning" data-tooltip="true" title="{{ trans('general.update') }}"><i class="fas fa-pencil-alt" aria-hidden="true"></i><span class="sr-only">{{ trans('general.update') }}</span></a>&nbsp;';
+                } else {
+                    actions += '<a href="{{ config('app.url') }}/' + dest + '/' + row.id + '/edit" class="actions btn btn-sm btn-warning" data-tooltip="true" title="{{ trans('general.update') }}"><i class="fas fa-pencil-alt" aria-hidden="true"></i><span class="sr-only">{{ trans('general.update') }}</span></a>&nbsp;';
+                }
             }
 
             if ((row.available_actions) && (row.available_actions.delete === true)) {

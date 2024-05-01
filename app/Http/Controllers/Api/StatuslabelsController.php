@@ -48,6 +48,10 @@ class StatuslabelsController extends Controller
                 $statuslabels = $statuslabels->Deployable();
             } elseif (strtolower($request->input('status_type')) == 'undeployable') {
                 $statuslabels = $statuslabels->Undeployable();
+            } elseif (strtolower($request->input('status_type')) == 'available') {
+                $statuslabels = $statuslabels->Available();
+            } elseif (strtolower($request->input('status_type')) == 'allocated') {
+                $statuslabels = $statuslabels->Allocated();
             }
         }
 
@@ -93,6 +97,7 @@ class StatuslabelsController extends Controller
         $statuslabel->color             =  $request->input('color');
         $statuslabel->show_in_nav       =  $request->input('show_in_nav', 0);
         $statuslabel->default_label     =  $request->input('default_label', 0);
+        $statusLabel->non_it_stuff = $request->input('non_it_stuff', 0);
 
 
         if ($statuslabel->save()) {
@@ -149,6 +154,7 @@ class StatuslabelsController extends Controller
         $statuslabel->color             =  $request->input('color');
         $statuslabel->show_in_nav       =  $request->input('show_in_nav', 0);
         $statuslabel->default_label     =  $request->input('default_label', 0);
+        $statusLabel->non_it_stuff = $request->input('non_it_stuff', 0);
 
         if ($statuslabel->save()) {
             return response()->json(Helper::formatStandardApiResponse('success', $statuslabel, trans('admin/statuslabels/message.update.success')));
@@ -235,6 +241,12 @@ class StatuslabelsController extends Controller
 
         $total['undeployable']['label'] = trans('general.undeployable');
         $total['undeployable']['count'] = Asset::Undeployable()->count();
+
+        $total['allocated']['label'] = trans('general.allocated');
+        $total['allocated']['count'] = Asset::Allocated()->count();
+
+        $total['available']['label'] = trans('general.available');
+        $total['available']['count'] = Asset::Available()->count();
 
         return (new PieChartTransformer())->transformPieChartDate($total);
     }

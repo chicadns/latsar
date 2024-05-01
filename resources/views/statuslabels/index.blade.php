@@ -78,13 +78,25 @@
       </div>
       <div class="box box-danger">
           <div class="box-body">
-            <p><i class="fas fa-times text-red"></i> <strong>{{ trans('admin/statuslabels/table.undeployable') }}</strong>: {{ trans('admin/statuslabels/message.help.undeployable') }}</p>
+            <p><i class="fas fa-circle text-red"></i> <strong>{{ trans('admin/statuslabels/table.undeployable') }}</strong>: {{ trans('admin/statuslabels/message.help.undeployable') }}</p>
           </div>
       </div>
 
       <div class="box box-danger">
           <div class="box-body">
               <p><i class="fas fa-times text-red"></i> <strong>{{ trans('admin/statuslabels/table.archived') }}</strong>: {{ trans('admin/statuslabels/message.help.archived') }}</p>
+          </div>
+      </div>
+
+      <div class="box box-info">
+          <div class="box-body">
+          <p><i class="fas fa-square text-blue"></i> <strong>{{ trans('admin/statuslabels/table.allocated') }}</strong>: {!!  trans('admin/statuslabels/message.help.allocated')  !!}</p>
+          </div>
+      </div>
+
+      <div class="box box-success">
+          <div class="box-body">
+          <p><i class="fas fa-square text-green"></i> <strong>{{ trans('admin/statuslabels/table.available') }}</strong>: {!!  trans('admin/statuslabels/message.help.available')  !!}</p>
           </div>
       </div>
 
@@ -129,6 +141,16 @@
                   icon_style = 'fa-circle';
                   trans  ='{{ trans('admin/statuslabels/table.undeployable') }}';
 
+                  break;
+              case 'allocated':
+                  text_color = 'blue';
+                  icon_style = 'fa-square';
+                  trans = '{{ trans('general.allocated') }}';
+                  break;
+              case 'available':
+                  text_color = 'green';
+                  icon_style = 'fa-square';
+                  trans = '{{ trans('general.available') }}';
                   break;
               default:
                   text_color = 'red';

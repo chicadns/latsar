@@ -16,6 +16,7 @@
 
   <!-- Asset Tag -->
   <div class="form-group {{ $errors->has('asset_tag') ? ' has-error' : '' }}">
+    <input type="text" style="display: none" name="asset_status" id="asset_status" value="{{ Request::get('status') }}">
     <label for="asset_tag" class="col-md-3 control-label">{{ trans('admin/hardware/form.tag') }}</label>
 
 

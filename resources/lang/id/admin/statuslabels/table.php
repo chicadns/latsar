@@ -2,12 +2,14 @@
 
 return array(
     'about'      	=> 'Tentang label status',
+    'allocated'     => 'Teralokasikan/Sudah Dialokasikan',
     'archived'      	=> 'Diarsipkan',
+    'available'     => 'Tersedia/Belum Dialokasikan',
     'create'      	=> 'Buat Status Aset',
     'color'      	=> 'Warna Status',
     'default_label' => 'Label standar',
     'default_label_help' => 'Ini digunakan untuk memastikan label status yang paling sering digunakan muncul di bagian atas kotak pilih saat membuat / mengedit aset.',
-    'deployable'      	=> 'Dapat digunakan',
+    'deployable'      	=> 'Siap dialokasikan',
     'info'      	=> 'Label status digunakan untuk menjelaskan berbagai macam status aset. Sebagai contoh, rusak/hilang, dalam perbaikan dan sebagainya. Anda dapat membuat status label baru untuk penundaan aset, aset yang dapat digunakan dan aset yang diarsipkan.',
     'name'      	=> 'Status Aset',
     'pending'      	=> 'Dalam Pemeliharaan',

@@ -212,10 +212,10 @@ class AssetsController extends Controller
                 $assets->where('assets.assigned_to', '=', 0);
                 break;
             case 'Allocated':
-                $assets->where('assets.assigned_to', '=', 0)->where('assets.status_id', '=', 4);
+                $assets->where('assets.assigned_to', '=', 0)->where('assets.status_id', '=', 6);
                 break;
             case 'Available':
-                $assets->where('assets.assigned_to', '=', 0)->where('assets.status_id', '=', 2);
+                $assets->where('assets.assigned_to', '=', 0)->where('assets.status_id', '=', 7);
                 break;
             default:
 

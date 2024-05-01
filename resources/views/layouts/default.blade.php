@@ -18,7 +18,7 @@
     <link rel="apple-touch-icon" href="{{ ($snipeSettings) && ($snipeSettings->favicon!='') ?  Storage::disk('public')->url(e($snipeSettings->logo)) :  config('app.url').'/img/favicon.ico' }}">
     <link rel="apple-touch-startup-image" href="{{ ($snipeSettings) && ($snipeSettings->favicon!='') ?  Storage::disk('public')->url(e($snipeSettings->logo)) :  config('app.url').'/img/favicon.ico' }}">
     <link rel="shortcut icon" type="image/ico" href="{{ ($snipeSettings) && ($snipeSettings->favicon!='') ?  Storage::disk('public')->url(e($snipeSettings->favicon)) : config('app.url').'/logo.png' }} ">
-    <link rel="shortcut icon" type="image/ico" href="{{ url(asset('favicon.ico')) }}">    
+    <link rel="shortcut icon" type="image/ico" href="{{ url(asset('favicon.ico')) }}">
 
 
     <meta name="csrf-token" content="{{ csrf_token() }}">
@@ -132,7 +132,7 @@
                         <a href="#" style="float:left" class="sidebar-toggle-mobile visible-xs btn" data-toggle="push-menu" role="button">
                         <span class="sr-only">{{ trans('general.toggle_navigation') }}</span>
                         <i class="fas fa-bars"></i>
-                        </a>                
+                        </a>
 
                     <!-- Navbar Menu Atas -->
                     <div class="navbar-custom-menu">
@@ -143,7 +143,7 @@
                                         <i class="fa fa-location-pin" aria-hidden="true"></i>
                                         <span>{{ Auth::user()->company->name }}</span>
                                     </a>
-                                </li>        
+                                </li>
                             @endif
 
                             <!-- @can('index', \App\Models\Asset::class)
@@ -434,17 +434,19 @@
                             </li>
                         @endcan
                         @can('index', \App\Models\Asset::class)
-                            <li class="treeview{{ ((Request::is('statuslabels/*') || Request::is('hardware*')) ? ' active' : '') }}">
+                            <li class="treeview{{ ((Request::is('statuslabels/*') || Request::is('hardware*'))
+                                && (!Request::query('status') == 'Allstuff' || !Request::query('status') == 'Allocated' || !Request::query('status') == 'Available') ? ' active' : '') }}">
                                 <a href="#"><i class="fas fa-barcode fa-fw" aria-hidden="true"></i>
                                     <span>{{ trans('general.assets') }}</span>
                                     <i class="fa fa-angle-left pull-right"></i>
                                 </a>
 
                                 <ul class="treeview-menu">
-                                    <li class="treeview{{ (Request::is('hardware*') ? ' active' : '') }}">
+                                    <li class="treeview{{ (Request::is('hardware*')
+                                        && (!Request::query('status') == 'Allstuff' || !Request::query('status') == 'Allocated' || !Request::query('status') == 'Available') ? ' active' : '') }}">
                                         <a href="#"><i class="fas fa-magnifying-glass-chart fa-fw" aria-hidden="true"></i>
                                             <span>Perangkat IT Per Status</span>
-                                            <i class="fa fa-angle-left pull-right"></i>                
+                                            <i class="fa fa-angle-left pull-right"></i>
                                         </a>
                                         <ul class="treeview-menu">
                                             <li{!! (Request::query('status') == 'Allitems' ? ' class="active"' : '') !!}>
@@ -452,7 +454,7 @@
                                                     <i class="fas fa-list" aria-hidden="true"></i>
                                                     {{ trans('general.list_all') }}
                                                 </a>
-                                            </li>                
+                                            </li>
 
                                             <?php $status_navs = \App\Models\Statuslabel::where('show_in_nav', '=', 1)->withCount('assets as asset_count')->get(); ?>
                                             @if (count($status_navs) > 0)
@@ -462,7 +464,7 @@
                                                         {{ $status_nav->name }} ({{ $status_nav->asset_count }})</a></li>
                                                 @endforeach
                                             @endif
-                
+
                                             <li{!! (Request::query('status') == 'Deployed' ? ' class="active"' : '') !!}>
                                                 <a href="{{ url('hardware?status=Deployed') }}">
                                                     <i class="fas fa-check-double"></i>
@@ -496,7 +498,7 @@
                                                     {{ trans('admin/hardware/general.archived') }}
                                                     ({{ (isset($total_archived_sidebar)) ? $total_archived_sidebar : '' }})
                                                     </a>
-                                            </li>                
+                                            </li>
 
                                     <!-- <li class="divider">&nbsp;</li> -->
 
@@ -598,7 +600,7 @@
                                                     </a>
                                                 </li>
                                             @endcan
-                                        @endcan                
+                                        @endcan
                                     </li>
                                 </ul>
                             </li>
@@ -606,14 +608,14 @@
 
                         {{-- Barang Non-IT --}}
                         @can('view', \App\Models\Accessory::class)
-                        <li class="treeview{{ (Request::is('accessories*') ? ' active' : '') }}">
+                        <li class="treeview{{ (Request::query('status') == 'Allstuff' || Request::query('status') == 'Allocated' || Request::query('status') == 'Available' ? ' active' : '') }}">
                         <a href="#"><i class="fas fa-barcode fa-fw" aria-hidden="true"></i>
                             <span>{{ trans('general.accessories') }}</span>
                             <i class="fa fa-angle-left pull-right"></i>
                         </a>
 
                         <ul class="treeview-menu">
-                            <li class="treeview{{ (Request::is('accessories*') && !Request::is('accessories/category') ? ' active' : '') }}">
+                            <li class="treeview{{ (Request::query('status') == 'Allstuff' || Request::query('status') == 'Allocated' || Request::query('status') == 'Available' ? ' active' : '') }}">
                                 <a href="#"><i class="fas fa-magnifying-glass-chart fa-fw" aria-hidden="true"></i>
                                     <span>Perangkat Non-IT Per Status</span>
                                     <i class="fa fa-angle-left pull-right"></i>
@@ -621,25 +623,25 @@
 
                                 <ul class="treeview-menu">
                                     <li{!! (Request::query('status') == 'Allstuff' ? ' class="active"' : '') !!}>
-                                        <a href="{{ url('accessories?status=Allstuff') }}">
+                                        <a href="{{ url('hardware?status=Allstuff') }}">
                                             <i class="fas fa-list" aria-hidden="true"></i>
                                             {{ trans('general.list_all') }}
                                         </a>
                                     </li>
                                     <li{!! (Request::query('status') == 'Allocated' ? ' class="active"' : '') !!}>
-                                        <a href="{{ url('accessories?status=Allocated') }}">
+                                        <a href="{{ url('hardware?status=Allocated') }}">
                                             <i class="fas fa-check-double"></i>
                                             <!-- {{ trans('general.all') }} -->
                                             {{ trans('general.allocated') }}
-                                            {{-- ({{ (isset($total_deployed_sidebar)) ? $total_deployed_sidebar : '' }}) --}}
+                                            ({{ (isset($total_allocated_sidebar)) ? $total_allocated_sidebar : '' }})
                                         </a>
                                     </li>
                                     <li{!! (Request::query('status') == 'Available' ? ' class="active"' : '') !!}>
-                                        <a href="{{ url('accessories?status=Available') }}">
+                                        <a href="{{ url('hardware?status=Available') }}">
                                             <i class="fas fa-circle-check"></i>
                                             <!-- {{ trans('general.all') }} -->
                                             {{ trans('general.available') }}
-                                            {{-- ({{ (isset($total_rtd_sidebar)) ? $total_rtd_sidebar : '' }}) --}}
+                                            ({{ (isset($total_available_sidebar)) ? $total_available_sidebar : '' }})
                                         </a>
                                     </li>
                                     {{-- <li{!! (Request::query('status') == 'Pending' ? ' class="active"' : '') !!}><a href="{{ url('accessories?status=Pending') }}"><i class="fas fa-wrench fa-fw"></i>
@@ -838,8 +840,8 @@
                                         {{ trans('general.custom_report') }}
                                     </a>
                                 </li>
-            
-                                <!-- <li><a href="{{ route('reports.audit') }}" {{ (Request::is('reports.audit') ? ' class="active"' : '') }}>            
+
+                                <!-- <li><a href="{{ route('reports.audit') }}" {{ (Request::is('reports.audit') ? ' class="active"' : '') }}>
                                 <li>
                                     <a href="{{ url('reports/depreciation') }}" {{ (Request::is('reports/depreciation') ? ' class="active"' : '') }}>
                                         {{ trans('general.depreciation_report') }}
@@ -1074,7 +1076,7 @@
                         </div>
                     @endif
                 </div>
-                
+
 
             </footer>
         </div><!-- ./wrapper -->
@@ -1164,7 +1166,7 @@
                     container: 'body',
                     animation: true,
                 });
-                
+
                 $('[data-toggle="popover"]').popover();
                 $('.select2 span').addClass('needsclick');
                 $('.select2 span').removeAttr('title');

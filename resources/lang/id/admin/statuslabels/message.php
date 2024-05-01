@@ -26,6 +26,8 @@ return [
         'deployable'   => 'Aset ini dapat dialokasikan. Setelah perangkat dialokasikan, status perangkat akan berubah menjadi <i class="fas fa-circle text-blue"></i> <strong>Telah dialokasikan</strong>.',
         'archived'   => 'Aset ini tidak dapat dialokasikan, dan hanya akan muncul di tampilan Arsip. Status ini berguna untuk menyimpan informasi tentang perangkat untuk tujuan anggaran/history namun memisahkan mereka dari daftar perangkat lainnya.',
         'pending'   => 'Aset ini belum bisa diberikan/dialokasikan kepada siapapun, status ini digunakan untuk barang yang sedang diperbaiki.',
+        'allocated' => 'Aset ini termasuk sebagai aset yang telah dialokasikan dan masuk kedalam kelompok aset Non-TI',
+        'available' => 'Aset ini termasuk sebagai aset yang tersedia namun belum dialokasikan. aset ini juga termasuk dalam kelompok aset Non-TI'
     ],
 
 ];
