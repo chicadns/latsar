@@ -206,7 +206,7 @@ class AssetsController extends Controller
                 break;
             case 'Deployed':
                 // more sad, horrible workarounds for laravel bugs when doing full text searches
-                $assets->where('assets.assigned_to', '>', 0);
+                $assets->where('assets.status_id', '=', 2)->where('assets.assigned_to', '>', 0);
                 break;
             case 'Allstuff':
                 $assets->where('assets.assigned_to', '=', 0);
@@ -217,13 +217,71 @@ class AssetsController extends Controller
             case 'Available':
                 $assets->where('assets.assigned_to', '=', 0)->where('assets.status_id', '=', 7);
                 break;
+            case 'AssetTI1':
+                $assets->join('models AS category_models', function ($join) {
+                    $join->on('category_models.id', '=', 'assets.model_id')
+                        ->join('categories', function ($subjoin) {
+                            $subjoin->on('categories.id', '=', 'category_models.category_id')
+                                ->where('category_models.category_id', '<', 95)
+                                ->orWhere('category_models.category_id', '=', 97);
+                        });
+                });
+                break;
+            case 'AssetTI2':
+                $assets->join('models AS category_models', function ($join) {
+                    $join->on('category_models.id', '=', 'assets.model_id')
+                        ->join('categories', function ($subjoin) {
+                            $subjoin->on('categories.id', '=', 'category_models.category_id')
+                                ->where('category_models.category_id', '>', 94)
+                                ->where('category_models.category_id', '<', 97);
+                        });
+                });
+                break;
+            case 'AssetNonTI1':
+                $assets->join('models AS category_models', function ($join) {
+                    $join->on('category_models.id', '=', 'assets.model_id')
+                        ->join('categories', function ($subjoin) {
+                            $subjoin->on('categories.id', '=', 'category_models.category_id')
+                                ->where('category_models.category_id', '>', 129)
+                                ->where('category_models.category_id', '<', 142);
+                        });
+                });
+                break;
+            case 'AssetNonTI2':
+                $assets->join('models AS category_models', function ($join) {
+                    $join->on('category_models.id', '=', 'assets.model_id')
+                        ->join('categories', function ($subjoin) {
+                            $subjoin->on('categories.id', '=', 'category_models.category_id')
+                                ->where('category_models.category_id', '>', 141)
+                                ->where('category_models.category_id', '<', 160);
+                        });
+                });
+                $assets->where('assets.assigned_to', '=', 0)->where('assets.bmn', 'LIKE', '301%');
+                break;
+            case 'AssetNonTI3':
+                break;
+            case 'AssetNonTI4':
+                break;
+            case 'AssetNonTI5':
+                break;
+            case 'AssetNonTI6':
+                break;
+            case 'AssetNonTI7':
+                break;
+            case 'AssetNonTI8':
+                break;
+            case 'AssetNonTI9':
+                break;
+            case 'AssetNonTI10':
+                break;
             default:
 
                 if ((! $request->filled('status_id')) && ($settings->show_archived_in_list != '1')) {
                     // terrible workaround for complex-query Laravel bug in fulltext
-                    $assets->join('status_labels AS status_alias', function ($join) {
-                        $join->on('status_alias.id', '=', 'assets.status_id')
-                            ->where('status_alias.archived', '=', 0);
+                    $assets->whereNull('assets.assigned_to')->orWhere('assets.assigned_to', '<>', 0)
+                        ->join('status_labels AS status_alias', function ($join) {
+                            $join->on('status_alias.id', '=', 'assets.status_id')
+                                ->where('status_alias.archived', '=', 0);
                     });
 
                     // If there is a status ID, don't take show_archived_in_list into consideration
@@ -234,7 +292,6 @@ class AssetsController extends Controller
                 }
 
         }
-
 
         // Leave these under the TextSearch scope, else the fuzziness will override the specific ID (status ID, etc) requested
         if ($request->filled('status_id')) {

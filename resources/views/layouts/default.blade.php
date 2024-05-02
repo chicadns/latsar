@@ -434,16 +434,17 @@
                             </li>
                         @endcan
                         @can('index', \App\Models\Asset::class)
-                            <li class="treeview{{ ((Request::is('statuslabels/*') || Request::is('hardware*'))
-                                && (!Request::query('status') == 'Allstuff' || !Request::query('status') == 'Allocated' || !Request::query('status') == 'Available') ? ' active' : '') }}">
+                            <li class="treeview{{ (Request::is('statuslabels/*') || Request::is('hardware/maintenances')
+                                || (Request::query('status') == 'AssetTI1' || Request::query('status') == 'AssetTI2')
+                                || (Request::query('status') == 'Allitems' || Request::query('status') == 'Deployed' || Request::query('status') == 'RTD' || Request::query('status') == 'Pending' || Request::query('status') == 'Undeployable' || Request::query('status') == 'Archived') ? ' active' : '') }}">
                                 <a href="#"><i class="fas fa-barcode fa-fw" aria-hidden="true"></i>
                                     <span>{{ trans('general.assets') }}</span>
                                     <i class="fa fa-angle-left pull-right"></i>
                                 </a>
 
                                 <ul class="treeview-menu">
-                                    <li class="treeview{{ (Request::is('hardware*')
-                                        && (!Request::query('status') == 'Allstuff' || !Request::query('status') == 'Allocated' || !Request::query('status') == 'Available') ? ' active' : '') }}">
+                                    <li class="treeview{{ ((!Request::query('status') == 'AssetTI*')
+                                        && (Request::query('status') == 'Allitems' || Request::query('status') == 'Deployed' || Request::query('status') == 'RTD' || Request::query('status') == 'Pending' || Request::query('status') == 'Undeployable' || Request::query('status') == 'Archived') ? ' active' : '') }}">
                                         <a href="#"><i class="fas fa-magnifying-glass-chart fa-fw" aria-hidden="true"></i>
                                             <span>Perangkat IT Per Status</span>
                                             <i class="fa fa-angle-left pull-right"></i>
@@ -570,22 +571,24 @@
                                         @endcan -->
                                         </ul>
                                     </li>
-                                    <li class="treeview{{ (Request::is('accessories?category') ? ' active' : '') }}">
+                                    <li class="treeview{{ (Request::query('status') == 'AssetTI1' || Request::query('status') == 'AssetTI2' ? ' active' : '') }}">
                                         <a href="#"><i class="fas fa-magnifying-glass-chart fa-fw" aria-hidden="true"></i>
                                             <span>Perangkat IT Per Kategori</span>
                                             <i class="fa fa-angle-left pull-right"></i>
                                         </a>
                                         <ul class="treeview-menu">
-                                            <li{!! (Request::query('category') == '1' ? ' class="active"' : '') !!}>
-                                                <a href="{{ url('hardware?category=1') }}">
+                                            <li{!! (Request::query('status') == 'AssetTI1' ? ' class="active"' : '') !!}>
+                                                <a href="{{ url('hardware?status=AssetTI1') }}">
                                                     <i class="fas fa-list" aria-hidden="true"></i>
                                                     Peralatan dan Mesin Khusus TIK
+                                                    ({{ (isset($total_categoryti1_sidebar)) ? $total_categoryti1_sidebar : '' }})
                                                 </a>
                                             </li>
-                                            <li{!! (Request::query('category') == '2' ? ' class="active"' : '') !!}>
-                                                <a href="{{ url('hardware?category=2') }}">
+                                            <li{!! (Request::query('status') == 'AssetTI2' ? ' class="active"' : '') !!}>
+                                                <a href="{{ url('hardware?status=AssetTI2') }}">
                                                     <i class="fas fa-list" aria-hidden="true"></i>
                                                     Aset Tak Berwujud
+                                                    ({{ (isset($total_categoryti2_sidebar)) ? $total_categoryti2_sidebar : '' }})
                                                 </a>
                                             </li>
                                         </ul>
@@ -608,14 +611,15 @@
 
                         {{-- Barang Non-IT --}}
                         @can('view', \App\Models\Accessory::class)
-                        <li class="treeview{{ (Request::query('status') == 'Allstuff' || Request::query('status') == 'Allocated' || Request::query('status') == 'Available' ? ' active' : '') }}">
+                        <li class="treeview{{ (Request::query('status') == 'AssetNonTI1' || Request::query('status') == 'AssetNonTI2' || Request::query('status') == 'AssetNonTI3' || Request::query('status') == 'AssetNonTI4' || Request::query('status') == 'AssetNonTI5' || Request::query('status') == 'AssetNonTI6' || Request::query('status') == 'AssetNonTI7' || Request::query('status') == 'AssetNonTI8' || Request::query('status') == 'AssetNonTI9' || Request::query('status') == 'AssetNonTI10' 
+                            || Request::query('status') == 'Allstuff' || Request::query('status') == 'Allocated' || Request::query('status') == 'Available' ? ' active' : '') }}">
                         <a href="#"><i class="fas fa-barcode fa-fw" aria-hidden="true"></i>
                             <span>{{ trans('general.accessories') }}</span>
                             <i class="fa fa-angle-left pull-right"></i>
                         </a>
 
                         <ul class="treeview-menu">
-                            <li class="treeview{{ (Request::query('status') == 'Allstuff' || Request::query('status') == 'Allocated' || Request::query('status') == 'Available' ? ' active' : '') }}">
+                            <li class="treeview{{ ((!Request::query('status') == 'AssetNonTI*') || Request::query('status') == 'Allstuff' || Request::query('status') == 'Allocated' || Request::query('status') == 'Available' ? ' active' : '') }}">
                                 <a href="#"><i class="fas fa-magnifying-glass-chart fa-fw" aria-hidden="true"></i>
                                     <span>Perangkat Non-IT Per Status</span>
                                     <i class="fa fa-angle-left pull-right"></i>
@@ -665,69 +669,69 @@
                                 </ul>
                             </li>
 
-                            <li class="treeview{{ (Request::is('accessories?category') ? ' active' : '') }}">
+                            <li class="treeview{{ (Request::query('status') == 'AssetNonTI1' || Request::query('status') == 'AssetNonTI2' || Request::query('status') == 'AssetNonTI3' || Request::query('status') == 'AssetNonTI4' || Request::query('status') == 'AssetNonTI5' || Request::query('status') == 'AssetNonTI6' || Request::query('status') == 'AssetNonTI7' || Request::query('status') == 'AssetNonTI8' || Request::query('status') == 'AssetNonTI9' || Request::query('status') == 'AssetNonTI10' ? ' active' : '') }}">
                                 <a href="#"><i class="fas fa-magnifying-glass-chart fa-fw" aria-hidden="true"></i>
                                     <span>Perangkat Non-IT Per Kategori</span>
                                     <i class="fa fa-angle-left pull-right"></i>
                                 </a>
 
                                 <ul class="treeview-menu">
-                                    <li{!! (Request::query('category') == '3' ? ' class="active"' : '') !!}>
-                                        <a href="{{ url('accessories?category=3') }}">
+                                    <li{!! (Request::query('status') == 'AssetNonTI1' ? ' class="active"' : '') !!}>
+                                        <a href="{{ url('hardware?status=AssetNonTI1') }}">
                                             <i class="fas fa-list" aria-hidden="true"></i>
                                             Alat Angkutan Bermotor
                                         </a>
                                     </li>
-                                    <li{!! (Request::query('category') == '4' ? ' class="active"' : '') !!}>
-                                        <a href="{{ url('accessories?category=4') }}">
+                                    <li{!! (Request::query('status') == 'AssetNonTI2' ? ' class="active"' : '') !!}>
+                                        <a href="{{ url('hardware?status=AssetNonTI2') }}">
                                             <i class="fas fa-list" aria-hidden="true"></i>
                                             Alat Besar
                                         </a>
                                     </li>
-                                    <li{!! (Request::query('category') == '5' ? ' class="active"' : '') !!}>
-                                        <a href="{{ url('accessories?category=5') }}">
+                                    <li{!! (Request::query('category') == 'AssetNonTI3' ? ' class="active"' : '') !!}>
+                                        <a href="{{ url('hardware?category=AssetNonTI3') }}">
                                             <i class="fas fa-list" aria-hidden="true"></i>
                                             Aset Tetap Lainnya
                                         </a>
                                     </li>
-                                    <li{!! (Request::query('category') == '6' ? ' class="active"' : '') !!}>
-                                        <a href="{{ url('accessories?category=6') }}">
+                                    <li{!! (Request::query('status') == 'AssetNonTI4' ? ' class="active"' : '') !!}>
+                                        <a href="{{ url('hardware?status=AssetNonTI4') }}">
                                             <i class="fas fa-list" aria-hidden="true"></i>
                                             Aset Tetap Renovasi
                                         </a>
                                     </li>
-                                    <li{!! (Request::query('category') == '7' ? ' class="active"' : '') !!}>
-                                        <a href="{{ url('accessories?category=7') }}">
+                                    <li{!! (Request::query('status') == 'AssetNonTI5' ? ' class="active"' : '') !!}>
+                                        <a href="{{ url('hardware?status=AssetNonTI5') }}">
                                             <i class="fas fa-list" aria-hidden="true"></i>
                                             Gedung dan Bangunan
                                         </a>
                                     </li>
-                                    <li{!! (Request::query('category') == '8' ? ' class="active"' : '') !!}>
-                                        <a href="{{ url('accessories?category=8') }}">
+                                    <li{!! (Request::query('status') == 'AssetNonTI6' ? ' class="active"' : '') !!}>
+                                        <a href="{{ url('hardware?status=AssetNonTI6') }}">
                                             <i class="fas fa-list" aria-hidden="true"></i>
                                             Jalan dan Jembatan
                                         </a>
                                     </li>
-                                    <li{!! (Request::query('category') == '9' ? ' class="active"' : '') !!}>
-                                        <a href="{{ url('accessories?category=9') }}">
+                                    <li{!! (Request::query('status') == 'AssetNonTI7' ? ' class="active"' : '') !!}>
+                                        <a href="{{ url('hardware?status=AssetNonTI7') }}">
                                             <i class="fas fa-list" aria-hidden="true"></i>
                                             Konstruksi Dalam Pengerjaan
                                         </a>
                                     </li>
-                                    <li{!! (Request::query('category') == '10' ? ' class="active"' : '') !!}>
-                                        <a href="{{ url('accessories?category=10') }}">
+                                    <li{!! (Request::query('status') == 'AssetNonTI8' ? ' class="active"' : '') !!}>
+                                        <a href="{{ url('hardware?status=AssetNonTI8') }}">
                                             <i class="fas fa-list" aria-hidden="true"></i>
                                             Peralatan dan Mesin Non TIK
                                         </a>
                                     </li>
-                                    <li{!! (Request::query('category') == '11' ? ' class="active"' : '') !!}>
-                                        <a href="{{ url('accessories?category=11') }}">
+                                    <li{!! (Request::query('status') == 'AssetNonTI9' ? ' class="active"' : '') !!}>
+                                        <a href="{{ url('hardware?status=AssetNonTI9') }}">
                                             <i class="fas fa-list" aria-hidden="true"></i>
                                             Rumah Negara
                                         </a>
                                     </li>
-                                    <li{!! (Request::query('category') == '12' ? ' class="active"' : '') !!}>
-                                        <a href="{{ url('accessories?category=12') }}">
+                                    <li{!! (Request::query('status') == 'AssetNonTI10' ? ' class="active"' : '') !!}>
+                                        <a href="{{ url('hardware?status=AssetNonTI10') }}">
                                             <i class="fas fa-list" aria-hidden="true"></i>
                                             Tanah
                                         </a>

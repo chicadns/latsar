@@ -25,9 +25,33 @@
   @elseif (Request::get('status')=='Allstuff')
     {{ trans('general.all') }} {{ trans('general.accessories') }}
   @elseif (Request::get('status')=='Allocated')
-    {{ trans('general.accessories') }} {{ trans('general.allocated') }}
+    {{ trans('general.accessories') }} - {{ trans('general.allocated') }}
   @elseif (Request::get('status')=='Available')
-    {{ trans('general.accessories') }} {{ trans('general.available') }}
+    {{ trans('general.accessories') }} - {{ trans('general.available') }}
+  @elseif (Request::get('status')=='AssetTI1')
+    {{ trans('general.assets') }} - {{ trans('general.assetti1') }}
+  @elseif (Request::get('status')=='AssetTI2')
+    {{ trans('general.assets') }} - {{ trans('general.assetti2') }}
+  @elseif (Request::get('status')=='AssetNonTI1')
+    {{ trans('general.accessories') }} - {{ trans('general.assetnonti1') }}
+  @elseif (Request::get('status')=='AssetNonTI2')
+    {{ trans('general.accessories') }} - {{ trans('general.assetnonti2') }}
+  @elseif (Request::get('status')=='AssetNonTI3')
+    {{ trans('general.accessories') }} - {{ trans('general.assetnonti3') }}
+  @elseif (Request::get('status')=='AssetNonTI4')
+    {{ trans('general.accessories') }} - {{ trans('general.assetnonti4') }}
+  @elseif (Request::get('status')=='AssetNonTI5')
+    {{ trans('general.accessories') }} - {{ trans('general.assetnonti5') }}
+  @elseif (Request::get('status')=='AssetNonTI6')
+    {{ trans('general.accessories') }} - {{ trans('general.assetnonti6') }}
+  @elseif (Request::get('status')=='AssetNonTI7')
+    {{ trans('general.accessories') }} - {{ trans('general.assetnonti7') }}
+  @elseif (Request::get('status')=='AssetNonTI8')
+    {{ trans('general.accessories') }} - {{ trans('general.assetnonti8') }}
+  @elseif (Request::get('status')=='AssetNonTI9')
+    {{ trans('general.accessories') }} - {{ trans('general.assetnonti9') }}
+  @elseif (Request::get('status')=='AssetNonTI10')
+    {{ trans('general.accessories') }} - {{ trans('general.assetnonti10') }}
   @endif
 @endif
 

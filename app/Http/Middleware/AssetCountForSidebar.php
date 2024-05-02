@@ -66,6 +66,20 @@ class AssetCountForSidebar
             \Log::debug($e);
         }
 
+        try {
+            $total_categoryti1_sidebar = Asset::CategoryTI1()->count();
+            view()->share('total_categoryti1_sidebar', $total_categoryti1_sidebar);
+        } catch (\Exception $e) {
+            \Log::debug($e);
+        }
+
+        try {
+            $total_categoryti2_sidebar = Asset::CategoryTI2()->count();
+            view()->share('total_categoryti2_sidebar', $total_categoryti2_sidebar);
+        } catch (\Exception $e) {
+            \Log::debug($e);
+        }
+
         return $next($request);
     }
 }

@@ -1071,10 +1071,11 @@ class Asset extends Depreciable
 
     public function scopeUndeployable($query)
     {
-        return $query->whereHas('assetstatus', function ($query) {
-            $query->where('deployable', '=', 0)
-                ->where('pending', '=', 0)
-                ->where('archived', '=', 0);
+        return $query->where('assets.status_id', '=', 4)
+            ->whereHas('assetstatus', function ($query) {
+                $query->where('deployable', '=', 0)
+                    ->where('pending', '=', 0)
+                    ->where('archived', '=', 0);
         });
     }
 
@@ -1226,7 +1227,7 @@ class Asset extends Depreciable
 
     public function scopeDeployed($query)
     {
-        return $query->where('assigned_to', '>', '0');
+        return $query->where('assets.status_id', '=', 2)->where('assigned_to', '>', '0');
     }
 
     public function scopeAllocated($query)
@@ -1237,6 +1238,30 @@ class Asset extends Depreciable
     public function scopeAvailable($query)
     {
         return $query->where('assigned_to', '=', '0')->where('status_id', '=', 7);
+    }
+
+    public function scopeCategoryTI1($query)
+    {
+        return $query->join('models AS category_models', function ($join) {
+            $join->on('category_models.id', '=', 'assets.model_id')
+                ->join('categories', function ($subjoin) {
+                    $subjoin->on('categories.id', '=', 'category_models.category_id')
+                        ->where('category_models.category_id', '<', 95)
+                        ->orWhere('category_models.category_id', '=', 97);
+                });
+        });
+    }
+
+    public function scopeCategoryTI2($query)
+    {
+        return $query->join('models AS category_models', function ($join) {
+            $join->on('category_models.id', '=', 'assets.model_id')
+                ->join('categories', function ($subjoin) {
+                    $subjoin->on('categories.id', '=', 'category_models.category_id')
+                        ->where('category_models.category_id', '>', 94)
+                        ->where('category_models.category_id', '<', 97);
+                });
+        });
     }
 
   /**
