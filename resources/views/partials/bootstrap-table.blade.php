@@ -187,7 +187,9 @@
             if (value) {
                 if (destination == 'hardware') {
                     return '<a href="{{ config('app.url') }}/' + destination + '/' + row.id + '?status={{ Request::get("status") }}">' + value + '</a>';
-                } else {
+                } else if (destination == 'licenses') {
+                    return '<a href="{{ config('app.url') }}/' + destination + '/' + row.id + '{{ (Request::has("status")) ? "?status=".Request::get("status") : "" }}">' + value + '</a>';
+                }else {
                     return '<a href="{{ config('app.url') }}/' + destination + '/' + row.id + '">' + value + '</a>';
                 }
             }
@@ -331,7 +333,13 @@
             }
 
             if ((row.available_actions) && (row.available_actions.clone === true)) {
-                actions += '<a href="{{ config('app.url') }}/' + dest + '/' + row.id + '/clone" class="actions btn btn-sm btn-info" data-tooltip="true" title="{{ trans('general.clone_item') }}"><i class="far fa-clone" aria-hidden="true"></i><span class="sr-only">Clone</span></a>&nbsp;';
+                if (dest == 'hardware') {
+                    actions += '<a href="{{ config('app.url') }}/' + dest + '/' + row.id + '/clone?status={{ Request::get("status") }}" class="actions btn btn-sm btn-info" data-tooltip="true" title="{{ trans('general.clone_item') }}"><i class="far fa-clone" aria-hidden="true"></i><span class="sr-only">Clone</span></a>&nbsp;';
+                } else if (dest == 'licenses') {
+                    actions += '<a href="{{ config('app.url') }}/' + dest + '/' + row.id + '/clone{{ (Request::has("status")) ? "?status=".Request::get("status") : "" }}" class="actions btn btn-sm btn-info" data-tooltip="true" title="{{ trans('general.clone_item') }}"><i class="far fa-clone" aria-hidden="true"></i><span class="sr-only">Clone</span></a>&nbsp;';
+                } else {
+                    actions += '<a href="{{ config('app.url') }}/' + dest + '/' + row.id + '/clone" class="actions btn btn-sm btn-info" data-tooltip="true" title="{{ trans('general.clone_item') }}"><i class="far fa-clone" aria-hidden="true"></i><span class="sr-only">Clone</span></a>&nbsp;';
+                }
             }
 
             if ((row.available_actions) && (row.available_actions.history === true)) {
@@ -341,6 +349,8 @@
             if ((row.available_actions) && (row.available_actions.update === true)) {
                 if (dest == 'hardware') {
                     actions += '<a href="{{ config('app.url') }}/' + dest + '/' + row.id + '/edit?status={{ Request::get("status") }}" class="actions btn btn-sm btn-warning" data-tooltip="true" title="{{ trans('general.update') }}"><i class="fas fa-pencil-alt" aria-hidden="true"></i><span class="sr-only">{{ trans('general.update') }}</span></a>&nbsp;';
+                } else if (dest == 'licenses') {
+                    actions += '<a href="{{ config('app.url') }}/' + dest + '/' + row.id + '/edit{{ (Request::has("status")) ? "?status=".Request::get("status") : "" }}" class="actions btn btn-sm btn-warning" data-tooltip="true" title="{{ trans('general.update') }}"><i class="fas fa-pencil-alt" aria-hidden="true"></i><span class="sr-only">{{ trans('general.update') }}</span></a>&nbsp;';
                 } else {
                     actions += '<a href="{{ config('app.url') }}/' + dest + '/' + row.id + '/edit" class="actions btn btn-sm btn-warning" data-tooltip="true" title="{{ trans('general.update') }}"><i class="fas fa-pencil-alt" aria-hidden="true"></i><span class="sr-only">{{ trans('general.update') }}</span></a>&nbsp;';
                 }
@@ -356,8 +366,16 @@
                 } else if (!row.name) {
                     var name_for_box = "transaksi dari " + row.company_id.name + " pada tanggal " + row.purchase_date.date;
                 }
+
+                if (dest == 'hardware') {
+                    var statusit = '?status={{ Request::get("status") }}';
+                } else if (dest == 'licenses') {
+                    var statusit = '{{ (Request::has("status")) ? "?status=".Request::get("status") : "" }}';
+                } else {
+                    var statusit = '';
+                }
                 
-                actions += '<a href="{{ config('app.url') }}/' + dest + '/' + row.id + '" '
+                actions += '<a href="{{ config('app.url') }}/' + dest + '/' + row.id + statusit + '" '
                     + ' class="actions btn btn-danger btn-sm delete-asset" data-tooltip="true"  '
                     + ' data-toggle="modal" '
                     + ' data-content="{{ trans('general.sure_to_delete') }} ' + name_for_box + '?" '
@@ -465,7 +483,13 @@
             // The user is allowed to check items out, AND the item is deployable
             if ((row.available_actions.checkout == true) && (row.user_can_checkout == true) && ((!row.asset_id) && (!row.assigned_to))) {
 
+                if (destination == 'hardware') {
+                    return '<a href="{{ config('app.url') }}/' + destination + '/' + row.id + '/checkout?status={{ Request::get("status") }}" class="btn btn-sm bg-maroon" data-tooltip="true" title="{{ trans('general.checkout_tooltip') }}">{{ trans('general.checkout') }}</a>';
+                } else if (destination == 'licenses') {
+                    return '<a href="{{ config('app.url') }}/' + destination + '/' + row.id + '/checkout{{ (Request::has("status")) ? "?status=".Request::get("status") : "" }}" class="btn btn-sm bg-maroon" data-tooltip="true" title="{{ trans('general.checkout_tooltip') }}">{{ trans('general.checkout') }}</a>';
+                } else {
                     return '<a href="{{ config('app.url') }}/' + destination + '/' + row.id + '/checkout" class="btn btn-sm bg-maroon" data-tooltip="true" title="{{ trans('general.checkout_tooltip') }}">{{ trans('general.checkout') }}</a>';
+                }
 
             // The user is allowed to check items out, but the item is not able to be checked out
             } else if (((row.user_can_checkout == false)) && (row.available_actions.checkout == true) && (!row.assigned_to)) {
@@ -481,7 +505,13 @@
             // The user is allowed to check items in
             } else if (row.available_actions.checkin == true)  {
                 if (row.assigned_to) {
-                    return '<a href="{{ config('app.url') }}/' + destination + '/' + row.id + '/checkin" class="btn btn-sm bg-purple" data-tooltip="true" title="Check this item in so it is available for re-imaging, re-issue, etc.">{{ trans('general.checkin') }}</a>';
+                    if (destination == 'hardware'){
+                        return '<a href="{{ config('app.url') }}/' + destination + '/' + row.id + '/checkin?status={{ Request::get("status") }}" class="btn btn-sm bg-purple" data-tooltip="true" title="Check this item in so it is available for re-imaging, re-issue, etc.">{{ trans('general.checkin') }}</a>';
+                    } else if (destination == 'licenses') {
+                        return '<a href="{{ config('app.url') }}/' + destination + '/' + row.id + '/checkin{{ (Request::has("status")) ? "?status=".Request::get("status") : "" }}" class="btn btn-sm bg-purple" data-tooltip="true" title="Check this item in so it is available for re-imaging, re-issue, etc.">{{ trans('general.checkin') }}</a>';
+                    } else {
+                        return '<a href="{{ config('app.url') }}/' + destination + '/' + row.id + '/checkin" class="btn btn-sm bg-purple" data-tooltip="true" title="Check this item in so it is available for re-imaging, re-issue, etc.">{{ trans('general.checkin') }}</a>';
+                    }
                 } else if (row.assigned_pivot_id) {
                     return '<a href="{{ config('app.url') }}/' + destination + '/' + row.assigned_pivot_id + '/checkin" class="btn btn-sm bg-purple" data-tooltip="true" title="Check this item in so it is available for re-imaging, re-issue, etc.">{{ trans('general.checkin') }}</a>';
                 }

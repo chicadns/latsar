@@ -115,7 +115,7 @@ class BulkAssetsController extends Controller
         $error_bag = [];
 
         // Get the back url from the session and then destroy the session
-        $bulk_back_url = route('hardware.index');
+        $bulk_back_url = route('hardware.index', ['status' => 'Allitems']);
         if ($request->session()->has('bulk_back_url')) {
             $bulk_back_url = $request->session()->pull('bulk_back_url');
         }
@@ -297,7 +297,7 @@ class BulkAssetsController extends Controller
     {
         $this->authorize('delete', Asset::class);
 
-        $bulk_back_url = route('hardware.index');
+        $bulk_back_url = route('hardware.index', ['status' => 'Allitems']);
         if ($request->session()->has('bulk_back_url')) {
             $bulk_back_url = $request->session()->pull('bulk_back_url');
         }
@@ -405,13 +405,13 @@ class BulkAssetsController extends Controller
         $this->authorize('update', Asset::class);
        $assetIds = $request->get('ids');
       if (empty($assetIds)) {
-          return redirect()->route('hardware.index')->with('error', trans('admin/hardware/message.restore.nothing_updated'));
+          return redirect()->route('hardware.index', ['status' => 'Allitems'])->with('error', trans('admin/hardware/message.restore.nothing_updated'));
         } else {
             foreach ($assetIds as $key => $assetId) {
                     $asset = Asset::withTrashed()->find($assetId);
                     $asset->restore(); 
             } 
-        return redirect()->route('hardware.index')->with('success', trans('admin/hardware/message.restore.success'));
+        return redirect()->route('hardware.index', ['status' => 'Allitems'])->with('success', trans('admin/hardware/message.restore.success'));
         }
     }
 }

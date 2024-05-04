@@ -222,8 +222,7 @@ class AssetsController extends Controller
                     $join->on('category_models.id', '=', 'assets.model_id')
                         ->join('categories', function ($subjoin) {
                             $subjoin->on('categories.id', '=', 'category_models.category_id')
-                                ->where('category_models.category_id', '<', 95)
-                                ->orWhere('category_models.category_id', '=', 97);
+                                ->where('category_models.category_id', '<', 98);
                         });
                 });
                 break;
@@ -242,7 +241,7 @@ class AssetsController extends Controller
                     $join->on('category_models.id', '=', 'assets.model_id')
                         ->join('categories', function ($subjoin) {
                             $subjoin->on('categories.id', '=', 'category_models.category_id')
-                                ->where('category_models.category_id', '>', 129)
+                                ->where('category_models.category_id', '>', 128)
                                 ->where('category_models.category_id', '<', 142);
                         });
                 });
@@ -256,23 +255,74 @@ class AssetsController extends Controller
                                 ->where('category_models.category_id', '<', 160);
                         });
                 });
-                $assets->where('assets.assigned_to', '=', 0)->where('assets.bmn', 'LIKE', '301%');
-                break;
-            case 'AssetNonTI3':
                 break;
             case 'AssetNonTI4':
+                $assets->join('models AS category_models', function ($join) {
+                    $join->on('category_models.id', '=', 'assets.model_id')
+                        ->join('categories', function ($subjoin) {
+                            $subjoin->on('categories.id', '=', 'category_models.category_id')
+                                ->where('category_models.category_id', '=', 161);
+                        });
+                });
                 break;
             case 'AssetNonTI5':
+                $assets->join('models AS category_models', function ($join) {
+                    $join->on('category_models.id', '=', 'assets.model_id')
+                        ->join('categories', function ($subjoin) {
+                            $subjoin->on('categories.id', '=', 'category_models.category_id')
+                                ->where('category_models.category_id', '>', 165)
+                                ->where('category_models.category_id', '<', 211);
+                        });
+                });
                 break;
             case 'AssetNonTI6':
+                $assets->join('models AS category_models', function ($join) {
+                    $join->on('category_models.id', '=', 'assets.model_id')
+                        ->join('categories', function ($subjoin) {
+                            $subjoin->on('categories.id', '=', 'category_models.category_id')
+                                ->where('category_models.category_id', '=', 165);
+                        });
+                });
                 break;
             case 'AssetNonTI7':
+                $assets->join('models AS category_models', function ($join) {
+                    $join->on('category_models.id', '=', 'assets.model_id')
+                        ->join('categories', function ($subjoin) {
+                            $subjoin->on('categories.id', '=', 'category_models.category_id')
+                                ->where('category_models.category_id', '>', 161)
+                                ->where('category_models.category_id', '<', 165);
+                        });
+                });
                 break;
             case 'AssetNonTI8':
+                $assets->join('models AS category_models', function ($join) {
+                    $join->on('category_models.id', '=', 'assets.model_id')
+                        ->join('categories', function ($subjoin) {
+                            $subjoin->on('categories.id', '=', 'category_models.category_id')
+                                ->where('category_models.category_id', '>', 219)
+                                ->where('category_models.category_id', '<', 870);
+                        });
+                });
                 break;
             case 'AssetNonTI9':
+                $assets->join('models AS category_models', function ($join) {
+                    $join->on('category_models.id', '=', 'assets.model_id')
+                        ->join('categories', function ($subjoin) {
+                            $subjoin->on('categories.id', '=', 'category_models.category_id')
+                                ->where('category_models.category_id', '>', 117)
+                                ->where('category_models.category_id', '<', 129);
+                        });
+                });
                 break;
             case 'AssetNonTI10':
+                $assets->join('models AS category_models', function ($join) {
+                    $join->on('category_models.id', '=', 'assets.model_id')
+                        ->join('categories', function ($subjoin) {
+                            $subjoin->on('categories.id', '=', 'category_models.category_id')
+                                ->where('category_models.category_id', '>', 210)
+                                ->where('category_models.category_id', '<', 220);
+                        });
+                });
                 break;
             default:
 

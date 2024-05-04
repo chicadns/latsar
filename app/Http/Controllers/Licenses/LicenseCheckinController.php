@@ -26,12 +26,12 @@ class LicenseCheckinController extends Controller
      * @return \Illuminate\Contracts\View\View
      * @throws \Illuminate\Auth\Access\AuthorizationException
      */
-    public function create($seatId = null, $backTo = null)
+    public function create($seatId = null, $backTo = null, Request $request)
     {
         // Check if the asset exists
         if (is_null($licenseSeat = LicenseSeat::find($seatId)) || is_null($license = License::find($licenseSeat->license_id))) {
             // Redirect to the asset management page with error
-            return redirect()->route('licenses.index')->with('error', trans('admin/licenses/message.not_found'));
+            return redirect()->route('licenses.index', ['status' => $request->get('status')])->with('error', trans('admin/licenses/message.not_found'));
         }
 
         $this->authorize('checkout', $license);
@@ -55,14 +55,14 @@ class LicenseCheckinController extends Controller
         // Check if the asset exists
         if (is_null($licenseSeat = LicenseSeat::find($seatId))) {
             // Redirect to the asset management page with error
-            return redirect()->route('licenses.index')->with('error', trans('admin/licenses/message.not_found'));
+            return redirect()->route('licenses.index', ['status' => $request->get('license_status')])->with('error', trans('admin/licenses/message.not_found'));
         }
 
         $license = License::find($licenseSeat->license_id);
 
         // LicenseSeat is not assigned, it can't be checked in
         if (is_null($licenseSeat->assigned_to) && is_null($licenseSeat->asset_id)) {
-            return redirect()->route('licenses.index')->with('error', trans('admin/licenses/message.checkin.error'));
+            return redirect()->route('licenses.index', ['status' => $request->get('license_status')])->with('error', trans('admin/licenses/message.checkin.error'));
         }
 
         $this->authorize('checkout', $license);
@@ -107,11 +107,11 @@ class LicenseCheckinController extends Controller
                 return redirect()->route('users.show', $return_to->id)->with('success', trans('admin/licenses/message.checkin.success'));
             }
 
-            return redirect()->route('licenses.show', $licenseSeat->license_id)->with('success', trans('admin/licenses/message.checkin.success'));
+            return redirect()->route('licenses.show', array('license' => $licenseSeat->license_id, 'status' => $request->get('license_status')))->with('success', trans('admin/licenses/message.checkin.success'));
         }
 
         // Redirect to the license page with error
-        return redirect()->route('licenses.index')->with('error', trans('admin/licenses/message.checkin.error'));
+        return redirect()->route('licenses.index', ['status' => $request->get('license_status')])->with('error', trans('admin/licenses/message.checkin.error'));
     }
 
     /**

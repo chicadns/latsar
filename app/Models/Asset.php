@@ -1264,6 +1264,123 @@ class Asset extends Depreciable
         });
     }
 
+    public function scopeCategoryNonTI1($query)
+    {
+        return $query->join('models AS category_models', function ($join) {
+            $join->on('category_models.id', '=', 'assets.model_id')
+                ->join('categories', function ($subjoin) {
+                    $subjoin->on('categories.id', '=', 'category_models.category_id')
+                        ->where('category_models.category_id', '>', 128)
+                        ->where('category_models.category_id', '<', 142);
+                });
+        });
+    }
+
+    public function scopeCategoryNonTI2($query)
+    {
+        return $query->join('models AS category_models', function ($join) {
+            $join->on('category_models.id', '=', 'assets.model_id')
+                ->join('categories', function ($subjoin) {
+                    $subjoin->on('categories.id', '=', 'category_models.category_id')
+                        ->where('category_models.category_id', '>', 141)
+                        ->where('category_models.category_id', '<', 160);
+                });
+        });
+    }
+
+    public function scopeCategoryNonTI4($query)
+    {
+        return $query->join('models AS category_models', function ($join) {
+            $join->on('category_models.id', '=', 'assets.model_id')
+                ->join('categories', function ($subjoin) {
+                    $subjoin->on('categories.id', '=', 'category_models.category_id')
+                        ->where('category_models.category_id', '=', 161);
+                });
+        });
+    }
+
+    public function scopeCategoryNonTI5($query)
+    {
+        return $query->join('models AS category_models', function ($join) {
+            $join->on('category_models.id', '=', 'assets.model_id')
+                ->join('categories', function ($subjoin) {
+                    $subjoin->on('categories.id', '=', 'category_models.category_id')
+                        ->where('category_models.category_id', '>', 165)
+                        ->where('category_models.category_id', '<', 211);
+                });
+        });
+    }
+
+    public function scopeCategoryNonTI6($query)
+    {
+        return $query->join('models AS category_models', function ($join) {
+            $join->on('category_models.id', '=', 'assets.model_id')
+                ->join('categories', function ($subjoin) {
+                    $subjoin->on('categories.id', '=', 'category_models.category_id')
+                        ->where('category_models.category_id', '=', 165);
+                });
+        });
+    }
+
+    public function scopeCategoryNonTI7($query)
+    {
+        return $query->join('models AS category_models', function ($join) {
+            $join->on('category_models.id', '=', 'assets.model_id')
+                ->join('categories', function ($subjoin) {
+                    $subjoin->on('categories.id', '=', 'category_models.category_id')
+                        ->where('category_models.category_id', '>', 161)
+                        ->where('category_models.category_id', '<', 165);
+                });
+        });
+    }
+
+    public function scopeCategoryNonTI8($query)
+    {
+        return $query->join('models AS category_models', function ($join) {
+            $join->on('category_models.id', '=', 'assets.model_id')
+                ->join('categories', function ($subjoin) {
+                    $subjoin->on('categories.id', '=', 'category_models.category_id')
+                        ->where('category_models.category_id', '>', 219)
+                        ->where('category_models.category_id', '<', 870);
+                });
+        });
+    }
+
+    public function scopeCategoryNonTI9($query)
+    {
+        return $query->join('models AS category_models', function ($join) {
+            $join->on('category_models.id', '=', 'assets.model_id')
+                ->join('categories', function ($subjoin) {
+                    $subjoin->on('categories.id', '=', 'category_models.category_id')
+                        ->where('category_models.category_id', '>', 117)
+                        ->where('category_models.category_id', '<', 129);
+                });
+        });
+    }
+
+    public function scopeCategoryNonTI10($query)
+    {
+        return $query->join('models AS category_models', function ($join) {
+            $join->on('category_models.id', '=', 'assets.model_id')
+                ->join('categories', function ($subjoin) {
+                    $subjoin->on('categories.id', '=', 'category_models.category_id')
+                        ->where('category_models.category_id', '>', 210)
+                        ->where('category_models.category_id', '<', 220);
+                });
+        });
+    }
+
+    public function scopeCategoryNonTISum($query)
+    {
+        return $query->join('models AS category_models', function ($join) {
+            $join->on('category_models.id', '=', 'assets.model_id')
+                ->join('categories', function ($subjoin) {
+                    $subjoin->on('categories.id', '=', 'category_models.category_id')
+                        ->where('category_models.category_id', '>', 117)
+                        ->where('category_models.category_id', '<', 870);
+                });
+        });
+    }
   /**
    * Query builder scope for Requestable assets
    *

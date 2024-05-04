@@ -14,6 +14,7 @@
 <!-- Serial-->
 @can('viewKeys', $item)
 <div class="form-group {{ $errors->has('serial') ? ' has-error' : '' }}">
+    <input type="text" style="display: none" name="license_status" id="license_status" value="{{ Request::get('status') }}">
     <label for="serial" class="col-md-3 control-label">{{ trans('admin/licenses/form.license_key') }}</label>
     <div class="col-md-7{{  (Helper::checkIfRequired($item, 'serial')) ? ' required' : '' }}">
         <textarea class="form-control" type="text" name="serial" id="serial">{{ old('serial', $item->serial) }}</textarea>

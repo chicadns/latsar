@@ -3,6 +3,7 @@
 namespace App\Http\Middleware;
 
 use App\Models\Asset;
+use App\Models\License;
 use Auth;
 use Closure;
 
@@ -76,6 +77,76 @@ class AssetCountForSidebar
         try {
             $total_categoryti2_sidebar = Asset::CategoryTI2()->count();
             view()->share('total_categoryti2_sidebar', $total_categoryti2_sidebar);
+        } catch (\Exception $e) {
+            \Log::debug($e);
+        }
+
+        try {
+            $total_categorynonti1_sidebar = Asset::CategoryNonTI1()->count();
+            view()->share('total_categorynonti1_sidebar', $total_categorynonti1_sidebar);
+        } catch (\Exception $e) {
+            \Log::debug($e);
+        }
+
+        try {
+            $total_categorynonti2_sidebar = Asset::CategoryNonTI2()->count();
+            view()->share('total_categorynonti2_sidebar', $total_categorynonti2_sidebar);
+        } catch (\Exception $e) {
+            \Log::debug($e);
+        }
+
+        try {
+            $total_categorynonti3_sidebar = License::CategoryNonTI3()->count();
+            view()->share('total_categorynonti3_sidebar', $total_categorynonti3_sidebar);
+        } catch (\Exception $e) {
+            \Log::debug($e);
+        }
+
+        try {
+            $total_categorynonti4_sidebar = Asset::CategoryNonTI4()->count();
+            view()->share('total_categorynonti4_sidebar', $total_categorynonti4_sidebar);
+        } catch (\Exception $e) {
+            \Log::debug($e);
+        }
+
+        try {
+            $total_categorynonti5_sidebar = Asset::CategoryNonTI5()->count();
+            view()->share('total_categorynonti5_sidebar', $total_categorynonti5_sidebar);
+        } catch (\Exception $e) {
+            \Log::debug($e);
+        }
+
+        try {
+            $total_categorynonti6_sidebar = Asset::CategoryNonTI6()->count();
+            view()->share('total_categorynonti6_sidebar', $total_categorynonti6_sidebar);
+        } catch (\Exception $e) {
+            \Log::debug($e);
+        }
+
+        try {
+            $total_categorynonti7_sidebar = Asset::CategoryNonTI7()->count();
+            view()->share('total_categorynonti7_sidebar', $total_categorynonti7_sidebar);
+        } catch (\Exception $e) {
+            \Log::debug($e);
+        }
+
+        try {
+            $total_categorynonti8_sidebar = Asset::CategoryNonTI8()->count();
+            view()->share('total_categorynonti8_sidebar', $total_categorynonti8_sidebar);
+        } catch (\Exception $e) {
+            \Log::debug($e);
+        }
+
+        try {
+            $total_categorynonti9_sidebar = Asset::CategoryNonTI9()->count();
+            view()->share('total_categorynonti9_sidebar', $total_categorynonti9_sidebar);
+        } catch (\Exception $e) {
+            \Log::debug($e);
+        }
+
+        try {
+            $total_categorynonti10_sidebar = Asset::CategoryNonTI10()->count();
+            view()->share('total_categorynonti10_sidebar', $total_categorynonti10_sidebar);
         } catch (\Exception $e) {
             \Log::debug($e);
         }

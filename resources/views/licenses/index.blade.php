@@ -2,14 +2,18 @@
 
 {{-- Page title --}}
 @section('title')
-{{ trans('admin/licenses/general.software_licenses') }}
+@if (Request::get('status')=='AssetNonTI3')
+  {{ trans('general.accessories') }} - {{ trans('general.assetnonti3') }}
+@else
+  {{ trans('admin/licenses/general.software_licenses') }}
+@endif
 @parent
 @stop
 
 
 @section('header_right')
 @can('create', \App\Models\License::class)
-    <a href="{{ route('licenses.create') }}" accesskey="n" class="btn btn-primary pull-right">
+    <a href="{{ route('licenses.create', ['status' => Request::get('status')]) }}" accesskey="n" class="btn btn-primary pull-right">
       {{ trans('general.create') }}
     </a>
     @endcan
@@ -39,9 +43,9 @@
               data-sort-name="name"
               id="licensesTable"
               class="table table-striped snipe-table"
-              data-url="{{ route('api.licenses.index') }}"
+              data-url="{{ route('api.licenses.index', ['status' => Request::get('status')]) }}"
               data-export-options='{
-            "fileName": "export-licenses-{{ date('Y-m-d') }}",
+            "fileName": "export{{ (Request::has('status')) ? '-'.str_slug(Request::get('status')) : '' }}-licenses-{{ date('Y-m-d') }}",
             "ignoreColumn": ["actions","image","change","checkbox","checkincheckout","icon"]
             }'>
           </table>

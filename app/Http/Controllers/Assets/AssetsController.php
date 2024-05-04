@@ -230,11 +230,11 @@ class AssetsController extends Controller
      * @since [v1.0]
      * @return View
      */
-    public function edit($assetId = null)
+    public function edit($assetId = null, Request $request)
     {
         if (! $item = Asset::find($assetId)) {
             // Redirect to the asset management page with error
-            return redirect()->route('hardware.index')->with('error', trans('admin/hardware/message.does_not_exist'));
+            return redirect()->route('hardware.index', ['status' => $request->get('status')])->with('error', trans('admin/hardware/message.does_not_exist'));
         }
         //Handles company checks and permissions.
         $this->authorize($item);
@@ -253,7 +253,7 @@ class AssetsController extends Controller
      * @since [v1.0]
      * @return View
      */
-    public function show($assetId = null)
+    public function show($assetId = null, Request $request)
     {
         $asset = Asset::withTrashed()->find($assetId);
         $this->authorize('view', $asset);
@@ -284,7 +284,7 @@ class AssetsController extends Controller
                 ->with('use_currency', $use_currency)->with('audit_log', $audit_log);
         }
 
-        return redirect()->route('hardware.index')->with('error', trans('admin/hardware/message.does_not_exist'));
+        return redirect()->route('hardware.index', ['status' => $request->get('status')])->with('error', trans('admin/hardware/message.does_not_exist'));
     }
 
     /**
@@ -300,7 +300,7 @@ class AssetsController extends Controller
         // Check if the asset exists
         if (! $asset = Asset::find($assetId)) {
             // Redirect to the asset management page with error
-            return redirect()->route('hardware.index')->with('error', trans('admin/hardware/message.does_not_exist'));
+            return redirect()->route('hardware.index', ['status' => $request->get('asset_status')])->with('error', trans('admin/hardware/message.does_not_exist'));
         }
         $this->authorize($asset);
 
@@ -377,7 +377,7 @@ class AssetsController extends Controller
 
 
         if ($asset->save()) {
-            return redirect()->route('hardware.index', ['status' => $request->get('asset_status')])
+            return redirect()->route('hardware.show', array('hardware' => $assetId, 'status' => $request->get('asset_status')))
                 ->with('success', trans('admin/hardware/message.update.success'));
         }
 
@@ -392,12 +392,12 @@ class AssetsController extends Controller
      * @since [v1.0]
      * @return Redirect
      */
-    public function destroy($assetId)
+    public function destroy($assetId, Request $request)
     {
         // Check if the asset exists
         if (is_null($asset = Asset::find($assetId))) {
             // Redirect to the asset management page with error
-            return redirect()->route('hardware.index')->with('error', trans('admin/hardware/message.does_not_exist'));
+            return redirect()->route('hardware.index', ['status' => $request->get('status')])->with('error', trans('admin/hardware/message.does_not_exist'));
         }
 
         $this->authorize('delete', $asset);
@@ -416,7 +416,7 @@ class AssetsController extends Controller
 
         $asset->delete();
 
-        return redirect()->route('hardware.index')->with('success', trans('admin/hardware/message.delete.success'));
+        return redirect()->route('hardware.index', ['status' => $request->get('status')])->with('success', trans('admin/hardware/message.delete.success'));
     }
 
     /**
@@ -431,10 +431,10 @@ class AssetsController extends Controller
         $topsearch = ($request->get('topsearch')=="true");
 
         if (!$asset = Asset::where('serial', '=', $request->get('serial'))->first()) {
-            return redirect()->route('hardware.index')->with('error', trans('admin/hardware/message.does_not_exist'));
+            return redirect()->route('hardware.index', ['status' => $request->get('status')])->with('error', trans('admin/hardware/message.does_not_exist'));
         }
         $this->authorize('view', $asset);
-        return redirect()->route('hardware.show', $asset->id)->with('topsearch', $topsearch);
+        return redirect()->route('hardware.show', array('hardware' => $asset->id, 'status' => $request->get('status')))->with('topsearch', $topsearch);
     }
 
     /**
@@ -450,11 +450,11 @@ class AssetsController extends Controller
         $topsearch = ($request->get('topsearch') == 'true');
 
         if (! $asset = Asset::where('asset_tag', '=', $tag)->first()) {
-            return redirect()->route('hardware.index')->with('error', trans('admin/hardware/message.does_not_exist'));
+            return redirect()->route('hardware.index', ['status' => $request->get('status')])->with('error', trans('admin/hardware/message.does_not_exist'));
         }
         $this->authorize('view', $asset);
 
-        return redirect()->route('hardware.show', $asset->id)->with('topsearch', $topsearch);
+        return redirect()->route('hardware.show', array('hardware' => $asset->id, 'status' => $request->get('status')))->with('topsearch', $topsearch);
     }
 
 
@@ -466,7 +466,7 @@ class AssetsController extends Controller
      * @since [v1.0]
      * @return Response
      */
-    public function getQrCode($assetId = null)
+    public function getQrCode($assetId = null, Request $request)
     {
         $settings = Setting::getSettings();
 
@@ -483,7 +483,7 @@ class AssetsController extends Controller
                         return response()->file($qr_file, $header);
                     } else {
                         $barcode = new \Com\Tecnick\Barcode\Barcode();
-                        $barcode_obj = $barcode->getBarcodeObj($settings->barcode_type, route('hardware.show', $asset->id), $size['height'], $size['width'], 'black', [-2, -2, -2, -2]);
+                        $barcode_obj = $barcode->getBarcodeObj($settings->barcode_type, route('hardware.show', array('hardware' => $asset->id, 'status' => $request->get('status'))), $size['height'], $size['width'], 'black', [-2, -2, -2, -2]);
                         file_put_contents($qr_file, $barcode_obj->getPngData());
 
                         return response($barcode_obj->getPngData())->header('Content-type', 'image/png');
@@ -564,12 +564,12 @@ class AssetsController extends Controller
      * @since [v1.0]
      * @return View
      */
-    public function getClone($assetId = null)
+    public function getClone($assetId = null, Request $request)
     {
         // Check if the asset exists
         if (is_null($asset_to_clone = Asset::find($assetId))) {
             // Redirect to the asset management page
-            return redirect()->route('hardware.index')->with('error', trans('admin/hardware/message.does_not_exist'));
+            return redirect()->route('hardware.index', ['status' => $request->get('status')])->with('error', trans('admin/hardware/message.does_not_exist'));
         }
 
         $this->authorize('create', $asset_to_clone);
@@ -775,7 +775,7 @@ class AssetsController extends Controller
      * @since [v1.0]
      * @return View
      */
-    public function getRestore($assetId = null)
+    public function getRestore($assetId = null, Request $request)
     {
         // Get asset information
         $asset = Asset::withTrashed()->find($assetId);
@@ -791,10 +791,10 @@ class AssetsController extends Controller
             $logaction->user_id = Auth::user()->id;
             $logaction->logaction('restored');
 
-            return redirect()->route('hardware.index')->with('success', trans('admin/hardware/message.restore.success'));
+            return redirect()->route('hardware.index', ['status' => $request->get('status')])->with('success', trans('admin/hardware/message.restore.success'));
         }
 
-        return redirect()->route('hardware.index')->with('error', trans('admin/hardware/message.does_not_exist'));
+        return redirect()->route('hardware.index', ['status' => $request->get('status')])->with('error', trans('admin/hardware/message.does_not_exist'));
     }
 
     public function quickScan()

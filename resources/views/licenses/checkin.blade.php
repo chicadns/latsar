@@ -25,6 +25,7 @@
                         <h2 class="box-title"> {{ $licenseSeat->license->name }}</h2>
                     </div>
                     <div class="box-body">
+                        <input type="text" style="display: none" name="license_status" id="license_status" value="{{ Request::get('status') }}">
 
             <!-- license name -->
             <div class="form-group">

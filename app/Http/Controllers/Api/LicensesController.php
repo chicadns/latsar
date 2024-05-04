@@ -94,6 +94,12 @@ class LicensesController extends Controller
             $licenses->onlyTrashed();
         }
 
+        if ($request->input('status') == 'AssetNonTI3') {
+            $licenses->where('category_id', '>', 97)->where('category_id', '<', 118);
+        } else {
+            $licenses->where('category_id', '=', 10)->orWhere('category_id', '=', 16);
+        }
+
         // Make sure the offset and limit are actually integers and do not exceed system limits
         $offset = ($request->input('offset') > $licenses->count()) ? $licenses->count() : app('api_offset_value');
         $limit = app('api_limit_value');

@@ -58,7 +58,7 @@
         <i class="far fa-file-alt"></i>
       </div>
       @can('index', \App\Models\Accessory::class)
-          <a href="{{ route('accessories.index') }}" class="small-box-footer">{{ trans('general.view_all') }} <i class="fa fa-arrow-circle-right" aria-hidden="true"></i></a>
+          <a href="{{ url('hardware?status=Allstuff') }}" class="small-box-footer">{{ trans('general.view_all') }} <i class="fa fa-arrow-circle-right" aria-hidden="true"></i></a>
       @endcan
     </div>
       </a>

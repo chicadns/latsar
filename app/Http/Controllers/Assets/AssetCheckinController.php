@@ -25,12 +25,12 @@ class AssetCheckinController extends Controller
      * @throws \Illuminate\Auth\Access\AuthorizationException
      * @since [v1.0]
      */
-    public function create($assetId, $backto = null)
+    public function create($assetId, $backto = null, Request $request)
     {
         // Check if the asset exists
         if (is_null($asset = Asset::find($assetId))) {
             // Redirect to the asset management page with error
-            return redirect()->route('hardware.index')->with('error', trans('admin/hardware/message.does_not_exist'));
+            return redirect()->route('hardware.index', ['status' => $request->get('status')])->with('error', trans('admin/hardware/message.does_not_exist'));
         }
 
         $this->authorize('checkin', $asset);
@@ -54,11 +54,11 @@ class AssetCheckinController extends Controller
         // Check if the asset exists
         if (is_null($asset = Asset::find($assetId))) {
             // Redirect to the asset management page with error
-            return redirect()->route('hardware.index')->with('error', trans('admin/hardware/message.does_not_exist'));
+            return redirect()->route('hardware.index', ['status' => $request->get('asset_status')])->with('error', trans('admin/hardware/message.does_not_exist'));
         }
 
         if (is_null($target = $asset->assignedTo)) {
-            return redirect()->route('hardware.index')->with('error', trans('admin/hardware/message.checkin.already_checked_in'));
+            return redirect()->route('hardware.index', ['status' => $request->get('asset_status')])->with('error', trans('admin/hardware/message.checkin.already_checked_in'));
         }
         $this->authorize('checkin', $asset);
 
@@ -142,9 +142,9 @@ class AssetCheckinController extends Controller
                 return redirect()->route('users.show', $user->id)->with('success', trans('admin/hardware/message.checkin.success'));
             }
 
-            return redirect()->route('hardware.index')->with('success', trans('admin/hardware/message.checkin.success'));
+            return redirect()->route('hardware.index', ['status' => $request->get('asset_status')])->with('success', trans('admin/hardware/message.checkin.success'));
         }
         // Redirect to the asset management page with error
-        return redirect()->route('hardware.index')->with('error', trans('admin/hardware/message.checkin.error').$asset->getErrors());
+        return redirect()->route('hardware.index', ['status' => $request->get('asset_status')])->with('error', trans('admin/hardware/message.checkin.error').$asset->getErrors());
     }
 }

@@ -727,4 +727,9 @@ class License extends Depreciable
         return $query->leftJoin('companies as companies', 'licenses.company_id', '=', 'companies.id')->select('licenses.*')
             ->orderBy('companies.name', $order);
     }
+
+    public function scopeCategoryNonTI3($query)
+    {
+        return $query->where('category_id', '>', 97)->where('category_id', '<', 118);
+    }
 }

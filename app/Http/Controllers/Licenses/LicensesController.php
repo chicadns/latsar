@@ -102,7 +102,7 @@ class LicensesController extends Controller
         $license->user_id           = Auth::id();
 
         if ($license->save()) {
-            return redirect()->route('licenses.index')->with('success', trans('admin/licenses/message.create.success'));
+            return redirect()->route('licenses.index', ['status' => $request->get('license_status')])->with('success', trans('admin/licenses/message.create.success'));
         }
 
         return redirect()->back()->withInput()->withErrors($license->getErrors());
@@ -118,10 +118,10 @@ class LicensesController extends Controller
      * @return \Illuminate\Contracts\View\View
      * @throws \Illuminate\Auth\Access\AuthorizationException
      */
-    public function edit($licenseId = null)
+    public function edit($licenseId = null, Request $request)
     {
         if (is_null($item = License::find($licenseId))) {
-            return redirect()->route('licenses.index')->with('error', trans('admin/licenses/message.does_not_exist'));
+            return redirect()->route('licenses.index', ['status' => $request->get('status')])->with('error', trans('admin/licenses/message.does_not_exist'));
         }
 
         $this->authorize('update', $item);
@@ -153,7 +153,7 @@ class LicensesController extends Controller
     public function update(Request $request, $licenseId = null)
     {
         if (is_null($license = License::find($licenseId))) {
-            return redirect()->route('licenses.index')->with('error', trans('admin/licenses/message.does_not_exist'));
+            return redirect()->route('licenses.index', ['status' => $request->get('license_status')])->with('error', trans('admin/licenses/message.does_not_exist'));
         }
 
         $this->authorize('update', $license);
@@ -180,7 +180,7 @@ class LicensesController extends Controller
         $license->category_id       = $request->input('category_id');
 
         if ($license->save()) {
-            return redirect()->route('licenses.show', ['license' => $licenseId])->with('success', trans('admin/licenses/message.update.success'));
+            return redirect()->route('licenses.show', array('license' => $licenseId, 'status' => $request->get('license_status')))->with('success', trans('admin/licenses/message.update.success'));
         }
         // If we can't adjust the number of seats, the error is flashed to the session by the event handler in License.php
         return redirect()->back()->withInput()->withErrors($license->getErrors());
@@ -196,12 +196,12 @@ class LicensesController extends Controller
      * @return \Illuminate\Http\RedirectResponse
      * @throws \Illuminate\Auth\Access\AuthorizationException
      */
-    public function destroy($licenseId)
+    public function destroy($licenseId, Request $request)
     {
         // Check if the license exists
         if (is_null($license = License::find($licenseId))) {
             // Redirect to the license management page
-            return redirect()->route('licenses.index')->with('error', trans('admin/licenses/message.not_found'));
+            return redirect()->route('licenses.index', ['status' => $request->get('status')])->with('error', trans('admin/licenses/message.not_found'));
         }
 
         $this->authorize('delete', $license);
@@ -217,11 +217,11 @@ class LicensesController extends Controller
             $license->delete();
 
             // Redirect to the licenses management page
-            return redirect()->route('licenses.index')->with('success', trans('admin/licenses/message.delete.success'));
+            return redirect()->route('licenses.index', ['status' => $request->get('status')])->with('success', trans('admin/licenses/message.delete.success'));
             // Redirect to the license management page
         }
         // There are still licenses in use.
-        return redirect()->route('licenses.index')->with('error', trans('admin/licenses/message.assoc_users'));
+        return redirect()->route('licenses.index', ['status' => $request->get('status')])->with('error', trans('admin/licenses/message.assoc_users'));
     }
 
     /**
@@ -233,29 +233,29 @@ class LicensesController extends Controller
      * @return \Illuminate\Contracts\View\View
      * @throws \Illuminate\Auth\Access\AuthorizationException
      */
-    public function show($licenseId = null)
+    public function show($licenseId = null, Request $request)
     {
         $license = License::with('assignedusers')->find($licenseId);
 
         if (!$license) {
-            return redirect()->route('licenses.index')
+            return redirect()->route('licenses.index', ['status' => $request->get('status')])
             ->with('error', trans('admin/licenses/message.does_not_exist'));
         }
 
-        $users_count = User::where('autoassign_licenses', '1')->count();
+        // $users_count = User::where('autoassign_licenses', '1')->count();
         $total_seats_count = $license->totalSeatsByLicenseID();
         $available_seats_count = $license->availCount()->count();
         $checkedout_seats_count = ($total_seats_count - $available_seats_count);
 
         \Log::debug('Total: '.$total_seats_count);
-        \Log::debug('Users: '.$users_count);
+        // \Log::debug('Users: '.$users_count);
         \Log::debug('Available: '.$available_seats_count);
         \Log::debug('Checkedout: '.$checkedout_seats_count);
 
 
         $this->authorize('view', $license);
         return view('licenses.view', compact('license'))
-            ->with('users_count', $users_count)
+            // ->with('users_count', $users_count)
             ->with('total_seats_count', $total_seats_count)
             ->with('available_seats_count', $available_seats_count)
             ->with('checkedout_seats_count', $checkedout_seats_count);
@@ -271,10 +271,10 @@ class LicensesController extends Controller
      * @return \Illuminate\Http\RedirectResponse
      * @throws \Illuminate\Auth\Access\AuthorizationException
      */
-    public function getClone($licenseId = null)
+    public function getClone($licenseId = null, Request $request)
     {
         if (is_null($license_to_clone = License::find($licenseId))) {
-            return redirect()->route('licenses.index')->with('error', trans('admin/licenses/message.does_not_exist'));
+            return redirect()->route('licenses.index', ['status' => $request->get('status')])->with('error', trans('admin/licenses/message.does_not_exist'));
         }
 
         $this->authorize('create', License::class);

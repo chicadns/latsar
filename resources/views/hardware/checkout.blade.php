@@ -25,6 +25,7 @@
                         <h2 class="box-title"> {{ trans('admin/hardware/form.tag') }} {{ $asset->asset_tag }}</h2>
                     </div>
                     <div class="box-body">
+                        <input type="text" style="display: none" name="asset_status" id="asset_status" value="{{ Request::get('status') }}">
                     {{csrf_field()}}
                         @if ($asset->company && $asset->company->name)
                             <div class="form-group">

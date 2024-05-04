@@ -38,6 +38,7 @@
 
                   <!-- AssetModel name -->
                     <div class="form-group">
+                        <input type="text" style="display: none" name="asset_status" id="asset_status" value="{{ Request::get('status') }}">
                       {{ Form::label('model', trans('admin/hardware/form.model'), array('class' => 'col-md-3 control-label')) }}
                       <div class="col-md-8">
                         <p class="form-control-static">

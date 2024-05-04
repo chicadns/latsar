@@ -444,7 +444,7 @@
 
                                 <ul class="treeview-menu">
                                     <li class="treeview{{ ((!Request::query('status') == 'AssetTI*')
-                                        && (Request::query('status') == 'Allitems' || Request::query('status') == 'Deployed' || Request::query('status') == 'RTD' || Request::query('status') == 'Pending' || Request::query('status') == 'Undeployable' || Request::query('status') == 'Archived') ? ' active' : '') }}">
+                                        || (Request::query('status') == 'Allitems' || Request::query('status') == 'Deployed' || Request::query('status') == 'RTD' || Request::query('status') == 'Pending' || Request::query('status') == 'Undeployable' || Request::query('status') == 'Archived') ? ' active' : '') }}">
                                         <a href="#"><i class="fas fa-magnifying-glass-chart fa-fw" aria-hidden="true"></i>
                                             <span>Perangkat IT Per Status</span>
                                             <i class="fa fa-angle-left pull-right"></i>
@@ -613,7 +613,7 @@
                         @can('view', \App\Models\Accessory::class)
                         <li class="treeview{{ (Request::query('status') == 'AssetNonTI1' || Request::query('status') == 'AssetNonTI2' || Request::query('status') == 'AssetNonTI3' || Request::query('status') == 'AssetNonTI4' || Request::query('status') == 'AssetNonTI5' || Request::query('status') == 'AssetNonTI6' || Request::query('status') == 'AssetNonTI7' || Request::query('status') == 'AssetNonTI8' || Request::query('status') == 'AssetNonTI9' || Request::query('status') == 'AssetNonTI10' 
                             || Request::query('status') == 'Allstuff' || Request::query('status') == 'Allocated' || Request::query('status') == 'Available' ? ' active' : '') }}">
-                        <a href="#"><i class="fas fa-barcode fa-fw" aria-hidden="true"></i>
+                        <a href="#"><i class="fas fa-file-alt fa-fw" aria-hidden="true"></i>
                             <span>{{ trans('general.accessories') }}</span>
                             <i class="fa fa-angle-left pull-right"></i>
                         </a>
@@ -680,60 +680,70 @@
                                         <a href="{{ url('hardware?status=AssetNonTI1') }}">
                                             <i class="fas fa-list" aria-hidden="true"></i>
                                             Alat Angkutan Bermotor
+                                            ({{ (isset($total_categorynonti1_sidebar)) ? $total_categorynonti1_sidebar : '' }})
                                         </a>
                                     </li>
                                     <li{!! (Request::query('status') == 'AssetNonTI2' ? ' class="active"' : '') !!}>
                                         <a href="{{ url('hardware?status=AssetNonTI2') }}">
                                             <i class="fas fa-list" aria-hidden="true"></i>
                                             Alat Besar
+                                            ({{ (isset($total_categorynonti2_sidebar)) ? $total_categorynonti2_sidebar : '' }})
                                         </a>
                                     </li>
-                                    <li{!! (Request::query('category') == 'AssetNonTI3' ? ' class="active"' : '') !!}>
-                                        <a href="{{ url('hardware?category=AssetNonTI3') }}">
+                                    <li{!! (Request::query('status') == 'AssetNonTI3' ? ' class="active"' : '') !!}>
+                                        <a href="{{ url('licenses?status=AssetNonTI3') }}">
                                             <i class="fas fa-list" aria-hidden="true"></i>
                                             Aset Tetap Lainnya
+                                            ({{ (isset($total_categorynonti3_sidebar)) ? $total_categorynonti3_sidebar : '' }})
                                         </a>
                                     </li>
                                     <li{!! (Request::query('status') == 'AssetNonTI4' ? ' class="active"' : '') !!}>
                                         <a href="{{ url('hardware?status=AssetNonTI4') }}">
                                             <i class="fas fa-list" aria-hidden="true"></i>
                                             Aset Tetap Renovasi
+                                            ({{ (isset($total_categorynonti4_sidebar)) ? $total_categorynonti4_sidebar : '' }})
                                         </a>
                                     </li>
                                     <li{!! (Request::query('status') == 'AssetNonTI5' ? ' class="active"' : '') !!}>
                                         <a href="{{ url('hardware?status=AssetNonTI5') }}">
                                             <i class="fas fa-list" aria-hidden="true"></i>
                                             Gedung dan Bangunan
+                                            ({{ (isset($total_categorynonti5_sidebar)) ? $total_categorynonti5_sidebar : '' }})
                                         </a>
                                     </li>
                                     <li{!! (Request::query('status') == 'AssetNonTI6' ? ' class="active"' : '') !!}>
                                         <a href="{{ url('hardware?status=AssetNonTI6') }}">
                                             <i class="fas fa-list" aria-hidden="true"></i>
                                             Jalan dan Jembatan
+                                            ({{ (isset($total_categorynonti6_sidebar)) ? $total_categorynonti6_sidebar : '' }})
                                         </a>
                                     </li>
                                     <li{!! (Request::query('status') == 'AssetNonTI7' ? ' class="active"' : '') !!}>
                                         <a href="{{ url('hardware?status=AssetNonTI7') }}">
                                             <i class="fas fa-list" aria-hidden="true"></i>
                                             Konstruksi Dalam Pengerjaan
+                                            ({{ (isset($total_categorynonti7_sidebar)) ? $total_categorynonti7_sidebar : '' }})
                                         </a>
                                     </li>
                                     <li{!! (Request::query('status') == 'AssetNonTI8' ? ' class="active"' : '') !!}>
                                         <a href="{{ url('hardware?status=AssetNonTI8') }}">
                                             <i class="fas fa-list" aria-hidden="true"></i>
                                             Peralatan dan Mesin Non TIK
+                                            ({{ (isset($total_categorynonti8_sidebar)) ? $total_categorynonti8_sidebar : '' }})
                                         </a>
                                     </li>
                                     <li{!! (Request::query('status') == 'AssetNonTI9' ? ' class="active"' : '') !!}>
                                         <a href="{{ url('hardware?status=AssetNonTI9') }}">
                                             <i class="fas fa-list" aria-hidden="true"></i>
                                             Rumah Negara
+                                            ({{ (isset($total_categorynonti9_sidebar)) ? $total_categorynonti9_sidebar : '' }})
                                         </a>
                                     </li>
                                     <li{!! (Request::query('status') == 'AssetNonTI10' ? ' class="active"' : '') !!}>
                                         <a href="{{ url('hardware?status=AssetNonTI10') }}">
                                             <i class="fas fa-list" aria-hidden="true"></i>
                                             Tanah
+                                            ({{ (isset($total_categorynonti10_sidebar)) ? $total_categorynonti10_sidebar : '' }})
                                         </a>
                                     </li>
 
@@ -744,7 +754,7 @@
                         @endcan
 
                         @can('view', \App\Models\License::class)
-                            <li{!! (Request::is('licenses*') ? ' class="active"' : '') !!}>
+                            <li{!! (Request::is('licenses*') && (!Request::query('status') == 'AssetNonTI3') ? ' class="active"' : '') !!}>
                                 <a href="{{ route('licenses.index') }}">
                                     <i class="fa fa-save fa-fw"></i>
                                     <span>{{ trans('general.licenses') }}</span>
