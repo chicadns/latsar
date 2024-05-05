@@ -1249,7 +1249,7 @@ class Asset extends Depreciable
                         ->where('category_models.category_id', '<', 95)
                         ->orWhere('category_models.category_id', '=', 97);
                 });
-        });
+        })->whereNull('assets.assigned_to')->orWhere('assets.assigned_to', '<>', 0);
     }
 
     public function scopeCategoryTI2($query)
@@ -1261,7 +1261,7 @@ class Asset extends Depreciable
                         ->where('category_models.category_id', '>', 94)
                         ->where('category_models.category_id', '<', 97);
                 });
-        });
+        })->whereNull('assets.assigned_to')->orWhere('assets.assigned_to', '<>', 0);
     }
 
     public function scopeCategoryNonTI1($query)
@@ -1273,7 +1273,7 @@ class Asset extends Depreciable
                         ->where('category_models.category_id', '>', 128)
                         ->where('category_models.category_id', '<', 142);
                 });
-        });
+        })->where('assets.assigned_to', '=', 0);
     }
 
     public function scopeCategoryNonTI2($query)
@@ -1285,7 +1285,7 @@ class Asset extends Depreciable
                         ->where('category_models.category_id', '>', 141)
                         ->where('category_models.category_id', '<', 160);
                 });
-        });
+        })->where('assets.assigned_to', '=', 0);
     }
 
     public function scopeCategoryNonTI4($query)
@@ -1308,7 +1308,7 @@ class Asset extends Depreciable
                         ->where('category_models.category_id', '>', 165)
                         ->where('category_models.category_id', '<', 211);
                 });
-        });
+        })->where('assets.assigned_to', '=', 0);
     }
 
     public function scopeCategoryNonTI6($query)
@@ -1319,7 +1319,7 @@ class Asset extends Depreciable
                     $subjoin->on('categories.id', '=', 'category_models.category_id')
                         ->where('category_models.category_id', '=', 165);
                 });
-        });
+        })->where('assets.assigned_to', '=', 0);
     }
 
     public function scopeCategoryNonTI7($query)
@@ -1331,7 +1331,7 @@ class Asset extends Depreciable
                         ->where('category_models.category_id', '>', 161)
                         ->where('category_models.category_id', '<', 165);
                 });
-        });
+        })->where('assets.assigned_to', '=', 0);
     }
 
     public function scopeCategoryNonTI8($query)
@@ -1343,7 +1343,7 @@ class Asset extends Depreciable
                         ->where('category_models.category_id', '>', 219)
                         ->where('category_models.category_id', '<', 870);
                 });
-        });
+        })->where('assets.assigned_to', '=', 0);
     }
 
     public function scopeCategoryNonTI9($query)
@@ -1355,7 +1355,7 @@ class Asset extends Depreciable
                         ->where('category_models.category_id', '>', 117)
                         ->where('category_models.category_id', '<', 129);
                 });
-        });
+        })->where('assets.assigned_to', '=', 0);
     }
 
     public function scopeCategoryNonTI10($query)
@@ -1367,7 +1367,7 @@ class Asset extends Depreciable
                         ->where('category_models.category_id', '>', 210)
                         ->where('category_models.category_id', '<', 220);
                 });
-        });
+        })->where('assets.assigned_to', '=', 0);
     }
 
     public function scopeCategoryNonTISum($query)
@@ -1379,7 +1379,7 @@ class Asset extends Depreciable
                         ->where('category_models.category_id', '>', 117)
                         ->where('category_models.category_id', '<', 870);
                 });
-        });
+        })->where('assets.assigned_to', '=', 0);
     }
   /**
    * Query builder scope for Requestable assets

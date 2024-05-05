@@ -224,7 +224,7 @@ class AssetsController extends Controller
                             $subjoin->on('categories.id', '=', 'category_models.category_id')
                                 ->where('category_models.category_id', '<', 98);
                         });
-                });
+                })->whereNull('assets.assigned_to')->orWhere('assets.assigned_to', '<>', 0);
                 break;
             case 'AssetTI2':
                 $assets->join('models AS category_models', function ($join) {
@@ -234,7 +234,7 @@ class AssetsController extends Controller
                                 ->where('category_models.category_id', '>', 94)
                                 ->where('category_models.category_id', '<', 97);
                         });
-                });
+                })->whereNull('assets.assigned_to')->orWhere('assets.assigned_to', '<>', 0);
                 break;
             case 'AssetNonTI1':
                 $assets->join('models AS category_models', function ($join) {
@@ -244,7 +244,7 @@ class AssetsController extends Controller
                                 ->where('category_models.category_id', '>', 128)
                                 ->where('category_models.category_id', '<', 142);
                         });
-                });
+                })->where('assets.assigned_to', '=', 0);
                 break;
             case 'AssetNonTI2':
                 $assets->join('models AS category_models', function ($join) {
@@ -254,7 +254,7 @@ class AssetsController extends Controller
                                 ->where('category_models.category_id', '>', 141)
                                 ->where('category_models.category_id', '<', 160);
                         });
-                });
+                })->where('assets.assigned_to', '=', 0);
                 break;
             case 'AssetNonTI4':
                 $assets->join('models AS category_models', function ($join) {
@@ -263,7 +263,7 @@ class AssetsController extends Controller
                             $subjoin->on('categories.id', '=', 'category_models.category_id')
                                 ->where('category_models.category_id', '=', 161);
                         });
-                });
+                })->where('assets.assigned_to', '=', 0);
                 break;
             case 'AssetNonTI5':
                 $assets->join('models AS category_models', function ($join) {
@@ -273,7 +273,7 @@ class AssetsController extends Controller
                                 ->where('category_models.category_id', '>', 165)
                                 ->where('category_models.category_id', '<', 211);
                         });
-                });
+                })->where('assets.assigned_to', '=', 0);
                 break;
             case 'AssetNonTI6':
                 $assets->join('models AS category_models', function ($join) {
@@ -282,7 +282,7 @@ class AssetsController extends Controller
                             $subjoin->on('categories.id', '=', 'category_models.category_id')
                                 ->where('category_models.category_id', '=', 165);
                         });
-                });
+                })->where('assets.assigned_to', '=', 0);
                 break;
             case 'AssetNonTI7':
                 $assets->join('models AS category_models', function ($join) {
@@ -292,7 +292,7 @@ class AssetsController extends Controller
                                 ->where('category_models.category_id', '>', 161)
                                 ->where('category_models.category_id', '<', 165);
                         });
-                });
+                })->where('assets.assigned_to', '=', 0);
                 break;
             case 'AssetNonTI8':
                 $assets->join('models AS category_models', function ($join) {
@@ -302,7 +302,7 @@ class AssetsController extends Controller
                                 ->where('category_models.category_id', '>', 219)
                                 ->where('category_models.category_id', '<', 870);
                         });
-                });
+                })->where('assets.assigned_to', '=', 0);
                 break;
             case 'AssetNonTI9':
                 $assets->join('models AS category_models', function ($join) {
@@ -312,7 +312,7 @@ class AssetsController extends Controller
                                 ->where('category_models.category_id', '>', 117)
                                 ->where('category_models.category_id', '<', 129);
                         });
-                });
+                })->where('assets.assigned_to', '=', 0);
                 break;
             case 'AssetNonTI10':
                 $assets->join('models AS category_models', function ($join) {
@@ -322,7 +322,7 @@ class AssetsController extends Controller
                                 ->where('category_models.category_id', '>', 210)
                                 ->where('category_models.category_id', '<', 220);
                         });
-                });
+                })->where('assets.assigned_to', '=', 0);
                 break;
             default:
 
