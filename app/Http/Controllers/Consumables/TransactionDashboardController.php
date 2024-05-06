@@ -16,14 +16,19 @@ class TransactionDashboardController extends Controller
     {
         $this->authorize('index', ConsumableDetails::class);
         $current_user = Auth::user();
+        $companyNamePattern = "BPS Propinsi";
+        $unikerja = Company::where('id', $current_user->company_id)->value('name');
+        $isBPSPropinsi = strpos($unikerja, $companyNamePattern) !== false;
         $data_type['pemasukkan'] = Company::scopeCompanyables(ConsumableDetails::select(
             'consumables_details.*','consumables_transaction.state','consumables_transaction.types'
         )->join('consumables_transaction', 'consumables_details.transaction_id', '=', 'consumables_transaction.id')
         ->groupBy(
             'consumables_details.company_id','consumables_details.consumable_id','consumables_transaction.state'
-        )->where(function ($query) use ($current_user) {
+        )->where(function ($query) use ($current_user, $isBPSPropinsi) {
             if ($current_user->company_id <= 25 && $current_user->company_id != 6 && $current_user->company_id != 7) {
                 $query->where('types', 'Pemasukkan')->where('consumables_transaction.company_id', 5)->where('state', 'Selesai');
+            } elseif ($isBPSPropinsi) {
+                $query->where('types', 'Pemasukkan')->where('consumables_transaction.company_id', $current_user)->where('state', 'Selesai');
             } else {
                 $query->where('types', 'Pemasukkan')->where('state', 'Selesai');
             }
@@ -34,13 +39,20 @@ class TransactionDashboardController extends Controller
         )->join('consumables_transaction', 'consumables_details.transaction_id', '=', 'consumables_transaction.id')
         ->groupBy(
             'consumables_details.company_id','consumables_details.consumable_id','consumables_transaction.state'
-        )->where(function ($query) use ($current_user) {
+        )->where(function ($query) use ($current_user, $isBPSPropinsi) {
             if ($current_user->company_id <= 25 && $current_user->company_id != 6 && $current_user->company_id != 7) {
                 $query->where(function($query) {
                     $query->where('types', 'Pengeluaran')->where('consumables_transaction.company_id', 5)->where('state', 'Selesai');
                 })
                 ->orWhere(function($query) {
-                    $query->where('consumables_transaction.company_id', '<>', 5)->where('state', 'Selesai');
+                    $query->where('types', 'Pemasukkan')->where('consumables_transaction.company_id', '<>', 5)->where('state', 'Selesai');
+                });
+            } elseif ($isBPSPropinsi) {
+                $query->where(function($query) use ($current_user) {
+                    $query->where('types', 'Pengeluaran')->where('consumables_transaction.company_id', $current_user)->where('state', 'Selesai');
+                })
+                ->orWhere(function($query) use ($current_user) {
+                    $query->where('types', 'Pemasukkan')->where('consumables_transaction.company_id', '<>', $current_user)->where('state', 'Selesai');
                 });
             } else {
                 $query->where('types', 'Pengeluaran')->where('state', 'Selesai');

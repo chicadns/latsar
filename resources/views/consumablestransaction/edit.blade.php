@@ -186,8 +186,8 @@
                 });
                 try {
                     let consumableData = await getConsumableData(consumableId);
-                    $(`input[name="purchase_costs[${index}]"]`).val(consumableData.purchase_cost);
-                    $(`input[name="purchase_costsview[${index}]"]`).val(consumableData.purchase_cost);
+                    $(`input[name="purchase_costs[${index}]"]`).val(parseInt(consumableData.purchase_cost));
+                    $(`input[name="purchase_costsview[${index}]"]`).val(parseInt(consumableData.purchase_cost));
                     $(`input[name="categorys[${index}]"]`).val(consumableData.category_id); 
                     $(`input[name="categorysview[${index}]"]`).val(consumableData.category_name);
                     $(`input[name="remains[${index}]"]`).val(consumableData.qty);

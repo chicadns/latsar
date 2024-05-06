@@ -90,9 +90,9 @@ final class Company extends SnipeModel
         }
 
         $groups = json_decode($current_user['groups'], true);
-        $groupName = $groups[0]['name'];
         
         if ($current_user->company_id != null) {
+            $groupName = $groups[0]['name'];
             $companyNamePattern = "BPS Propinsi";
             $unikerja = Company::where('id', $current_user->company_id)->value('name');
             $isBPSPropinsi = strpos($unikerja, $companyNamePattern) !== false;

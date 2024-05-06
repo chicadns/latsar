@@ -52,9 +52,14 @@ class TransactionDashboardController extends Controller
         if ($request->filled('type_filter')) {
             $consumables = $consumables->whereHas('consumableTransaction', function ($query) use ($request) {
                 $current_user = Auth::user();
+                $companyNamePattern = "BPS Propinsi";
+                $unikerja = Company::where('id', $current_user->company_id)->value('name');
+                $isBPSPropinsi = strpos($unikerja, $companyNamePattern) !== false;
                 if ($request->get('type_filter') === 'Pemasukkan') {
                     if ($current_user->company_id <= 25 && $current_user->company_id != 6 && $current_user->company_id != 7) {
                         $query->where('types', $request->get('type_filter'))->where('company_id', 5)->where('state', 'Selesai');
+                    } elseif ($isBPSPropinsi) {
+                        $query->where('types', $request->get('type_filter'))->where('company_id', $current_user)->where('state', 'Selesai');
                     } else {
                         $query->where('types', $request->get('type_filter'))->where('state', 'Selesai');
                     }
@@ -64,7 +69,14 @@ class TransactionDashboardController extends Controller
                             $query->where('types', $request->get('type_filter'))->where('company_id', 5)->where('state', 'Selesai');
                         })
                         ->orWhere(function($query) {
-                            $query->where('company_id', '<>', 5)->where('state', 'Selesai');
+                            $query->where('types', 'Pemasukkan')->where('company_id', '<>', 5)->where('state', 'Selesai');
+                        });
+                    } elseif ($isBPSPropinsi) {
+                        $query->where(function($query) use ($request, $current_user) {
+                            $query->where('types', $request->get('type_filter'))->where('company_id', $current_user)->where('state', 'Selesai');
+                        })
+                        ->orWhere(function($query) use ($current_user) {
+                            $query->where('types', 'Pemasukkan')->where('company_id', '<>', $current_user)->where('state', 'Selesai');
                         });
                     } else {
                         $query->where('types', $request->get('type_filter'))->where('state', 'Selesai');
@@ -141,9 +153,14 @@ class TransactionDashboardController extends Controller
         if ($request->filled('typeFilter')) {
             $companies = $companies->whereHas('consumableTransaction', function ($query) use ($request) {
                 $current_user = Auth::user();
+                $companyNamePattern = "BPS Propinsi";
+                $unikerja = Company::where('id', $current_user->company_id)->value('name');
+                $isBPSPropinsi = strpos($unikerja, $companyNamePattern) !== false;
                 if ($request->get('typeFilter') === 'Pemasukkan') {
                     if ($current_user->company_id <= 25 && $current_user->company_id != 6 && $current_user->company_id != 7) {
                         $query->where('types', $request->get('typeFilter'))->where('company_id', 5)->where('state', 'Selesai');
+                    } elseif ($isBPSPropinsi) {
+                        $query->where('types', $request->get('type_filter'))->where('company_id', $current_user)->where('state', 'Selesai');
                     } else {
                         $query->where('types', $request->get('typeFilter'))->where('state', 'Selesai');
                     }
@@ -153,7 +170,14 @@ class TransactionDashboardController extends Controller
                             $query->where('types', $request->get('typeFilter'))->where('company_id', 5)->where('state', 'Selesai');
                         })
                         ->orWhere(function($query) {
-                            $query->where('company_id', '<>', 5)->where('state', 'Selesai');
+                            $query->where('types', 'Pemasukkan')->where('company_id', '<>', 5)->where('state', 'Selesai');
+                        });
+                    } elseif ($isBPSPropinsi) {
+                        $query->where(function($query) use ($request, $current_user) {
+                            $query->where('types', $request->get('type_filter'))->where('company_id', $current_user)->where('state', 'Selesai');
+                        })
+                        ->orWhere(function($query) use ($current_user) {
+                            $query->where('types', 'Pemasukkan')->where('company_id', '<>', $current_user)->where('state', 'Selesai');
                         });
                     } else {
                         $query->where('types', $request->get('typeFilter'))->where('state', 'Selesai');
@@ -164,13 +188,17 @@ class TransactionDashboardController extends Controller
 
         $companies = $companies->get();
 
-        foreach ($companies as $company) {
-            $total[$company->company->name]['label'] = $company->company->name;
-            $total[$company->company->name]['count'] = $company->total_qty;
+        if ($companies->count() > 0) {
+            foreach ($companies as $company) {
+                $total[$company->company->name]['label'] = $company->company->name;
+                $total[$company->company->name]['count'] = $company->total_qty;
 
-            if ($company->color != '') {
-                $total[$company->company->name]['color'] = $company->color;
+                if ($company->color != '') {
+                    $total[$company->company->name]['color'] = $company->color;
+                }
             }
+        } else {
+            $total = [];
         }
 
         return (new PieChartTransformer())->transformPieChartDate($total);
@@ -197,9 +225,14 @@ class TransactionDashboardController extends Controller
         if ($request->filled('typeFilter')) {
             $consumables = $consumables->whereHas('consumableTransaction', function ($query) use ($request) {
                 $current_user = Auth::user();
+                $companyNamePattern = "BPS Propinsi";
+                $unikerja = Company::where('id', $current_user->company_id)->value('name');
+                $isBPSPropinsi = strpos($unikerja, $companyNamePattern) !== false;
                 if ($request->get('typeFilter') === 'Pemasukkan') {
                     if ($current_user->company_id <= 25 && $current_user->company_id != 6 && $current_user->company_id != 7) {
                         $query->where('types', $request->get('typeFilter'))->where('company_id', 5)->where('state', 'Selesai');
+                    } elseif ($isBPSPropinsi) {
+                        $query->where('types', $request->get('type_filter'))->where('company_id', $current_user)->where('state', 'Selesai');
                     } else {
                         $query->where('types', $request->get('typeFilter'))->where('state', 'Selesai');
                     }
@@ -209,7 +242,14 @@ class TransactionDashboardController extends Controller
                             $query->where('types', $request->get('typeFilter'))->where('company_id', 5)->where('state', 'Selesai');
                         })
                         ->orWhere(function($query) {
-                            $query->where('company_id', '<>', 5)->where('state', 'Selesai');
+                            $query->where('types', 'Pemasukkan')->where('company_id', '<>', 5)->where('state', 'Selesai');
+                        });
+                    } elseif ($isBPSPropinsi) {
+                        $query->where(function($query) use ($request, $current_user) {
+                            $query->where('types', $request->get('type_filter'))->where('company_id', $current_user)->where('state', 'Selesai');
+                        })
+                        ->orWhere(function($query) use ($current_user) {
+                            $query->where('types', 'Pemasukkan')->where('company_id', '<>', $current_user)->where('state', 'Selesai');
                         });
                     } else {
                         $query->where('types', $request->get('typeFilter'))->where('state', 'Selesai');
@@ -224,14 +264,18 @@ class TransactionDashboardController extends Controller
 
         $consumables = $consumables->get();
 
-        foreach ($consumables as $consumable) {
-            $total[$consumable->consumable->name . $consumable->id]['company'] = $consumable->company->name;
-            $total[$consumable->consumable->name . $consumable->id]['label']   = $consumable->consumable->name."-".$consumable->company->name;
-            $total[$consumable->consumable->name . $consumable->id]['count']   = $consumable->total_qty;
+        if ($consumables->count() > 0) {
+            foreach ($consumables as $consumable) {
+                $total[$consumable->consumable->name . $consumable->id]['company'] = $consumable->company->name;
+                $total[$consumable->consumable->name . $consumable->id]['label']   = $consumable->consumable->name."-".$consumable->company->name;
+                $total[$consumable->consumable->name . $consumable->id]['count']   = $consumable->total_qty;
 
-            if ($consumable->color != '') {
-                $total[$consumable->consumable->name . $consumable->id]['color'] = $consumable->color;
+                if ($consumable->color != '') {
+                    $total[$consumable->consumable->name . $consumable->id]['color'] = $consumable->color;
+                }
             }
+        } else {
+            $total = [];
         }
 
         return (new PieChartTransformer())->transformPieChartDate($total);
