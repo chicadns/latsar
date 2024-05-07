@@ -119,16 +119,16 @@
               <!-- Auto-Add to Future Fieldsets  -->
           <div class="form-group {{ $errors->has('auto_add_to_fieldsets') ? ' has-error' : '' }}"  id="auto_add_to_fieldsets">
               <div class="col-md-8 col-md-offset-4">
-                  <label class="form-control">
+                  <label class="form-control" style="display: flex; align-items: center; height: 50px;">
                       <input type="checkbox" name="auto_add_to_fieldsets" aria-label="auto_add_to_fieldsets" value="1"{{ (old('auto_add_to_fieldsets') || $field->auto_add_to_fieldsets) ? ' checked="checked"' : '' }}>
-                      {{ trans('admin/custom_fields/general.auto_add_to_fieldsets') }}
+                      <span style="margin-left: 5px;">{{ trans('admin/custom_fields/general.auto_add_to_fieldsets') }}</span>
                   </label>
               </div>
 
               <div class="col-md-8 col-md-offset-4">
-                  <label class="form-control">
+                  <label class="form-control" style="display: flex; align-items: center; height: 85px;">
                       <input type="checkbox" name="show_in_listview" aria-label="show_in_listview" value="1"{{ (old('show_in_listview') || $field->show_in_listview) ? ' checked="checked"' : '' }}>
-                      {{ trans('admin/custom_fields/general.show_in_listview') }}
+                      <span style="margin-left: 5px;">{{ trans('admin/custom_fields/general.show_in_listview') }}</span>
                   </label>
               </div>
 
@@ -157,10 +157,10 @@
               </div> -->
 
               <!-- Show in View All Assets profile view  -->
-              <div class="col-md-9 col-md-offset-3">
-                  <label class="form-control">
+              <div class="col-md-8 col-md-offset-4">
+                  <label class="form-control" style="display: flex; align-items: center; height: 85px;">
                       <input type="checkbox" name="display_in_user_view" aria-label="display_in_user_view" value="1" {{ (old('display_in_user_view') || $field->display_in_user_view) ? ' checked="checked"' : '' }}>
-                      {{ trans('admin/custom_fields/general.display_in_user_view') }}
+                      <span style="margin-left: 5px;">{{ trans('admin/custom_fields/general.display_in_user_view') }}</span>
                   </label>
               </div>
 

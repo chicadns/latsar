@@ -71,9 +71,9 @@
                 {{ trans('general.category') }}
               </label>
 
-              <label class="form-control">
+              <label class="form-control"  style="display: flex; align-items: center; height: 50px;">
                 {{ Form::checkbox('serial', '1', '1') }}
-                {{ trans('admin/hardware/table.serial') }}
+                <span style="margin-left: 5px;">{{ trans('admin/hardware/table.serial') }}</span>
               </label>
 
               <label class="form-control">
@@ -86,9 +86,9 @@
                 {{ trans('admin/hardware/form.cost') }}
               </label>
 
-              <label class="form-control">
+              <label class="form-control" style="display: flex; align-items: center; height: 50px;">
                 {{ Form::checkbox('eol', '1', '1') }}
-                {{ trans('admin/hardware/table.eol') }}
+                <span style="margin-left: 5px;">{{ trans('admin/hardware/table.eol') }}</span>
               </label>
 
               <label class="form-control">
@@ -146,9 +146,9 @@
                 {{ trans('admin/hardware/table.last_checkin_date') }}
               </label>
 
-              <label class="form-control">
+              <label class="form-control" style="display: flex; align-items: center; height: 50px;">
                 {{ Form::checkbox('expected_checkin', '1', '1') }}
-                {{ trans('admin/hardware/form.expected_checkin') }}
+                <span style="margin-left: 5px;">{{ trans('admin/hardware/form.expected_checkin') }}</span>
               </label>
 
               <label class="form-control">

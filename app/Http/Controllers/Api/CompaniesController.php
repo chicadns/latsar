@@ -171,7 +171,7 @@ class CompaniesController extends Controller
         $companies = Company::select([
             'companies.id',
             'companies.name',
-            'companies.email',
+            // 'companies.email',
             'companies.image',
         ]);
 
