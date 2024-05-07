@@ -20,6 +20,10 @@
     <link rel="shortcut icon" type="image/ico" href="{{ ($snipeSettings) && ($snipeSettings->favicon!='') ?  Storage::disk('public')->url(e($snipeSettings->favicon)) : config('app.url').'/logo.png' }} ">
     <link rel="shortcut icon" type="image/ico" href="{{ url(asset('favicon.ico')) }}">
 
+    <!-- Pendukung Filter on Visualisasi Data Aset. Theresia R. 2024. STIS -->
+    <script src="https://code.jquery.com/jquery-3.4.1.js" integrity="sha256-WpOohJOqMqqyKL9FccASB9O0KwACQJpFTUBLTYOVvVU=" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.7/js/select2.min.js"></script>
+
 
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <meta name="baseUrl" content="{{ config('app.url') }}/">
@@ -434,6 +438,56 @@
                             </li>
                         @endcan
                         @can('index', \App\Models\Asset::class)
+                            <li class="treeview menu-open" style="height: auto;">
+                                <a href="#"><i class="fas fa-magnifying-glass-chart fa-fw" aria-hidden="true"></i>
+                                    <span>Monitoring Aset</span>
+                                    <i class="fa fa-angle-left pull-right"></i>
+                                </a>
+                                                            
+                                <ul class="treeview-menu" style="display: block;">
+                                    @can('superadmin')
+                                    <li class="treeview">
+                                        <a href="#"><i class="fas fa-magnifying-glass-chart fa-fw" aria-hidden="true"></i>
+                                            <span>Pengelolaan Aset</span>
+                                            <i class="fa fa-angle-left pull-right"></i>
+                                        </a>
+                                        <ul class="treeview-menu">
+                                            <li>
+                                                <a href="{{ url('nasional') }}">
+                                                    <i class="fas fa-list" aria-hidden="true"></i>
+                                                    Nasional
+                                                </a>
+                                            </li>
+                                            <li>
+                                                <a href="{{ url('rank-asset') }}">
+                                                    <i class="fas fa-list" aria-hidden="true"></i>
+                                                    Provinsi dan Kabupaten/Kota
+                                                </a>
+                                            </li>
+                                        </ul>
+                                    </li>
+                                    @endcan
+                                    <li>
+                                        <a href="{{ url('condition-asset') }}">
+                                            <i class="fas fa-list" aria-hidden="true"></i>
+                                            Kondisi Aset
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a href="{{ url('perolehan-asset') }}">
+                                            <i class="fas fa-list" aria-hidden="true"></i>
+                                            Nilai Perolehan Pertama
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a href="{{ url('explore-asset') }}">
+                                            <i class="fas fa-list" aria-hidden="true"></i>
+                                            Rangkuman Informasi Aset
+                                        </a>
+                                    </li>
+                                </ul>
+                            </li>
+
                             <li class="treeview{{ (Request::is('statuslabels/*') || Request::is('hardware/maintenances')
                                 || (Request::query('status') == 'AssetTI1' || Request::query('status') == 'AssetTI2')
                                 || (Request::query('status') == 'Allitems' || Request::query('status') == 'Deployed' || Request::query('status') == 'RTD' || Request::query('status') == 'Pending' || Request::query('status') == 'Undeployable' || Request::query('status') == 'Archived') ? ' active' : '') }}">

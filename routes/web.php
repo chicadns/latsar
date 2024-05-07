@@ -15,6 +15,7 @@ use App\Http\Controllers\LabelsController;
 use App\Http\Controllers\LocationsController;
 use App\Http\Controllers\ManufacturersController;
 use App\Http\Controllers\ModalController;
+use App\Http\Controllers\MonitoringController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ReportsController;
 use App\Http\Controllers\SettingsController;
@@ -536,3 +537,13 @@ Route::middleware(['auth'])->get(
     '/',
     [DashboardController::class, 'index']
 )->name('home');
+
+// Visualisasi Data Aset by Theresia R. STIS. 2024
+Route::middleware(['auth'])->get(
+    '/nasional',
+    [MonitoringController::class, 'nasional']
+);
+Route::get('/condition-asset', [MonitoringController::class, 'getCondition']);
+Route::get('/rank-asset', [MonitoringController::class, 'getRank']);
+Route::get('/explore-asset', [MonitoringController::class, 'getCategoryFilter']);
+Route::get('/perolehan-asset', [MonitoringController::class, 'getPerolehan']);

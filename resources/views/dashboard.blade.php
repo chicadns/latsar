@@ -220,6 +220,7 @@
 
 <!-- recent activity -->
 <div class="row">
+@can('superadmin')
   <div class="col-md-8">
     <div class="box">
       <div class="box-header with-border">
@@ -295,7 +296,7 @@
             </div><!-- /.box-body -->
         </div> <!-- /.box -->
   </div>
-
+  @endcan
 </div> <!--/row-->
 <div class="row">
     <div class="col-md-6">

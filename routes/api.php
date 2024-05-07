@@ -526,6 +526,83 @@ Route::group(['prefix' => 'v1', 'middleware' => ['api', 'throttle:api']], functi
             ]
         ); // end groups API routes
         
+     /**
+      * Assets Dashboard API routes 
+      *
+      * Modified by Theresia R. 2024. STIS.
+      */
+      Route::group(['prefix' => 'dashboard'], function () {
+        Route::get('explore/{id}/{tingkat}/{unit}',
+            [
+                Api\ModifikasiDashboardController::class, 
+                'getExplore'
+            ]
+        )->name('api.explore.cat');
+
+        Route::get('agegroup/{id}/{tingkat}/{unit}',
+            [
+                Api\ModifikasiDashboardController::class, 
+                'getAgeGroup'
+            ]
+        )->name('api.age.group');
+
+        Route::get('bestrank/{tingkat}/{asetType}/{asetValue}',
+            [
+                Api\ModifikasiDashboardController::class, 
+                'getBestRank'
+            ]
+        )->name('api.best.rank');
+
+        Route::get('worstrank/{tingkat}/{asetType}/{asetValue}',
+            [
+                Api\ModifikasiDashboardController::class, 
+                'getWorstRank'
+            ]
+        )->name('api.worst.rank');
+
+        Route::get('worserank/{tingkat}/{asetType}/{asetValue}',
+            [
+                Api\ModifikasiDashboardController::class, 
+                'getWorseRank'
+            ]
+        )->name('api.worse.rank');
+
+        Route::get('notes/{id}/{tingkat}/{unit}',
+            [
+                Api\ModifikasiDashboardController::class, 
+                'getHardwareNotes'
+            ]
+        )->name('api.assets.notes');
+
+        Route::get('worstcat/{id}/{tingkat}/{unit}',
+            [
+                Api\ModifikasiDashboardController::class, 
+                'getWorstCat'
+            ]
+        )->name('api.worst.cat');
+
+        Route::get('latestcat/{id}/{tingkat}/{unit}',
+            [
+                Api\ModifikasiDashboardController::class, 
+                'getLatestCat'
+            ]
+        )->name('api.latest.cat');
+
+        Route::get('firstvalue/{id}/{tingkat}/{unit}',
+            [
+                Api\ModifikasiDashboardController::class, 
+                'getFirstValue'
+            ]
+        )->name('api.first.value');
+
+        Route::get('mapnasional/{agg}/{asetType}/{asetValue}',
+        [
+            Api\ModifikasiDashboardController::class, 
+            'getDataNasional'
+        ]
+        )->name('api.mapnasional.byid');
+    });
+
 
      /**
       * Assets API routes
