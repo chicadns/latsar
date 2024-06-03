@@ -544,6 +544,14 @@ Route::middleware(['auth'])->get(
     [MonitoringController::class, 'nasional']
 );
 Route::get('/condition-asset', [MonitoringController::class, 'getCondition']);
-Route::get('/rank-asset', [MonitoringController::class, 'getRank']);
+Route::get('/utilitas-lainnya', [MonitoringController::class, 'getUtilitasLainnya']);
+Route::get('/laporan-bulanan', [MonitoringController::class, 'getSummaryBulanan']);
+Route::get('/laporan/{month}/{year}', [MonitoringController::class, 'getLaporan']);
+Route::get('/sebaran-asset', [MonitoringController::class, 'getRank']);
 Route::get('/explore-asset', [MonitoringController::class, 'getCategoryFilter']);
 Route::get('/perolehan-asset', [MonitoringController::class, 'getPerolehan']);
+Route::get('/tahun/{tingkat}/{unit}', [MonitoringController::class, 'getTahun']);
+Route::get('/merek/{categoryId}/{filterunit}', [MonitoringController::class, 'getMerek']);
+Route::get('/wilayah/{id}', [MonitoringController::class, 'getUnitKerja']);
+Route::get('/propinsi', [MonitoringController::class, 'getPropinsi']);
+Route::get('/coba/{companyId}', [MonitoringController::class, 'getCompanyInfo']);

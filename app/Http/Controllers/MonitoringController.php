@@ -3,6 +3,13 @@
 namespace App\Http\Controllers;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Artisan;
+use App\Http\Transformers\ActionlogsTransformer;
+use App\Models\Asset;
+use App\Models\Category;
+use App\Models\Company;
+use App\Models\Actionlog;
+use Illuminate\Http\Request;
+use Carbon\Carbon;
 
 
 /**
@@ -39,36 +46,63 @@ class MonitoringController extends Controller
     }
 
 
-    private function getCompanyInfo($companyId)
+    public function getCompanyInfo($companyId)
     {
         $company = \App\Models\Company::find($companyId);
-
+    
         if (!$company) {
-            return ["pusat", \App\Models\Company::all()];
+            $kodeWil = "pusat";
+            return [$kodeWil, $this->getCompaniesWithSmallestYear()];
         }
-
+    
         $companyName = $company->name;
-
+        $kodeWil = "pusat"; 
+    
         if (strpos($companyName, "BPS Propinsi") !== false) {
             $kodeWil = "prov";
             $kodeProv = substr($company->kode_wil, 0, 2);
-            $companies = \App\Models\Company::where('kode_wil', 'like', $kodeProv . '%')
-                ->where(function ($query) {
-                    $query->where('name', 'like', '%Propinsi%')
-                        ->orWhere('name', 'like', '%Kabupaten%')
-                        ->orWhere('name', 'like', '%Kota%');
-                })
-                ->get();
+            $companies = $this->getCompaniesWithSmallestYear(function ($query) use ($kodeProv) {
+                $query->where('companies.id', '>', 25)
+                    ->where('companies.kode_wil', 'like', $kodeProv . '%')
+                    ->where(function ($query) {
+                        $query->where('companies.name', 'like', '%Propinsi%')
+                            ->orWhere('companies.name', 'like', '%Kabupaten%')
+                            ->orWhere('companies.name', 'like', '%Kota%');
+                    });
+            });
+    
         } elseif (strpos($companyName, "BPS Kabupaten") !== false || strpos($companyName, "BPS Kota") !== false) {
             $kodeWil = "kabkot";
-            $companies = \App\Models\Company::where('id', $companyId)->get();
+            $companies = $this->getCompaniesWithSmallestYear(function ($query) use ($companyId) {
+                $query->where('companies.id', $companyId);
+            });
+    
         } else {
-            $kodeWil = "pusat";
-            $companies = \App\Models\Company::all();
+            $companies = $this->getCompaniesWithSmallestYear();
         }
-
+    
         return [$kodeWil, $companies];
     }
+    
+    private function getCompaniesWithSmallestYear($additionalQuery = null)
+    {
+        $query = \App\Models\Company::join('assets', 'assets.company_id', '=', 'companies.id')
+            ->select(
+                \DB::raw('MIN(YEAR(IFNULL(assets.purchase_date, assets.created_at))) AS smallest_year'),
+                'companies.id',
+                'companies.kode_wil',
+                'companies.name'
+            )
+            ->groupBy('companies.id', 'companies.kode_wil', 'companies.name');
+    
+        if ($additionalQuery) {
+            $additionalQuery($query);
+        }
+    
+        return $query->get();
+    }
+    
+
 
     public function getCategoryFilter()
     {
@@ -76,15 +110,6 @@ class MonitoringController extends Controller
             $user = auth()->user();
             $companyId = $user->company_id;
             [$kodeWil, $companies] = $this->getCompanyInfo($companyId);
-            
-            // $hardwares = $this->getCategories([1, 3, 6, 8, 9, 15, 17, 18, 19, 20, 21, 28, 29, 30, 47, 58, 60, 61, 69, 70, 71, 79, 80, 94, 97], $companyId);
-            // $inoutputs = $this->getCategories([2, 4, 7, 24, 25, 26, 38, 40, 43, 46, 59, 62, 63, 64, 65, 66, 68, 73, 76, 83, 88, 89, 91, 92, 93], $companyId);
-            // $networks = $this->getCategories([13, 31, 32, 35, 37, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 67, 82, 90, 95, 96], $companyId);
-            // $additionals = $this->getCategories([5, 22, 23, 27, 33, 34, 39, 41, 42, 44, 45, 72, 74, 75, 77, 78, 81, 84, 85, 86, 87], $companyId);
-            // $transports = $this->getCategories(range(129, 141), $companyId);
-            // $supports = $this->getCategories(range(142, 159), $companyId);
-            // $rumahdinas = $this->getCategories(range(118, 128), $companyId);
-            // $publics = $this->getCategories(range(165, 210), $companyId);
 
             $hardwares = $this->getCategories(array_merge(range(1, 94), [97]), $companyId);
             $tinowujud = $this->getCategories([95, 96], $companyId);
@@ -96,7 +121,6 @@ class MonitoringController extends Controller
             $jalan = $this->getCategories([165], $companyId);
             $bangunan = $this->getCategories(range(166, 210), $companyId);
             return view('monitoring/explore-cat', compact('hardwares', 'tinowujud', 'rumahdinas', 'transports', 'alatbesar', 'renovasi', 'kontruksi', 'jalan', 'bangunan', 'kodeWil' , 'companies'));
-            // return view('monitoring/explore-cat', compact('hardwares', 'inoutputs', 'networks', 'additionals', 'transports', 'rumahdinas', 'publics', 'supports', 'kodeWil' , 'companies'));
         } 
     }
 
@@ -134,14 +158,215 @@ class MonitoringController extends Controller
             ->get();
     }
 
+    public function getMerek($categoryId, $filterunit = "pusat")
+    {
+        if (Auth::user()->hasAccess('admin')) {
+            $user = auth()->user();
+            $unitkerja = $user->company_id;
+
+            $filteredCompanyIds = null; 
+
+            if ($unitkerja !== null) {
+                $company = \App\Models\Company::find($unitkerja);
+                $companyName = $company->name;  
+
+                if (strpos($companyName, "BPS Propinsi") !== false) {
+                    $kodeProv = substr($company->kode_wil, 0, 2);
+                    $filteredCompanyIds = \App\Models\Company::where('kode_wil', 'like', $kodeProv . '%')
+                        ->where(function ($query) {
+                            $query->where('name', 'like', '%Propinsi%')
+                                ->orWhere('name', 'like', '%Kabupaten%')
+                                ->orWhere('name', 'like', '%Kota%');
+                        })
+                        ->pluck('id')
+                        ->toArray();
+                } else {
+                    $filteredCompanyIds = [$unitkerja]; 
+                }
+            }  
+
+            $brands = \App\Models\Category::join('models', 'categories.id', '=', 'models.category_id')
+            ->join('assets', 'models.id', '=', 'assets.model_id')
+            ->join('manufacturers', 'manufacturers.id', '=', 'models.manufacturer_id')
+            ->where('models.category_id', $categoryId)
+            ->when($filterunit == "pusat", function ($query) use ($filteredCompanyIds) {
+                if ($filteredCompanyIds !== null) {
+                    return $query->whereIn('assets.company_id', $filteredCompanyIds);
+                }
+            }, function ($query) use ($filterunit) {
+                return $query->where('assets.company_id', $filterunit);
+            })
+            ->distinct()
+            ->select('manufacturers.id', 'manufacturers.name')
+            ->get();
+
+            return response()->json($brands);
+        }
+    }
+
+    public function getPropinsi(){
+        $companies = \App\Models\Company::where('name', 'like', '%BPS Propinsi%')
+            ->get(['name', 'id']);        
+
+        $companies = $companies->map(function ($company) {
+            $company->name = str_replace('BPS ', '', $company->name);
+            $company->id = $company->id;
+            return $company;
+        });     
+
+        return response()->json($companies);
+    }
+
+    public function getUnitKerja($id){
+        $bpsIds = [];
+    
+        if ($id != 'all') {
+            $kodeWil = \App\Models\Company::where('id', $id)->pluck('kode_wil')->first();
+            
+            if ($id > 25){
+                if (isset($kodeWil) && substr($kodeWil, -2) == '00') { 
+                    $kodeProv = substr($kodeWil, 0, 2); 
+                    $bpsIds = \App\Models\Company::where('id', '>', 25)->where('kode_wil', 'like', $kodeProv . '%')->select('id', 'name')->get()->toArray();
+                } else {
+                    $bpsIds = \App\Models\Company::where('id', $id)->select('id', 'name')->get()->toArray();
+                }
+            }
+        } else {
+            $bpsIds = \App\Models\Company::where('id', '<', 26)->select('id', 'name')->get()->toArray();
+        }
+    
+        return response()->json($bpsIds);
+    }    
+
+    public function getTahun($tingkat = null, $unit = null)
+{
+
+    $years = \App\Models\Asset::select(
+        \DB::raw('YEAR(IFNULL(assets.purchase_date, assets.created_at)) AS year ')
+    )
+        ->when($tingkat == 4, function ($query) use ($unit) {
+            return $query->where('assets.company_id', $unit);
+        })
+        ->whereRaw('YEAR(IFNULL(assets.purchase_date, assets.created_at))')
+        ->distinct()
+        ->orderBy('year', 'desc')
+        ->pluck('year');
+
+    $startYear = $years->last();
+
+    return $startYear;
+}
+
+
     public function getCondition()
     {
         if (Auth::user()->hasAccess('admin')) {
             $user = auth()->user();
             $companyId = $user->company_id;
             [$kodeWil, $companies] = $this->getCompanyInfo($companyId);
+            $years = $this->getTahun(1, null);
             
-            return view('monitoring/kondisi-aset', compact('companies', 'kodeWil'));
+            return view('monitoring/kondisi-aset', compact('companies', 'kodeWil', 'years'));
+        } 
+    }
+
+    public function getLaporan(Request $request, $month = null, $year = null)
+    {
+        $this->authorize('reports.view');  
+
+        $startDate = null;
+        $endDate = null;
+    
+        if ($month !== null && $year !== null) {
+            $startDate = Carbon::create($year, $month, 1, 0, 0, 0)->startOfMonth();
+            $endDate = $startDate->copy()->endOfMonth();
+        }
+    
+        $actionlogs = Actionlog::with(['item' => function ($query) {
+            $query->select('id', 'name', 'model_id', 'purchase_cost', 'purchase_date', 'created_at');
+        }])
+        ->select('id', 'action_type', 'created_at', 'company_id', 'log_meta', 'item_type', 'item_id');
+    
+        if ($startDate && $endDate) {
+            $actionlogs->whereDate('created_at', '>=', $startDate)
+                       ->whereDate('created_at', '<=', $endDate);
+        }
+    
+        $allowed_columns = [
+            'id', 'created_at', 'action_type', 'note',
+        ];
+    
+        $offset = is_numeric($request->input('offset')) ? intval($request->input('offset')) : 0;
+        $limit = is_numeric($request->input('limit')) ? intval($request->input('limit')) : 15;
+    
+        $sort = in_array($request->input('sort'), $allowed_columns) ? e($request->input('sort')) : 'created_at';
+        $order = $request->input('order') === 'asc' ? 'asc' : 'desc';
+    
+        $total = $actionlogs->count();
+    
+        $actionlogs = $actionlogs->orderBy($sort, $order)
+                                 ->skip($offset)
+                                 ->take($limit)
+                                 ->get();
+    
+        $asetBaru = 0;
+        $asetRusak = 0;
+        $totalHarga = 0;
+    
+        foreach ($actionlogs as $log) {
+            if ($log->action_type === 'create' && $log->item !== null) {
+                $asetBaru++;
+                $totalHarga += $log->item->purchase_cost;
+            }
+    
+            if ($log->action_type === 'update') {
+                $logMeta = json_decode($log->log_meta, true);
+                if (isset($logMeta['notes'])) {
+                    $oldNote = $logMeta['notes']['old'] ?? '';
+                    $newNote = $logMeta['notes']['new'] ?? '';
+                    if (strpos($oldNote, 'Baik') !== false && strpos($newNote, 'Rusak') !== false) {
+                        $asetRusak++;
+                    }
+                }
+            }
+        }
+
+        $totalRusak = Asset::where('notes', 'like', '%Rusak%')->count();
+        $totalHargaFormatted = number_format($totalHarga, 0, ',', '.');
+        $totalRusakFormatted = number_format($totalRusak, 0, ',', '.');
+    
+        return response()->json([
+            'total' => $total,
+            'rows' => $actionlogs,
+            'asetBaru' => $asetBaru,
+            'asetRusak' => $asetRusak,
+            'totalHarga' => $totalHargaFormatted,
+            'totalRusak' => $totalRusakFormatted,
+        ], 200, ['Content-Type' => 'application/json;charset=utf8']);
+    }
+    
+
+
+
+        public function getSummaryBulanan()
+    {
+        if (Auth::user()->hasAccess('admin')) {
+            $user = auth()->user();
+            $companyId = $user->company_id;
+            [$kodeWil, $companies] = $this->getCompanyInfo($companyId);
+
+            return view('monitoring/bulanan', compact('companies', 'kodeWil'));
+        } 
+    }
+
+    public function getUtilitasLainnya()
+    {
+        if (Auth::user()->hasAccess('admin')) {
+            $user = auth()->user();
+            $companyId = $user->company_id;
+            [$kodeWil, $companies] = $this->getCompanyInfo($companyId);
+            
+            return view('monitoring/utilitas-lainnya', compact('kodeWil'));
         } 
     }
 
@@ -166,8 +391,9 @@ class MonitoringController extends Controller
             $user = auth()->user();
             $companyId = $user->company_id;
             [$kodeWil, $companies] = $this->getCompanyInfo($companyId);
+            $years = $this->getTahun(1, null);
             
-            return view('monitoring/perolehan', compact('companies', 'kodeWil'));
+            return view('monitoring/perolehan', compact('companies', 'kodeWil', 'years'));
         } 
     }
 }

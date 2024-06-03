@@ -446,32 +446,46 @@
                                                             
                                 <ul class="treeview-menu" style="display: block;">
                                     @can('superadmin')
+                                    <li>
+                                        <a href="{{ url('laporan-bulanan') }}">
+                                            <i class="fas fa-list" aria-hidden="true"></i>
+                                            Laporan Bulanan
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a href="{{ url('sebaran-asset') }}">
+                                            <i class="fas fa-list" aria-hidden="true"></i>
+                                            Tingkat Pengelolaan Aset
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a href="{{ url('nasional') }}">
+                                            <i class="fas fa-list" aria-hidden="true"></i>
+                                            Tingkat Pendayagunaan Aset
+                                        </a>
+                                    </li>
+                                    @endcan
                                     <li class="treeview">
                                         <a href="#"><i class="fas fa-magnifying-glass-chart fa-fw" aria-hidden="true"></i>
-                                            <span>Pengelolaan Aset</span>
+                                            <span>Utilitas Aset</span>
                                             <i class="fa fa-angle-left pull-right"></i>
                                         </a>
                                         <ul class="treeview-menu">
                                             <li>
-                                                <a href="{{ url('nasional') }}">
+                                                <a href="{{ url('condition-asset') }}">
                                                     <i class="fas fa-list" aria-hidden="true"></i>
-                                                    Nasional
+                                                    Digunakan Sendiri
                                                 </a>
                                             </li>
+                                            @can('superadmin')
                                             <li>
-                                                <a href="{{ url('rank-asset') }}">
+                                                <a href="{{ url('utilitas-lainnya') }}">
                                                     <i class="fas fa-list" aria-hidden="true"></i>
-                                                    Provinsi dan Kabupaten/Kota
+                                                    Lainnya
                                                 </a>
                                             </li>
+                                            @endcan
                                         </ul>
-                                    </li>
-                                    @endcan
-                                    <li>
-                                        <a href="{{ url('condition-asset') }}">
-                                            <i class="fas fa-list" aria-hidden="true"></i>
-                                            Kondisi Aset
-                                        </a>
                                     </li>
                                     <li>
                                         <a href="{{ url('perolehan-asset') }}">
@@ -482,7 +496,7 @@
                                     <li>
                                         <a href="{{ url('explore-asset') }}">
                                             <i class="fas fa-list" aria-hidden="true"></i>
-                                            Rangkuman Informasi Aset
+                                            Eksplorasi Kategori Aset
                                         </a>
                                     </li>
                                 </ul>

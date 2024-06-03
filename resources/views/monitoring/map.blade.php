@@ -5,79 +5,136 @@
 @parent
 @stop
 <style> 
-    #mapcontainer {
-        width: 100%;
-        height: 100vh; 
-        margin: 0; 
-        padding: 0; 
-    }
-
-    .highcharts-data-labels {
-        font-size: '30px';
-    }
-
-    .highcharts-contextmenu li {
-        font-size: 16px !important; 
-    }
-
-
+    .filterdata {
+        background-color: #222D32; 
+        padding: 15px; 
+        height: 100px;
+    }   
 </style>
 
 {{-- Page content --}}
 @section('content')
 
-<div class="col-md-6">
-        @if(session('message'))
-<div class="alert alert-success" role="alert">
-    {{ session('message') }}
-    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-        <span aria-hidden="true">&times;</span>
-    </button>
-</div>
-@endif
-        </div>
 <div class="row" style="margin-bottom: 30px;">
-    <div class="col-md-9" style="height: 150px;"> 
-
-        <h2><strong>Tingkat Pengelolaan Aset</strong></h2>
-        <p style="font-size: 17px;">Bagian ini bertujuan untuk membandingkan jumlah aset yang rusak antara provinsi, di mana jumlah aset berasal dari BPS Provinsi dan BPS Kabupaten/Kota turunannya pada provinsi tersebut. Semakin tinggi jumlah aset yang rusak, semakin besar upaya yang perlu dilakukan dalam pengelolaan maupun pemeliharaan aset.</p>
+    <div class="col-md-12"> 
+        <h2><strong>Tingkat Pendayagunaan Aset</strong></h2>
     </div>
 
-    <div class="col-md-3" style="border-radius: 5px;background-color: #222D32; padding: 15px; height: 230px;"> 
-        <div style=" margin-bottom: 12px;">
-        <label for="mapDropdown" style="font-size: 14px; color: #ECF0F5;">Pilih Data</label>
-        <select class="form-control" id="dropdownmap" style="width: 100%; background-color: #ECF0F5;">
-            <option value="1">Persentase Aset Rusak Berat</option>
-            <option value="2">Jumlah Aset Rusak Berat</option>
-            <option value="3">Persentase Aset Rusak Ringan</option>
-            <option value="4">Jumlah Aset Rusak Ringan</option>
-        </select>
-        <div style=" margin-bottom: 8px;">
-        <label for="mapDropdown" style="font-size: 14px; color: #ECF0F5; margin-top:10px;">Kelompok Aset</label>
-        <select class="form-control" id="filter-aset" style="width: 100%; background-color: #ECF0F5;">
-            <option value="null">Seluruh Aset</option>
-            <option value="1">Aset TI</option>
-            <option value="2">Aset non-TI</option>
-        </select>
+    <div class="col-md-12"> 
+        <div class="col-md-3 filterdata"> 
+            <div style=" margin-bottom: 8px;">
+            <label for="mapDropdown" style="font-size: 14px; color: #ECF0F5;">Kelompok Aset</label>
+            <select class="form-control" id="filter-aset" style="width: 100%; background-color: #ECF0F5;">
+                <option value="null">Seluruh Aset</option>
+                <option value="1">Aset TI</option>
+                <option value="2">Aset non-TI</option>
+            </select>
+            </div>
         </div>
 
-        <label for="catDropdown" style="font-size: 15px; color: #ECF0F5;">Kategori Aset:</label>
-        <select class="btn btn-default dropdown-toggle form control katgab" id="opsi-gab" style="width: 100%; background-color: #ECF0F5;">
-        </select>  
+        <div class="col-md-3 filterdata">
+            <label for="catDropdown" style="font-size: 15px; color: #ECF0F5;">Kategori Aset:</label>
+            <select class="btn btn-default dropdown-toggle form control katgab" id="opsi-gab" style="width: 100%; background-color: #ECF0F5;">
+            </select>  
+        </div>
+        <div class="col-md-3 filterdata"> 
+            <label for="provDropdown" style="font-size: 15px; color: #ECF0F5;">Wilayah:</label>
+            <select class="form-control prov" id="opsi-prov" style="width: 100%; background-color: #ECF0F5;">
+                
+            </select>  
+        </div>
+
+        <div class="col-md-3 filterdata" style="border-radius:0px 5px 5px 0px;"> 
         </div>
     </div>
 </div>
 
 <div class="container">
-    <div class="row justify-content-center">
-        <div class="col-md-12">
-            <div id="mapcontainer"></div>
+<div class="row justify-content-center">
+  <div class="col-md-12">
+        <!-- Horizontal Bar Chart Rank Pengelolaan Aset Terbaik-->
+        <div class="box box-default">
+            <div class="box-header with-border">
+                <h2 class="box-title">Jumlah Aset Berdasarkan Kondisi dan Tahun Pembelian</h2>
+                <div class="box-tools pull-right">
+                    <button type="button" class="btn btn-box-tool" data-widget="collapse" aria-hidden="true">
+                        <i class="fas fa-minus" aria-hidden="true"></i>
+                    </button>
+                </div>
+            </div>
+            <select class="form-control" id="unitbagian" name="unitbagian" style="width: 20%; margin-left: 75%;">
+               </select>
+            <!-- /.box-header -->
+            <div class="box-body">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="chart-responsive">
+                            <canvas id="lineCap"  style="height: 400px; width: 500px;"></canvas>
+                        </div> <!-- ./chart-responsive -->
+                    </div> <!-- /.col -->
+                </div> <!-- /.row -->
+            </div><!-- /.box-body -->
+        </div> <!-- /.box -->
+
+        <!-- Grouped Bar Chart Peringkat Penggunaan Aset Rusak Berat-->
+        @can('superadmin')
+        <div id="ri-box">
+           <div class="box box-default">
+               <div class="box-header with-border">
+                   <h2 class="box-title" id="prov-title">Perbandingan Jumlah Aset dan Pegawai pada Unit Kerja</h2>
+                   <div class="box-tools pull-right">
+                       <button type="button" class="btn btn-box-tool" data-widget="collapse" aria-hidden="true">
+                           <i class="fas fa-minus" aria-hidden="true"></i>
+                       </button>
+                   </div>
+               </div>
+               <select class="form-control" id="tingkatan" name="tingkatan" style="width: 20%; margin-left: 75%;">
+                   <option value="1">Provinsi</option>
+                   <option value="2">Kabupaten/Kota</option>
+                   <option value="3">Eselon 2/3</option>
+               </select>
+               <!-- /.box-header -->
+               <div class="box-body">
+                   <div class="row">
+                       <div class="col-md-12">
+                           <div class="chart-responsive">
+                               <canvas id="barGroupRusak" style="height: 400px; width: 500px;"></canvas>
+                           </div> <!-- ./chart-responsive -->
+                       </div> <!-- /.col -->
+                   </div> <!-- /.row -->
+               </div><!-- /.box-body -->
+           </div> <!-- /.box -->
+        </div>
+        @endcan
+
+        <!-- Grouped Bar Chart Peringkat Penggunaan Aset Rusak Berat-->
+        <div id="prov-box" style="display: none;">
+           <div class="box box-default">
+               <div class="box-header with-border">
+                   <h2 class="box-title" id="prov-title">Perbandingan Jumlah Aset dan Pegawai pada Unit Kerja</h2>
+                   <div class="box-tools pull-right">
+                       <button type="button" class="btn btn-box-tool" data-widget="collapse" aria-hidden="true">
+                           <i class="fas fa-minus" aria-hidden="true"></i>
+                       </button>
+                   </div>
+               </div>
+               <!-- /.box-header -->
+               <div class="box-body">
+                   <div class="row">
+                       <div class="col-md-12">
+                           <div class="chart-responsive">
+                               <canvas id="barGroupRusak2" style="height: 400px; width: 500px;"></canvas>
+                           </div> <!-- ./chart-responsive -->
+                       </div> <!-- /.col -->
+                   </div> <!-- /.row -->
+               </div><!-- /.box-body -->
+           </div> <!-- /.box -->
+        </div>
+
+
         </div>
     </div>
-</div>
-
-
-
+</div> <!--/row-->
 @stop
 
 @section('moar_scripts')
@@ -85,11 +142,47 @@
 @stop
 
 @push('js')
-<script src="https://code.highcharts.com/maps/highmaps.js"></script>
-<script src="https://code.highcharts.com/maps/modules/exporting.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.0/xlsx.full.min.js"></script>
-
 <script>
+$.ajax({
+    url: '/propinsi/',
+    type: "GET",
+    dataType: "json",
+    success: function(data) {
+        $('#opsi-prov').empty();
+        $('#opsi-prov').append('<option value="all">Keseluruhan</option>');
+        $.each(data, function(key, value) {
+            $('#opsi-prov').append('<option value="'+ value.id +'">'+ value.name +'</option>');
+        });
+    }
+});
+
+function updateUnitDropdown() {
+    var unitbagian = '#unitbagian'; 
+    var prov = $('#opsi-prov').val(); 
+
+    if (prov == null){
+        prov = 'all';
+    }
+
+    if (prov) {
+        $.ajax({
+            url: '/wilayah/' + prov ,
+            type: "GET",
+            dataType: "json",
+            success: function(data) {
+                $(unitbagian).empty();
+                $(unitbagian).append('<option value="all">Seluruh Unit Kerja</option>');
+                $.each(data, function(key, value) {
+                    $(unitbagian).append('<option value="'+ value.id +'">'+ value.name +'</option>');
+                });
+            }
+        });
+    } else {
+        $(unitbagian).empty();
+        $(unitbagian).append('<option value="all">Seluruh Unit Kerja</option>');
+    }
+}
+
  $('#opsi-gab').select2({
         closeOnSelect: true 
     });
@@ -115,264 +208,233 @@ $('#filter-aset').change(function() {
 });
 
 
-(async () => {
+var barCharts = {}; 
+var optionBarGroupedChart = {
+    elements: {
+        bar: {
+            borderWidth: 2,
+        }
+    },
+            plugins: {
+                title: {
+                    display: true,
+                    text: "Chart.js Bar Chart - Stacked",
+                },
+            },
+            interaction: {
+                intersect: false,
+            },
+            scales: {
+                xAxes: [{
+                    ticks: {
+                        min: 0,
+                    },  
+                    scaleLabel: {
+                        display: true,
+                        labelString: "Jumlah Aset"
+                    }
+                }],
+                yAxes: [{
+                    scaleLabel: {
+                        display: true,
+                        labelString: "Unit Kerja"
+                    }
+                }],
+                x: {
+                    stacked: true,
+                  },
+                 y: {
+                   stacked: true,
+                 }
+            },
+            maintainAspectRatio: false,
+        };
 
-const topology = await fetch(
-    'https://code.highcharts.com/mapdata/countries/id/id-all.topo.json'
-).then(response => response.json());
 
-const regionNames = {
-    'id-ac' : 'Provinsi Aceh',
-    'id-ba' : 'Provinsi Bali',
-    'id-bt' : 'Provinsi Banten',
-    'id-be' : 'Provinsi Bengkulu',
-    'id-yo' : 'Provinsi Yogyakarta',
-    'id-jk' : 'Provinsi DKI Jakarta',
-    'id-go' : 'Provinsi Gorontalo',
-    'id-ja' : 'Provinsi Jambi',
-    'id-jr' : 'Provinsi Jawa Barat',
-    'id-jt' : 'Provinsi Jawa Tengah',
-    'id-ji' : 'Provinsi Jawa Timur',
-    'id-kb' : 'Provinsi Kalimantan Barat',
-    'id-ks' : 'Provinsi Kalimantan Selatan',
-    'id-kt' : 'Provinsi Kalimantan Tengah',
-    'id-ki' : 'Provinsi Kalimantan Timur',
-    'id-ku' : 'Provinsi Kalimantan Utara',
-    'id-bb' : 'Provinsi Bangka-Belitung',
-    'id-kr' : 'Provinsi Kepulauan Riau',
-    'id-1024' : 'Provinsi Lampung',
-    'id-ma' : 'Provinsi Maluku',
-    'id-la' : 'Provinsi Maluku Utara',
-    'id-nb' : 'Provinsi Nusa Tenggara Barat',
-    'id-nt' : 'Provinsi Nusa Tenggara Timur',
-    'id-pa' : 'Provinsi Papua',
-    'id-ib' : 'Provinsi Papua Barat', 
-    'id-ri' : 'Provinsi Riau',
-    'id-sr' : 'Provinsi Sulawesi Barat',
-    'id-se' : 'Provinsi Sulawesi Selatan',
-    'id-st' : 'Provinsi Sulawesi Tengah',
-    'id-sg' : 'Provinsi Sulawesi Tenggara',
-    'id-sw' : 'Provinsi Sulawesi Utara',
-    'id-sb' : 'Provinsi Sumatera Barat',
-    'id-sl' : 'Provinsi Sumatera Selatan',
-    'id-su' : 'Provinsi Sumatera Utara',
+    function initializeBarChart(chartId, chartUrl, option) {
+        $.ajax({
+            type: 'GET',
+            url: chartUrl,
+            headers: {
+                "X-Requested-With": 'XMLHttpRequest',
+                "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr('content')
+            },
+            dataType: 'json',
+            success: function (data) {
+                if (barCharts[chartId]) {
+                    barCharts[chartId].destroy();
+                }       
+
+                barCharts[chartId] = new Chart(document.getElementById(chartId).getContext('2d'), {
+                    type: 'horizontalBar',
+                    data: data,
+                    options: option,
+                });
+            },
+            error: function (data) {
+                console.error("Ajax request failed:", data);
+            },
+        });
+    } 
+
+    var lineCharts = {};
+var optionLineChart = {
+    plugins: {
+        title: {
+            display: true,
+            text: "Chart.js Line Chart",
+        },
+        legend: {
+            display: false 
+        }
+    },
+    scales: {
+        yAxes: [{
+            ticks: {
+                beginAtZero: true,
+            },
+            scaleLabel: {
+                display: true,
+                labelString: "Jumlah Aset",
+            },
+        }],
+        xAxes: [{
+            scaleLabel: {
+                display: true,
+                labelString: "Tahun Pembelian Aset", 
+            },
+        }],
+    },
+    interaction: {
+        intersect: false,
+    },
+    maintainAspectRatio: false,
 };
 
-// Data Persentase Aset Rusak Berat 2024
-const data = [
-    ['id-ac', 17.85], ['id-ba', 2.67], ['id-bt', 18.71], ['id-be', 22.08], 
-    ['id-yo', 9.63], ['id-jk', 20.16], ['id-go', 13.35], ['id-ja', 25.01], 
-    ['id-jr', 19.73], ['id-jt', 5.41], ['id-ji', 12.28], ['id-kb', 20.31], 
-    ['id-ks', 15.38], ['id-kt', 19.17], ['id-ki', 13.09], ['id-ku', 13.95], 
-    ['id-bb', 12.86], ['id-kr', 15.01], ['id-1024', 17.75], ['id-ma', 26.12], 
-    ['id-la', 22.72], ['id-nb', 5.41], ['id-nt', 19.33], ['id-pa', 39.18], 
-    ['id-ib', 16.5], ['id-ri', 23.82], ['id-sr', 5.32], ['id-se', 11.34], 
-    ['id-st', 12.31], ['id-sg', 19.63], ['id-sw', 24.51], ['id-sb', 16.13], 
-    ['id-sl', 14.3], ['id-su', 18.32]
-];
-
-Highcharts.mapChart('mapcontainer', {
-    chart: {
-        map: topology
-    },
-
-    title: {
-        text: 'Persentase Aset Rusak Berat 2024',
-        style: {
-            fontSize: '18px',
-        }
-    },
-
-    mapNavigation: {
-        enabled: true,
-        buttonOptions: {
-            verticalAlign: 'bottom',
-        }
-    },
-
-    colorAxis: {
-        min: 0,
-        stops: [
-            [0, '#EFEFFF'], 
-            [0.5, '#DE425B'],
-            [1, '#550613'] 
-        ]
-    },
-
-    series: [{
-        data: data,
-        name: 'Random data',
-        states: {
-            hover: {
-                color: '#BADA55'
-            }
-        },
-        dataLabels: {
-                enabled: true,
-                format: '{point.name}',
-                style: {
-                    fontFamily: 'Arial, sans-serif', 
-                    fontSize: '14px', 
-                    fontWeight: 'normal' 
-                }
-        }
-    }],
-    
-    tooltip: {
-        formatter: function() {
-            const regionName = regionNames[this.point['hc-key']] || 'Unknown';
-            return '<span style="color:' + this.point.color + '; font-size: 16px;">■ </span>'+ '<span style="font-size: 16px;"> <b>' + regionName + '</b>: <b>' + this.point.value + '</b></span>';
-        }
-    },
-    
-    exporting: {
-        enabled: true,
-        buttons: {
-            contextButton: {
-                menuItems: [{
-                    text: 'Export to PNG',
-                    onclick: function () {
-                        this.exportChart({ type: 'image/png' });
-                    }
-                }, {
-                    text: 'Export to JPEG',
-                    onclick: function () {
-                        this.exportChart({ type: 'image/jpeg' });
-                    }
-                }, {
-                    text: 'Export to CSV',
-                    onclick: function () {
-                        exportDataToCSV(data, regionNames);
-                    }
-                }, {
-                    text: 'Export to Excel',
-                    onclick: function () {
-                        exportDataToExcel(data, regionNames);
-                    }
-                }]
-            }
-        }
-    }
-});
-
-})();
-
-function exportDataToCSV(data, regionNames) {
-    var csvContent = "data:text/csv;charset=utf-8,";
-
-    csvContent += "Provinsi,Tingkat Kerusakan Aset\r\n";
-
-    data.forEach(function(item) {
-        const hcKey = item[0];
-        const regionName = regionNames[hcKey] || 'Unknown';
-        const value = item[1];
-        csvContent += '"' + regionName + '",' + value + "\r\n";
-    });
-
-    var encodedUri = encodeURI(csvContent);
-    var link = document.createElement("a");
-    link.setAttribute("href", encodedUri);
-    link.setAttribute("download", "region_data.csv");
-    document.body.appendChild(link);
-    link.click();
-}
-
-function exportDataToExcel(data, regionNames) {
-    var workbook = XLSX.utils.book_new();
-    
-    var worksheet = XLSX.utils.aoa_to_sheet([['Region Name', 'Tingkat Kerusakan Aset']]);
-    data.forEach(function(item) {
-        const hcKey = item[0];
-        const regionName = regionNames[hcKey] || 'Unknown';
-        const value = item[1];
-        XLSX.utils.sheet_add_aoa(worksheet, [[regionName, value]], {origin: -1});
-    });
-
-    XLSX.utils.book_append_sheet(workbook, worksheet, 'Data');
-
-    XLSX.writeFile(workbook, 'data.xlsx');
-}
-
-function fetchDataAndUpdateChart(aggVal, asetType, valAset) {
-    var newTitle = $('#dropdownmap option:selected').text() + "  (" + $('#filter-aset option:selected').text() + " " + $('#opsi-gab option:selected').text() + ")";
-    var chart = Highcharts.charts[0];
-
-    return fetch(`{{ route('api.mapnasional.byid', ['agg' => ':agg', 'asetType' => ':asetType', 'asetValue' => ':asetValue']) }}`.replace(':agg', aggVal).replace(':asetType', asetType).replace(':asetValue', valAset), {
-        method: 'GET',
+function initializeLineChart(chartId, chartUrl) {
+    $.ajax({
+        type: 'GET',
+        url: chartUrl,
         headers: {
             "X-Requested-With": 'XMLHttpRequest',
             "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr('content')
-        }
-    })
-    .then(response => response.json())
-    .then(data => {
-        chart.setTitle({ text: newTitle });
-        const formattedData = data.rows.map(row => [row.id_area, row.value]);
-        console.log(formattedData);
-        updateHighmapsChart(formattedData);
-        return formattedData; 
-    })
-    .catch(error => {
-        console.error('Error:', error);
+        },
+        dataType: 'json',
+        success: function (data) {
+            if (lineCharts[chartId]) {
+                lineCharts[chartId].destroy();
+            }
+            // Create a new chart instance
+            lineCharts[chartId] = new Chart(document.getElementById(chartId).getContext('2d'), {
+                type: 'line',
+                data: data,
+                options: optionLineChart,
+            });
+        },
+        error: function (data) {
+            console.error("Ajax request failed:", data);
+        },
     });
-}
+} 
 
-document.addEventListener("DOMContentLoaded", function() {
-    const agg = document.getElementById("dropdownmap");
-    agg.addEventListener("change", function() {
+initializeLineChart('lineCap', '{!! route('api.aset.yearly', ['id' => ':id','asetType' => ':asetType', 'asetValue' => ':asetValue', 'wil' => ':wil']) !!}'.replace(':id', 'all').replace(':asetType', 'kelAset').replace(':asetValue', null).replace(':wil', 1));
+// initializeBarChart('barGroupRusak', '{!! route('api.condi.rank', ['tingkat' => ':tingkat','asetType' => ':asetType', 'asetValue' => ':asetValue', 'notes' => ':notes']) !!}'.replace(':tingkat', 1).replace(':asetType', 'kelAset').replace(':asetValue', null).replace(':notes', 1), optionBarGroupedChart);
+initializeBarChart('barGroupRusak', '{!! route('api.unit.rank', ['tingkat' => ':tingkat','asetType' => ':asetType', 'asetValue' => ':asetValue']) !!}'.replace(':tingkat', 1).replace(':asetType', 'kelAset').replace(':asetValue', null), optionBarGroupedChart);
+$(document).ready(function() {
+    updateUnitDropdown();
+
+    function updateCharts() {
+        var selectedNotes = $('#dropdownmap').val();
+        var tingkatan = $('#tingkatan').val();
         const kelAset = $('#filter-aset').val();
         const katAset = $('#opsi-gab').val();
-        var asetType, nilai;    
+        var asetType;
+        var nilai = null;
 
-        if (katAset >= 1 && katAset != null) {
+        if (katAset != null && katAset >= 1) {
             asetType = 'katAset';
             nilai = katAset;
         } else {
             asetType = 'kelAset';
             nilai = kelAset;
         }
+
+        var ChartUrl = '{!! route('api.unit.rank', ['tingkat' => ':tingkat','asetType' => ':asetType', 'asetValue' => ':asetValue']) !!}'.replace(':tingkat', tingkatan).replace(':asetType', asetType).replace(':asetValue', nilai);
+        initializeBarChart('barGroupRusak', ChartUrl, optionBarGroupedChart);
         
-        fetchDataAndUpdateChart(agg.value, asetType, nilai).then(data => {
-            Highcharts.charts[0].series[0].setData(data);
-        });
-    });
+        var tingkatan = $('#tingkatan option:selected').text();
+        var newTitle = 'Perbandingan Jumlah Aset dan Pegawai pada Unit Kerja Tingkat ' + tingkatan ;
+        $('#prov-title').text(newTitle);
+    }
 
+    function updateChartsProv(prov) {
+        var selectedNotes = $('#dropdownmap').val();
+        const kelAset = $('#filter-aset').val();
+        const katAset = $('#opsi-gab').val();
+        var asetType;
+        var nilai = null;
 
-    $('#filter-aset').on("change", function() {
-        const aggVal = $('#dropdownmap').val();
-        var asetType = 'kelAset';
-        const kelAsetVal = $(this).val();
-        fetchDataAndUpdateChart(aggVal, asetType, kelAsetVal).then(data => {
-            Highcharts.charts[0].series[0].setData(data);
-        });
-    });
-
-    $('#opsi-gab').on("change", function() {
-        const aggVal = $('#dropdownmap').val();
-        const katAset = $(this).val();
-        const kelAset = $('#filter-aset').val(); 
-        var asetType, nilai; 
-        
-        if (katAset >= 1 && katAset !== null) {
+        if (katAset != null && katAset >= 1) {
             asetType = 'katAset';
             nilai = katAset;
-        } else { 
+        } else {
             asetType = 'kelAset';
             nilai = kelAset;
         }
-    
-        fetchDataAndUpdateChart(aggVal, asetType, nilai).then(data => {
-            Highcharts.charts[0].series[0].setData(data);
-        });
+
+        var ChartUrl = '{!! route('api.rank.byprov', ['id' => ':id','asetType' => ':asetType', 'asetValue' => ':asetValue']) !!}'.replace(':id', prov).replace(':asetType', asetType).replace(':asetValue', nilai);
+        initializeBarChart('barGroupRusak2', ChartUrl, optionBarGroupedChart);
+        
+        var prov = $('#opsi-prov option:selected').text();
+        var newTitle = 'Perbandingan Jumlah Aset dan Pegawai pada Unit Kerja di' + prov ;
+        $('#prov2-title').text(newTitle);
+    }
+
+    function updateLineChart(prov, wil){
+        const kelAset = $('#filter-aset').val();
+        const katAset = $('#opsi-gab').val();
+        var asetType;
+        var nilai = null;
+
+        if (katAset != null && katAset >= 1) {
+            asetType = 'katAset';
+            nilai = katAset;
+        } else {
+            asetType = 'kelAset';
+            nilai = kelAset;
+        }
+
+        initializeLineChart('lineCap', '{!! route('api.aset.yearly', ['id' => ':id','asetType' => ':asetType', 'asetValue' => ':asetValue','wil' => ':wil']) !!}'.replace(':id', prov).replace(':asetType', asetType).replace(':asetValue', nilai).replace(':wil', wil));
+    }
+
+    $('#dropdownmap, #filter-aset, #tingkatan, #opsi-gab, #opsi-prov').change(function() {
+        var prov = $('#opsi-prov').val();
+        updateUnitDropdown();
+        if (prov != 'all') {
+            $('#prov-box').show();
+            $('#ri-box').hide();
+            updateChartsProv(prov);
+        } else {
+            $('#prov-box').hide();
+            $('#ri-box').show();
+            updateCharts();
+        }
+        updateLineChart(prov, 1);
     });
+
+    $('#unitbagian').change(function() {
+        var prov = $('#opsi-prov').val();
+        var unit = $('#unitbagian').val();
+        var wil = 1;
+            if (unit != 'all'){
+                prov = unit;
+                wil = 2;
+            }
+        updateLineChart(prov, wil);
+        
+    });
+
 });
-
-
-function updateHighmapsChart(data) {
-    var series = Highcharts.charts[0].series[0];
-    series.setData(data);
-    series.chart.redraw();
-}
 
 </script>
 
