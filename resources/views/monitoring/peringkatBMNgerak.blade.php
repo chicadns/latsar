@@ -1,10 +1,17 @@
 @extends('layouts/default')
 {{-- Page title --}}
+
 @section('title')
 {{ trans('Monitoring') }}
 @parent
 @stop
 <style> 
+    .filterdata {
+        background-color: #222D32; 
+        padding: 15px; 
+        height: 100px;
+    }   
+
     #mapcontainer {
         width: 100%;
         height: 100vh; 
@@ -20,55 +27,54 @@
         font-size: 16px !important; 
     }
 
-
 </style>
 
 {{-- Page content --}}
 @section('content')
 
-<div class="col-md-6">
-        @if(session('message'))
-<div class="alert alert-success" role="alert">
-    {{ session('message') }}
-    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-        <span aria-hidden="true">&times;</span>
-    </button>
-</div>
-@endif
-        </div>
 <div class="row" style="margin-bottom: 30px;">
-    <div class="col-md-9" style="height: 150px;"> 
-
-        <h2><strong>Tingkat Pengelolaan Aset</strong></h2>
-        <p style="font-size: 17px;">Bagian ini bertujuan untuk membandingkan jumlah aset yang rusak antara provinsi, di mana jumlah aset berasal dari BPS Provinsi dan BPS Kabupaten/Kota turunannya pada provinsi tersebut. Semakin tinggi jumlah aset yang rusak, semakin besar upaya yang perlu dilakukan dalam pengelolaan maupun pemeliharaan aset.</p>
+    <div class="col-md-12"> 
+        <h2><strong>Tingkat Pendayagunaan BMN TI Bergerak</strong></h2>
     </div>
 
-    <div class="col-md-3" style="border-radius: 5px;background-color: #222D32; padding: 15px; height: 230px;"> 
-        <div style=" margin-bottom: 12px;">
-        <label for="mapDropdown" style="font-size: 14px; color: #ECF0F5;">Pilih Data</label>
-        <select class="form-control" id="dropdownmap" style="width: 100%; background-color: #ECF0F5;">
-            <option value="1">Persentase Aset Rusak Berat</option>
-            <option value="2">Jumlah Aset Rusak Berat</option>
-            <option value="3">Persentase Aset Rusak Ringan</option>
-            <option value="4">Jumlah Aset Rusak Ringan</option>
-        </select>
-        <div style=" margin-bottom: 8px;">
-        <label for="mapDropdown" style="font-size: 14px; color: #ECF0F5; margin-top:10px;">Kelompok Aset</label>
-        <select class="form-control" id="filter-aset" style="width: 100%; background-color: #ECF0F5;">
-            <option value="null">Seluruh Aset</option>
-            <option value="1">Aset TI</option>
-            <option value="2">Aset non-TI</option>
-        </select>
+    <div class="col-md-12"> 
+        <div class="col-md-3 filterdata" style="border-radius: 5px 0px 0px 5px;"> 
+            <div style="margin-bottom: 8px;">
+                <label for="mapDropdown" style="font-size: 14px; color: #ECF0F5;">Pilih Kondisi Aset:</label>
+                <select class="form-control" id="dropdownmap" style="width: 100%; background-color: #ECF0F5;">
+                    <option value="1">Tidak Optimal Digunakan</option>
+                    <option value="3">Baik Digunakan</option>
+                </select>
+            </div>
+        </div> 
+
+        <div class="col-md-3 filterdata">
+            <label for="catDropdown" style="font-size: 15px; color: #ECF0F5;">Kategori Aset:</label>
+            <select class="btn btn-default dropdown-toggle form-control katgab" id="opsi-gab" style="width: 100%; background-color: #ECF0F5;">
+            </select>  
         </div>
 
-        <label for="catDropdown" style="font-size: 15px; color: #ECF0F5;">Kategori Aset:</label>
-        <select class="btn btn-default dropdown-toggle form control katgab" id="opsi-gab" style="width: 100%; background-color: #ECF0F5;">
-        </select>  
+        <div class="col-md-3 filterdata" style="display: none;"> 
+            <div style="margin-bottom: 8px;">
+                <label for="mapDropdown" style="font-size: 14px; color: #ECF0F5;">Kelompok Aset</label>
+                <select class="form-control" id="filter-aset" style="width: 100%; background-color: #ECF0F5;">
+                    <option value="1">Aset TI</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="col-md-3 filterdata"> 
+            <!-- Add content or functionality if necessary -->
+        </div>
+
+        <div class="col-md-3 filterdata" style="border-radius: 0px 5px 5px 0px;"> 
+            <!-- Add content or functionality if necessary -->
         </div>
     </div>
 </div>
 
-<div class="container">
+
+<div class="container" style="margin-bottom: 20px;">
     <div class="row justify-content-center">
         <div class="col-md-12">
             <div id="mapcontainer"></div>
@@ -76,6 +82,7 @@
     </div>
 </div>
 
+<!-- /.row -->
 
 
 @stop
@@ -90,28 +97,65 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.0/xlsx.full.min.js"></script>
 
 <script>
- $('#opsi-gab').select2({
+    $.ajax({
+    url: '/propinsi/',
+    type: "GET",
+    dataType: "json",
+    success: function(data) {
+        $('#opsi-prov').empty();
+        $('#opsi-prov').append('<option value="ri">BPS RI</option>');
+        $.each(data, function(key, value) {
+            $('#opsi-prov').append('<option value="'+ value.id +'">'+ value.name +'</option>');
+        });
+    }
+});
+
+function updateUnitDropdown() {
+    var unitbagian = '#unitbagian'; 
+    var prov = $('#opsi-prov').val(); 
+
+    if(prov != "all" && prov != null){
+        $('#unitbagian').show();
+    }
+
+    if (prov == null){
+        prov = 'all';
+    }
+
+    if (prov) {
+        $.ajax({
+            url: '/wilayah/' + prov ,
+            type: "GET",
+            dataType: "json",
+            success: function(data) {
+                $(unitbagian).empty();
+                $(unitbagian).append('<option value="all">--</option>');
+                $.each(data, function(key, value) {
+                    $(unitbagian).append('<option value="'+ value.id +'">'+ value.name +'</option>');
+                });
+            }
+        });
+    } else {
+        $(unitbagian).empty();
+        $(unitbagian).append('<option value="all">--</option>');
+    }
+}
+
+
+$('#opsi-gab').select2({
         closeOnSelect: true 
     });
-
-$('#opsi-gab').append($('<option>').text('Seluruh Kategori').attr('value', ''));
-
 $('#filter-aset').change(function() {
     var selectedValue = $(this).val();
     $('#opsi-gab').empty(); 
-    $('#opsi-gab').append($('<option>').text('Seluruh Kategori').attr('value', '')); 
 
     if (selectedValue === '1') {
         data = <?php echo json_encode($ti); ?>;
+        $('#opsi-gab').append('<option value="gerak">BMN Bergerak</option>');
         $.each(data, function(index, item) {
             $('#opsi-gab').append($('<option>').text(item.name).attr('value', item.id));
         });
-    } else if (selectedValue === '2') {
-        data = <?php echo json_encode($nonti); ?>;
-        $.each(data, function(index, item) {
-            $('#opsi-gab').append($('<option>').text(item.name).attr('value', item.id));
-        });
-    }
+    } 
 });
 
 
@@ -158,18 +202,7 @@ const regionNames = {
     'id-su' : 'Provinsi Sumatera Utara',
 };
 
-// Data Persentase Aset Rusak Berat 2024
-const data = [
-    ['id-ac', 17.85], ['id-ba', 2.67], ['id-bt', 18.71], ['id-be', 22.08], 
-    ['id-yo', 9.63], ['id-jk', 20.16], ['id-go', 13.35], ['id-ja', 25.01], 
-    ['id-jr', 19.73], ['id-jt', 5.41], ['id-ji', 12.28], ['id-kb', 20.31], 
-    ['id-ks', 15.38], ['id-kt', 19.17], ['id-ki', 13.09], ['id-ku', 13.95], 
-    ['id-bb', 12.86], ['id-kr', 15.01], ['id-1024', 17.75], ['id-ma', 26.12], 
-    ['id-la', 22.72], ['id-nb', 5.41], ['id-nt', 19.33], ['id-pa', 39.18], 
-    ['id-ib', 16.5], ['id-ri', 23.82], ['id-sr', 5.32], ['id-se', 11.34], 
-    ['id-st', 12.31], ['id-sg', 19.63], ['id-sw', 24.51], ['id-sb', 16.13], 
-    ['id-sl', 14.3], ['id-su', 18.32]
-];
+const data = [];
 
 Highcharts.mapChart('mapcontainer', {
     chart: {
@@ -177,7 +210,7 @@ Highcharts.mapChart('mapcontainer', {
     },
 
     title: {
-        text: 'Persentase Aset Rusak Berat 2024',
+        text: 'Rasio Aset Tidak Optimal Digunakan',
         style: {
             fontSize: '18px',
         }
@@ -194,8 +227,8 @@ Highcharts.mapChart('mapcontainer', {
         min: 0,
         stops: [
             [0, '#EFEFFF'], 
-            [0.5, '#DE425B'],
-            [1, '#550613'] 
+            [0.5, '#EF845F'],
+            [1, '#4C2213'] 
         ]
     },
 
@@ -294,10 +327,12 @@ function exportDataToExcel(data, regionNames) {
 }
 
 function fetchDataAndUpdateChart(aggVal, asetType, valAset) {
-    var newTitle = $('#dropdownmap option:selected').text() + "  (" + $('#filter-aset option:selected').text() + " " + $('#opsi-gab option:selected').text() + ")";
+    var selectedValue = $('#dropdownmap option:selected').text();
+    var newTitle = "Rasio Aset " + $('#opsi-gab option:selected').text()  + " " + selectedValue + " Terhadap Jumlah Pegawai";
     var chart = Highcharts.charts[0];
-
-    return fetch(`{{ route('api.mapnasional.byid', ['agg' => ':agg', 'asetType' => ':asetType', 'asetValue' => ':asetValue']) }}`.replace(':agg', aggVal).replace(':asetType', asetType).replace(':asetValue', valAset), {
+    
+    
+    return fetch(`{{ route('api.bmngerak.byid', ['agg' => ':agg', 'asetType' => ':asetType', 'asetValue' => ':asetValue']) }}`.replace(':agg', aggVal).replace(':asetType', asetType).replace(':asetValue', valAset), {
         method: 'GET',
         headers: {
             "X-Requested-With": 'XMLHttpRequest',
@@ -318,31 +353,37 @@ function fetchDataAndUpdateChart(aggVal, asetType, valAset) {
 }
 
 document.addEventListener("DOMContentLoaded", function() {
-    const agg = document.getElementById("dropdownmap");
-    agg.addEventListener("change", function() {
+    const agg = $('#dropdownmap').val();
+    const katAset = $('#opsi-gab').val();
+    $('#opsi-gab').val("gerak").change();
+    // fetchDataAndUpdateChart(agg, "katAset", "gerak");
+
+    $('#dropdownmap').on("change", function() {
+        const aggVal = $(this).val();
         const kelAset = $('#filter-aset').val();
         const katAset = $('#opsi-gab').val();
-        var asetType, nilai;    
-
-        if (katAset >= 1 && katAset != null) {
-            asetType = 'katAset';
-            nilai = katAset;
-        } else {
-            asetType = 'kelAset';
-            nilai = kelAset;
-        }
+        var asetType = 'katAset'; 
         
-        fetchDataAndUpdateChart(agg.value, asetType, nilai).then(data => {
+        fetchDataAndUpdateChart(aggVal, asetType, katAset).then(data => {
             Highcharts.charts[0].series[0].setData(data);
         });
     });
 
-
     $('#filter-aset').on("change", function() {
         const aggVal = $('#dropdownmap').val();
-        var asetType = 'kelAset';
-        const kelAsetVal = $(this).val();
-        fetchDataAndUpdateChart(aggVal, asetType, kelAsetVal).then(data => {
+        var asetType = 'katAset';
+        var katAset = $('#opsi-gab').val();;
+        if (katAset == null){
+            if (kelAset == 1) {
+                katAset = 1;
+            }
+
+            if (kelAset == 2) {
+                katAset = 118;
+            }
+        }
+
+        fetchDataAndUpdateChart(aggVal, asetType, katAset).then(data => {
             Highcharts.charts[0].series[0].setData(data);
         });
     });
@@ -351,17 +392,10 @@ document.addEventListener("DOMContentLoaded", function() {
         const aggVal = $('#dropdownmap').val();
         const katAset = $(this).val();
         const kelAset = $('#filter-aset').val(); 
-        var asetType, nilai; 
+        var asetType = 'katAset';
         
-        if (katAset >= 1 && katAset !== null) {
-            asetType = 'katAset';
-            nilai = katAset;
-        } else { 
-            asetType = 'kelAset';
-            nilai = kelAset;
-        }
     
-        fetchDataAndUpdateChart(aggVal, asetType, nilai).then(data => {
+        fetchDataAndUpdateChart(aggVal, asetType, katAset).then(data => {
             Highcharts.charts[0].series[0].setData(data);
         });
     });
@@ -370,9 +404,38 @@ document.addEventListener("DOMContentLoaded", function() {
 
 function updateHighmapsChart(data) {
     var series = Highcharts.charts[0].series[0];
+    var selectedValue = $('#dropdownmap option:selected').text();
     series.setData(data);
     series.chart.redraw();
+
+    var colorStops;
+    if (selectedValue === 'Tidak Optimal Digunakan') {
+        colorStops = [
+            [0, '#EFEFFF'], 
+            [0.5, '#DE425B'],
+            [1, '#550613'] 
+        ];
+    } else if (selectedValue === 'Baik Digunakan') {
+        colorStops = [
+            [0, '#EFEFFF'], 
+            [0.5, '#70AB79'],
+            [1, '#07290C'] 
+        ];
+      }
+    Highcharts.charts[0].update({
+        colorAxis: {
+            stops: colorStops
+        }
+    });
+
 }
+
+
+
+$(document).ready(function() {
+    $('#filter-aset').val('1').change();
+});
+
 
 </script>
 

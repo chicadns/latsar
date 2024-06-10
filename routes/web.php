@@ -538,12 +538,20 @@ Route::middleware(['auth'])->get(
     [DashboardController::class, 'index']
 )->name('home');
 
+
 // Visualisasi Data Aset by Theresia R. STIS. 2024
-Route::middleware(['auth'])->get(
-    '/nasional',
-    [MonitoringController::class, 'nasional']
-);
+Route::middleware(['auth'])->get('/nasional', [MonitoringController::class, 'nasional']);
+Route::get('/laporan/{month}/{year}', [MonitoringController::class, 'getLaporan']);
+Route::get('/tahunan_nilai/{id}/{tingkat}/{unit}/{years}', [MonitoringController::class, 'getTahunanNilai']);
+Route::get('/masamanfaat/{id}/{tingkat}/{unit}', [MonitoringController::class, 'getAgeInfo']);
+Route::get('/laporan-bulanan', [MonitoringController::class, 'getSummaryBulanan']);
+Route::get('/sebaran-asset', [MonitoringController::class, 'getRank']);
+Route::get('/sebaran-assetgerak', [MonitoringController::class, 'getRankGerak']);
+Route::get('/propinsi', [MonitoringController::class, 'getPropinsi']);
+Route::get('/wilayah/{id}', [MonitoringController::class, 'getUnitKerja']);
+Route::get('/utilitas-lainnya', [MonitoringController::class, 'getUtilitasLainnya']);
 Route::get('/condition-asset', [MonitoringController::class, 'getCondition']);
-Route::get('/rank-asset', [MonitoringController::class, 'getRank']);
 Route::get('/explore-asset', [MonitoringController::class, 'getCategoryFilter']);
 Route::get('/perolehan-asset', [MonitoringController::class, 'getPerolehan']);
+Route::get('/tahun/{tingkat}/{unit}', [MonitoringController::class, 'getTahun']);
+Route::get('/merek/{categoryId}/{filterunit}', [MonitoringController::class, 'getMerek']);

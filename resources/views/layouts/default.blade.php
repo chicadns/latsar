@@ -446,32 +446,54 @@
                                                             
                                 <ul class="treeview-menu" style="display: block;">
                                     @can('superadmin')
+                                    <li>
+                                        <a href="{{ url('laporan-bulanan') }}">
+                                            <i class="fas fa-list" aria-hidden="true"></i>
+                                            Laporan Bulanan
+                                        </a>
+                                    </li>
                                     <li class="treeview">
                                         <a href="#"><i class="fas fa-magnifying-glass-chart fa-fw" aria-hidden="true"></i>
-                                            <span>Pengelolaan Aset</span>
+                                            <span>Pendayagunaan Aset</span>
                                             <i class="fa fa-angle-left pull-right"></i>
                                         </a>
                                         <ul class="treeview-menu">
                                             <li>
-                                                <a href="{{ url('nasional') }}">
+                                                <a href="{{ url('sebaran-assetgerak') }}">
                                                     <i class="fas fa-list" aria-hidden="true"></i>
-                                                    Nasional
+                                                    BMN TI Bergerak
                                                 </a>
                                             </li>
                                             <li>
-                                                <a href="{{ url('rank-asset') }}">
+                                                <a href="{{ url('sebaran-asset') }}">
                                                     <i class="fas fa-list" aria-hidden="true"></i>
-                                                    Provinsi dan Kabupaten/Kota
+                                                    BMN Lainnya
                                                 </a>
                                             </li>
                                         </ul>
                                     </li>
                                     @endcan
-                                    <li>
-                                        <a href="{{ url('condition-asset') }}">
-                                            <i class="fas fa-list" aria-hidden="true"></i>
-                                            Kondisi Aset
+                                    <li class="treeview">
+                                        <a href="#"><i class="fas fa-magnifying-glass-chart fa-fw" aria-hidden="true"></i>
+                                            <span>Utilitas Aset</span>
+                                            <i class="fa fa-angle-left pull-right"></i>
                                         </a>
+                                        <ul class="treeview-menu">
+                                            <li>
+                                                <a href="{{ url('condition-asset') }}">
+                                                    <i class="fas fa-list" aria-hidden="true"></i>
+                                                    Digunakan Sendiri
+                                                </a>
+                                            </li>
+                                            @can('superadmin')
+                                            <li>
+                                                <a href="{{ url('utilitas-lainnya') }}">
+                                                    <i class="fas fa-list" aria-hidden="true"></i>
+                                                    Lainnya
+                                                </a>
+                                            </li>
+                                            @endcan
+                                        </ul>
                                     </li>
                                     <li>
                                         <a href="{{ url('perolehan-asset') }}">
@@ -482,7 +504,7 @@
                                     <li>
                                         <a href="{{ url('explore-asset') }}">
                                             <i class="fas fa-list" aria-hidden="true"></i>
-                                            Rangkuman Informasi Aset
+                                            Umur Aset
                                         </a>
                                     </li>
                                 </ul>
