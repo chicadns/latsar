@@ -35,8 +35,13 @@ class AssetCheckoutController extends Controller
         $this->authorize('checkout', $asset);
 
         if ($asset->availableForCheckout()) {
-            return view('hardware/checkout', compact('asset'))
-                ->with('statusLabel_list', Helper::deployableStatusLabelList());
+            if ($asset->status_id == 2) {
+                return view('hardware/checkout', compact('asset'))
+                    ->with('statusLabel_list', Helper::deployableStatusLabelList());
+            } else if ($asset->status_id == 7) {
+                return view('hardware/checkout', compact('asset'))
+                    ->with('statusLabel_list', Helper::availableStatusLabelList());
+            }
         }
 
         return redirect()->route('hardware.index', ['status' => $request->get('status')])->with('error', trans('admin/hardware/message.checkout.not_available'));

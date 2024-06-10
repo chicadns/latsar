@@ -300,6 +300,8 @@ class StatuslabelsController extends Controller
         $statuslabel = Statuslabel::findOrFail($id);
         if ($statuslabel->getStatuslabelType() == 'deployable') {
             return '1';
+        } else if ($statuslabel->getStatuslabelType() == 'available') {
+            return '1';
         }
 
         return '0';

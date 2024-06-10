@@ -833,7 +833,7 @@
                                     <li{!! (Request::is('consumables*') && !Request::is('consumablestransaction*') ? ' class="active"' : '') !!}>
                                         <a href="{{ url('consumables') }}">
                                             <i class="fas fa-shopping-cart" aria-hidden="true"></i>
-                                            Daftar Persediaan
+                                            Daftar Barang
                                         </a>
                                     </li>
                                     <li{!! (Request::is('consumablestransaction*') ? ' class="active"' : '') !!}>

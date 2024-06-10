@@ -1057,7 +1057,8 @@ class Asset extends Depreciable
                    ->whereHas('assetstatus', function ($query) {
                        $query->where('deployable', '=', 1)
                              ->where('pending', '=', 0)
-                             ->where('archived', '=', 0);
+                             ->where('archived', '=', 0)
+                             ->where('non_it_stuff', '=', 0);
                    });
     }
 
@@ -1075,7 +1076,8 @@ class Asset extends Depreciable
             ->whereHas('assetstatus', function ($query) {
                 $query->where('deployable', '=', 0)
                     ->where('pending', '=', 0)
-                    ->where('archived', '=', 0);
+                    ->where('archived', '=', 0)
+                    ->where('non_it_stuff', '=', 0);
         });
     }
 
@@ -1213,7 +1215,8 @@ class Asset extends Depreciable
         return $query->whereHas('assetstatus', function ($query) {
             $query->where('deployable', '=', 0)
                 ->where('pending', '=', 0)
-                ->where('archived', '=', 1);
+                ->where('archived', '=', 1)
+                ->where('non_it_stuff', '=', 0);
         });
     }
 
@@ -1232,12 +1235,24 @@ class Asset extends Depreciable
 
     public function scopeAllocated($query)
     {
-        return $query->where('assigned_to', '=', '0')->where('status_id', '=', 6);
+        return $query->whereHas('assetstatus', function ($query) {
+            $query->where('deployable', '=', 0)
+                ->where('pending', '=', 0)
+                ->where('archived', '=', 0)
+                ->where('non_it_stuff', '=', 1);
+        });
+        // return $query->where('assigned_to', '=', '0')->where('status_id', '=', 6);
     }
 
     public function scopeAvailable($query)
     {
-        return $query->where('assigned_to', '=', '0')->where('status_id', '=', 7);
+        return $query->whereHas('assetstatus', function ($query) {
+            $query->where('deployable', '=', 1)
+                ->where('pending', '=', 0)
+                ->where('archived', '=', 0)
+                ->where('non_it_stuff', '=', 1);
+        });
+        // return $query->where('assigned_to', '=', '0')->where('status_id', '=', 7);
     }
 
     public function scopeCategoryTI1($query)

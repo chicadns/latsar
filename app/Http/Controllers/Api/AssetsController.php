@@ -171,7 +171,8 @@ class AssetsController extends Controller
                     $join->on('status_alias.id', '=', 'assets.status_id')
                         ->where('status_alias.deployable', '=', 0)
                         ->where('status_alias.pending', '=', 1)
-                        ->where('status_alias.archived', '=', 0);
+                        ->where('status_alias.archived', '=', 0)
+                        ->where('status_alias.non_it_stuff', '=', 0);
                 });
                 break;
             case 'RTD':
@@ -180,7 +181,8 @@ class AssetsController extends Controller
                         $join->on('status_alias.id', '=', 'assets.status_id')
                             ->where('status_alias.deployable', '=', 1)
                             ->where('status_alias.pending', '=', 0)
-                            ->where('status_alias.archived', '=', 0);
+                            ->where('status_alias.archived', '=', 0)
+                            ->where('status_alias.non_it_stuff', '=', 0);
                     });
                 break;
             case 'Undeployable':
@@ -191,7 +193,8 @@ class AssetsController extends Controller
                     $join->on('status_alias.id', '=', 'assets.status_id')
                         ->where('status_alias.deployable', '=', 0)
                         ->where('status_alias.pending', '=', 0)
-                        ->where('status_alias.archived', '=', 1);
+                        ->where('status_alias.archived', '=', 1)
+                        ->where('status_alias.non_it_stuff', '=', 0);
                 });
                 break;
             case 'Requestable':
@@ -200,7 +203,8 @@ class AssetsController extends Controller
                         $join->on('status_alias.id', '=', 'assets.status_id')
                             ->where('status_alias.deployable', '=', 1)
                             ->where('status_alias.pending', '=', 0)
-                            ->where('status_alias.archived', '=', 0);
+                            ->where('status_alias.archived', '=', 0)
+                            ->where('status_alias.non_it_stuff', '=', 0);
                     });
 
                 break;
@@ -212,10 +216,26 @@ class AssetsController extends Controller
                 $assets->where('assets.assigned_to', '=', 0);
                 break;
             case 'Allocated':
-                $assets->where('assets.assigned_to', '=', 0)->where('assets.status_id', '=', 6);
+                $assets->where('assets.assigned_to', '=', 0)
+                    ->join('status_labels AS status_alias', function ($join) {
+                        $join->on('status_alias.id', '=', 'assets.status_id')
+                            ->where('status_alias.deployable', '=', 0)
+                            ->where('status_alias.pending', '=', 0)
+                            ->where('status_alias.archived', '=', 0)
+                            ->where('status_alias.non_it_stuff', '=', 1);
+                    });
+                // $assets->where('assets.assigned_to', '=', 0)->where('assets.status_id', '=', 6);
                 break;
             case 'Available':
-                $assets->where('assets.assigned_to', '=', 0)->where('assets.status_id', '=', 7);
+                $assets->where('assets.assigned_to', '=', 0)
+                    ->join('status_labels AS status_alias', function ($join) {
+                        $join->on('status_alias.id', '=', 'assets.status_id')
+                            ->where('status_alias.deployable', '=', 1)
+                            ->where('status_alias.pending', '=', 0)
+                            ->where('status_alias.archived', '=', 0)
+                            ->where('status_alias.non_it_stuff', '=', 1);
+                    });
+                // $assets->where('assets.assigned_to', '=', 0)->where('assets.status_id', '=', 7);
                 break;
             case 'AssetTI1':
                 $assets->join('models AS category_models', function ($join) {

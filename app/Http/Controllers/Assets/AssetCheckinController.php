@@ -25,7 +25,7 @@ class AssetCheckinController extends Controller
      * @throws \Illuminate\Auth\Access\AuthorizationException
      * @since [v1.0]
      */
-    public function create($assetId, $backto = null, Request $request)
+    public function create($assetId, $backto = null, AssetCheckinRequest $request)
     {
         // Check if the asset exists
         if (is_null($asset = Asset::find($assetId))) {

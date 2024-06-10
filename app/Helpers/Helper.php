@@ -495,7 +495,17 @@ class Helper
      */
     public static function deployableStatusLabelList()
     {
-        $statuslabel_list = Statuslabel::where('deployable', '=', '1')->orderBy('default_label', 'desc')
+        $statuslabel_list = Statuslabel::where('deployable', '=', '1')->where('non_it_stuff', '=', 0)->orderBy('default_label', 'desc')
+                ->orderBy('name', 'asc')
+                ->orderBy('deployable', 'desc')
+                ->pluck('name', 'id')->toArray();
+
+        return $statuslabel_list;
+    }
+
+    public static function availableStatusLabelList()
+    {
+        $statuslabel_list = Statuslabel::where('deployable', '=', '1')->where('non_it_stuff', '=', 1)->orderBy('default_label', 'desc')
                 ->orderBy('name', 'asc')
                 ->orderBy('deployable', 'desc')
                 ->pluck('name', 'id')->toArray();

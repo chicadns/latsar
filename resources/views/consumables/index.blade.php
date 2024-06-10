@@ -2,7 +2,7 @@
 
 {{-- Page title --}}
 @section('title')
-{{ trans('general.consumables') }}
+Daftar Barang
 @parent
 @stop
 
