@@ -49,7 +49,7 @@
                             data-sort-field="assets_count"
                             id="dashLocationSummary"
                             class="table table-striped snipe-table"
-                            data-url="{{ route('api.assets.hardware.info', ['sort' => 'category', 'order' => 'asc']) }}">
+                            data-url="{{ route('api.assets.sewa.info', ['sort' => 'category', 'order' => 'asc']) }}">
                             <thead class="bg-primary text-white">
                                 <tr>
                                     <th class="col-sm-3" data-visible="true" data-field="category">

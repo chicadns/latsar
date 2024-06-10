@@ -34,7 +34,6 @@
             <div style="margin-bottom: 8px;">
                 <label for="hardwareDropdown" style="font-size: 16px; color: #ECF0F5;">Kelompok Aset:</label>
                 <select class="form-control" id="filter-aset" style="width: 100%; background-color: #ECF0F5;">
-                    <option class="dropdown-item" value="">Gabungan</option>
                     <option class="dropdown-item" value="1">Aset TI</option>
                     <option class="dropdown-item" value="2">Aset non-TI</option>
                 </select>
@@ -44,19 +43,20 @@
         <div class="col-md-3 filterdata"> 
             @if ($kodeWil == "pusat")
                 <div style="margin-bottom: 8px;">
-                    <label for="groupDropdown" style="font-size: 16px; color: #ECF0F5;">Level:</label>
+                    <label for="groupDropdown" style="font-size: 16px; color: #ECF0F5;">Lokasi:</label>
                     <select class="form-control level" id="filter-lv" style="width: 100%; background-color: #ECF0F5;">
-                        <option value="1">Nasional</option>
-                        <option value="2">BPS Provinsi</option>
-                        <option value="3">BPS Kabupaten/Kota</option>
-                        <option value="4">Satuan Unit Kerja</option>
+                        <option value="1">Seluruh Unit Kerja</option>
+                        <option value="2">BPS RI</option>   <!--option value="4">Satuan Unit Kerja</option> -->
+                        <option value="3">BPS Provinsi</option>
+                        <option value="5">BPS Kabupaten/Kota</option>
                     </select>  
                 </div>
+
         </div> 
 
         <div class="col-md-3 filterdata"> 
             <div id="unit-satuan" style="display:none;">
-                <label for="companyDropdown" style="font-size: 16px; color: #ECF0F5;">Unit Kerja:</label>
+                <label for="companyDropdown" style="font-size: 16px; color: #ECF0F5;">Satuan Unit:</label>
                 <input type="hidden" id="kode-wil" value="{{ $kodeWil }}">
                 <select class="btn btn-default dropdown-toggle form-control filterunit" id="filter-unitkerja" style="width: 100%; background-color: #ECF0F5;">
                 </select>  
@@ -72,14 +72,21 @@
         </div> 
 
         <div class="col-md-3 filterdata" style="border-radius: 0px 5px 5px 0px;"> 
-                <label for="thnDropdown" style="font-size: 16px; color: #ECF0F5;">Rentang Tahun Pembelian:</label>  
+        <div style="display: none;">
+            <label for="thnDropdown" style="font-size: 16px; color: #ECF0F5;">Rentang Tahun Pembelian:</label>  
                 <input type="hidden" id="thn" value="{{ $years }}">
+                <input type="hidden" id="thnri" value="{{ $yearsri }}">
+                <input type="hidden" id="thnpr" value="{{ $yearspr }}">
+                <input type="hidden" id="thnkk" value="{{ $yearskk }}">
                 <div class="row" style="display:flex; width:100%;">
                     <select id="start-year" class="form-control year-select filtertahun" style="width: 125px;" >
                     </select>
                     <select id="end-year" class="form-control year-select filtertahun" style="width: 125px;" >
                     </select>
                 </div>
+
+        </div>
+               
         </div>
 
     </div>
@@ -91,14 +98,13 @@
     </div>
 
     <div class="col-md-3">
-        <div class="row">
+        <div class="row" style="display:none;">
             <span  style="display:flex; align-items: center; padding-right:20px;">Status:  
             <select class="form-control status" id="filter-status" style="width: 100%; background-color: #ECF0F5; border-color: black; margin-left:10px;">
                 <option value="">Pilih status</option>
                 <option value="2">Siap Dialokasikan</option>
                 <option value="3">Telah Dialokasikan</option>
                 <option value="1">Dalam Pemeliharaan</option>
-                <!-- <option value="4">Tidak Dapat Dialokasikan</option> -->
             </select>
             </span>
         </div>
@@ -110,7 +116,7 @@
         <!-- Grafik pertama -->
         <div class="box box-default mb-4">
             <div class="box-header with-border">
-                <h2 class="box-title">Persentase Kondisi Aset</h2>
+                <h2 class="box-title">Kelompok Aset Berdasarkan Kondisi</h2>
                 <div class="box-tools pull-right">
                     <button type="button" class="btn btn-box-tool" data-widget="collapse" aria-hidden="true">
                         <i class="fas fa-minus" aria-hidden="true"></i>
@@ -120,15 +126,44 @@
             <!-- /.box-header -->
             <div class="box-body">
                 <div class="chart-responsive">
-                    <canvas id="pieCondition"  style="height: 300px; width: 500px;"></canvas>
+                    <canvas id="pieCondition"  style="height: 250px; width: 500px;"></canvas>
                 </div> <!-- ./chart-responsive -->
             </div><!-- /.box-body -->
         </div> <!-- /.box -->
 
-        <!-- Horizontal Bar Chart Rank Pengelolaan Aset Terbaik-->
+            <div class="box-body">
+            
+                <div class="row">
+                    <div class="col-md-12">
+                    <div class="box box-default">
+                        <div class="box-header with-border">
+                            <h2 class="box-title">Jumlah Kategori Aset Rusak Berat Tertinggi</h2>
+                            <div class="box-tools pull-right">
+                                <button type="button" class="btn btn-box-tool" data-widget="collapse" aria-hidden="true">
+                                    <i class="fas fa-minus" aria-hidden="true"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <!-- /.box-header -->
+                        <div class="box-body">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="chart-responsive">
+                                        <canvas id="groupedNewAsset"  style="height: 300px; width: 500px;"></canvas>
+                                    </div> <!-- ./chart-responsive -->
+                                </div> <!-- /.col -->
+                            </div> <!-- /.row -->
+                        </div><!-- /.box-body -->
+                    </div> <!-- /.box -->
+                    </div> <!-- /.col -->
+                </div> <!-- /.row -->
+            </div><!-- /.box-body -->
+    </div>
+
+    <div class="col-md-6">
         <div class="box box-default">
             <div class="box-header with-border">
-                <h2 class="box-title">Persentase Kerusakan Aset Menurut Kategori</h2>
+                <h2 class="box-title">Rasio Kategori Aset Rusak Berat Tertinggi</h2>
                 <div class="box-tools pull-right">
                     <button type="button" class="btn btn-box-tool" data-widget="collapse" aria-hidden="true">
                         <i class="fas fa-minus" aria-hidden="true"></i>
@@ -140,29 +175,10 @@
                 <div class="row">
                     <div class="col-md-12">
                         <div class="chart-responsive">
-                            <canvas id="barRank"  style="height: 400px; width: 500px;"></canvas>
+                            <canvas id="barRank"  style="height: 600px; width: 500px;"></canvas>
                         </div> <!-- ./chart-responsive -->
                     </div> <!-- /.col -->
                 </div> <!-- /.row -->
-            </div><!-- /.box-body -->
-        </div> <!-- /.box -->
-    </div>
-
-    <div class="col-md-6">
-        <div class="box box-default">
-            <div class="box-header with-border">
-                <h2 class="box-title">Kategori Aset dengan Jumlah Kerusakan Tertinggi</h2>
-                <div class="box-tools pull-right">
-                    <button type="button" class="btn btn-box-tool" data-widget="collapse" aria-hidden="true">
-                        <i class="fas fa-minus" aria-hidden="true"></i>
-                    </button>
-                </div>
-            </div>
-            <!-- /.box-header -->
-            <div class="box-body">
-                <div class="chart-responsive">
-                    <canvas id="groupedNewAsset" style="height: 800px; width: 500px;"></canvas>
-                </div> <!-- ./chart-responsive -->
             </div><!-- /.box-body -->
         </div> <!-- /.box -->
     </div>
@@ -216,6 +232,26 @@ $(document).ready(function() {
     });
 });
 
+$('#opsi-gab').select2({
+        closeOnSelect: true 
+    });
+$('#filter-aset').change(function() {
+    var selectedValue = $(this).val();
+    $('#opsi-gab').empty(); 
+
+    if (selectedValue === '1') {
+        data = <?php echo json_encode($ti); ?>;
+        $.each(data, function(index, item) {
+            $('#opsi-gab').append($('<option>').text(item.name).attr('value', item.id));
+        });
+    } else if (selectedValue === '2') {
+        data = <?php echo json_encode($nonti); ?>;
+        $.each(data, function(index, item) {
+            $('#opsi-gab').append($('<option>').text(item.name).attr('value', item.id));
+        });
+    }
+});
+
 function updateCharts() {
     var selectedAset = $('#filter-aset').val() || null;
     var selectedLv = $('#filter-lv').val();
@@ -225,6 +261,7 @@ function updateCharts() {
     var selectedTahun = [];
     const startYear = parseInt($('#start-year').val());
     const endYear = parseInt($('#end-year').val());
+
     for (let year = startYear; year <= endYear; year++) {
         selectedTahun.push(year);
     }
@@ -239,13 +276,13 @@ function updateCharts() {
         selectedLv = 1;
     }
 
-    if (selectedLv <= 3) {
+    if (selectedLv <= 1) {
         unit = null;
     } 
 
-    console.log("unit" + unit);
-    console.log("lv" + selectedLv);
-
+    if (unit == ""){
+        unit = null;
+    }
     
     var pieChartUrl = '{!! route('api.assets.notes', ['id' => ':id', 'tingkat' => ':tingkat', 'unit' => ':unit', 'years' => ':years', 'status' => ':status']) !!}'.replace(':id', selectedAset).replace(':tingkat', selectedLv).replace(':unit', unit).replace(':years', years).replace(':status', status);
     var barPercentage = '{!! route('api.worst.percentage', ['id' => ':id', 'tingkat' => ':tingkat', 'unit' => ':unit', 'years' => ':years', 'status' => ':status']) !!}'.replace(':id', selectedAset).replace(':tingkat', selectedLv).replace(':unit', unit).replace(':years', years).replace(':status', status);
@@ -348,12 +385,11 @@ var percentageChart =  {
         xAxes: [{
             ticks: {
                 min: 0,
-                max: 100,
-                callback: function(value){ return value + "%" }
+                max: 1,
             },  
             scaleLabel: {
                 display: true,
-                labelString: "Percentage"
+                labelString: "Rasio"
             }
         }]
     }, 
@@ -377,7 +413,7 @@ var percentageChart =  {
                     label: function(tooltipItem, data) {
                         var dataset = data.datasets[tooltipItem.datasetIndex];
                     var currentValue = dataset.data[tooltipItem.index];
-                    return dataset.label + ': ' + currentValue + '%';
+                    return dataset.label + ': ' + currentValue;
                     }
                 }
               },
@@ -406,7 +442,6 @@ function initializePieChart(chartId, chartUrl) {
                 pieCharts[chartId].destroy();
             }       
 
-            // Create a new chart
             pieCharts[chartId] = new Chart(document.getElementById(chartId).getContext('2d'), {
                 type: 'pie',
                 data: data,
@@ -446,13 +481,20 @@ function initializeBarChart(chartId, chartUrl, option = optionBarChart) {
 } 
 
 
-    initializePieChart('pieCondition', '{!! route('api.assets.notes', ['id' => ':id', 'tingkat' => ':tingkat', 'unit' => ':unit', 'years' => ':years', 'status' => ':status']) !!}'.replace(':id', null).replace(':tingkat', 1).replace(':unit', null).replace(':years', 'all').replace(':status', null));
-    initializeBarChart('barRank', '{!! route('api.worst.percentage',  ['id' => ':id', 'tingkat' => ':tingkat', 'unit' => ':unit', 'years' => ':years', 'status' => ':status']) !!}'.replace(':id', null).replace(':tingkat', 1).replace(':unit', null).replace(':years', 'all').replace(':status', null), percentageChart);
-    initializeBarChart('groupedNewAsset', '{!! route('api.latest.cat', ['id' => ':id', 'tingkat' => ':tingkat', 'unit' => ':unit', 'years' => ':years', 'status' => ':status']) !!}'.replace(':id', null).replace(':tingkat', 1).replace(':unit', null).replace(':years', 'all').replace(':status', null));
+    initializePieChart('pieCondition', '{!! route('api.assets.notes', ['id' => ':id', 'tingkat' => ':tingkat', 'unit' => ':unit', 'years' => ':years', 'status' => ':status']) !!}'.replace(':id', 1).replace(':tingkat', 1).replace(':unit', null).replace(':years', 'all').replace(':status', null));
+    initializeBarChart('barRank', '{!! route('api.worst.percentage',  ['id' => ':id', 'tingkat' => ':tingkat', 'unit' => ':unit', 'years' => ':years', 'status' => ':status']) !!}'.replace(':id', 1).replace(':tingkat', 1).replace(':unit', null).replace(':years', 'all').replace(':status', null), percentageChart);
+    initializeBarChart('groupedNewAsset', '{!! route('api.latest.cat', ['id' => ':id', 'tingkat' => ':tingkat', 'unit' => ':unit', 'years' => ':years', 'status' => ':status']) !!}'.replace(':id', 1).replace(':tingkat', 1).replace(':unit', null).replace(':years', 'all').replace(':status', null));
 
 $(document).ready(function() {
+    $('#filter-aset').val('1').change();
     var companies = @json($companies);
+    var bpsri = @json($bpsri);
+    var bpspr = @json($bpspr);
+    var bpskk = @json($bpskk);
     var thn = parseInt($('#thn').val());
+    var thnri = parseInt($('#thnri').val());
+    var thnpr = parseInt($('#thnpr').val());
+    var thnkk = parseInt($('#thnkk').val());
     var kodeWil = $('#kode-wil').val();
     $('#filter-unitkerja, #filter-turunan, #start-year, #end-year').select2();
     var selectedLv = $('#filter-lv').val();
@@ -460,14 +502,15 @@ $(document).ready(function() {
 
     function buatYearDropdowns(selectedLv, unit = null) {
         var endYear = new Date().getFullYear();
+        var unit = $('#filter-unitkerja').val();
         var startYear;
         
         $('#start-year').empty();
         $('#end-year').empty();
 
-        if (selectedLv == 1 || selectedLv == 2) {
+        if (selectedLv == 1 || selectedLv == 2  || selectedLv == 3) {
             startYear = 1961;
-        } else if (selectedLv == 3) {
+        } else if (selectedLv == 5) {
             startYear = 1969;
         } else if (selectedLv == 4) {
             startYear = thn;
@@ -486,8 +529,6 @@ $(document).ready(function() {
             $('#end-year').append('<option value="' + year + '" ' + (year == endYear ? 'selected' : '') + '>' + year + '</option>');
         }
     }
-
-
 
     if (kodeWil != "pusat") {
         $('#unit-turunan').show();
@@ -524,17 +565,18 @@ $(document).ready(function() {
         updateCharts();
     });
 
+
     $('#filter-lv').change(function() {
         var selectedLv = $('#filter-lv').val();
-        var unit = $('#filter-unitkerja').val();
+        var unit = $('#filter-unitkerja').val();    
 
         if (selectedLv == 4 && unit == '') {
             selectedLv = 1;
         }   
 
-        if (selectedLv <= 3) {
+        if (selectedLv <= 1) {
             unit = null;
-        } 
+        }   
 
         if (selectedLv == 4) {
             $('#unit-satuan').show();
@@ -553,13 +595,31 @@ $(document).ready(function() {
             } else {
                 $('#unit-satuan').hide();
             }
+        } else if (selectedLv == 2 || selectedLv == 3 || selectedLv == 5) {
+            $('#unit-satuan').show();
+            $('#filter-unitkerja').empty();
+            $('#filter-unitkerja').append($('<option>').text('Seluruh Unit Kerja').attr('value', ''));
+            
+            var data;
+            if (selectedLv == 2) {
+                data = bpsri;
+            } else if (selectedLv == 3) {
+                data = bpspr;
+            } else if (selectedLv == 5) {
+                data = bpskk;
+            }   
+
+            $.each(data, function(id, name) {
+                $('#filter-unitkerja').append($('<option>').text(name).attr('value', id));
+            });
         } else {
             $('#unit-satuan').hide();
-        }
+        }   
 
         buatYearDropdowns(selectedLv, unit);
         updateCharts();
     });
+
 });
 
 </script>

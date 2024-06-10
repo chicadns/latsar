@@ -34,39 +34,45 @@
 
 <div class="row" style="margin-bottom: 30px;">
     <div class="col-md-12"> 
-        <h2><strong>Tingkat Pendayagunaan BMN Lainnya</strong></h2>
+        <h2><strong>Tingkat Pendayagunaan BMN TI Bergerak</strong></h2>
     </div>
 
     <div class="col-md-12"> 
         <div class="col-md-3 filterdata" style="border-radius: 5px 0px 0px 5px;"> 
-            <div style=" margin-bottom: 8px;">
-            <label for="mapDropdown" style="font-size: 14px; color: #ECF0F5;">Pilih Kondisi Aset:</label>
-            <select class="form-control" id="dropdownmap" style="width: 100%; background-color: #ECF0F5;">
-                <option value="1">Rusak Berat</option>
-                <option value="3">Baik Digunakan</option>
-            </select>
+            <div style="margin-bottom: 8px;">
+                <label for="mapDropdown" style="font-size: 14px; color: #ECF0F5;">Pilih Kondisi Aset:</label>
+                <select class="form-control" id="dropdownmap" style="width: 100%; background-color: #ECF0F5;">
+                    <option value="1">Tidak Optimal Digunakan</option>
+                    <option value="3">Baik Digunakan</option>
+                </select>
             </div>
         </div> 
 
-        <div class="col-md-3 filterdata"> 
-            <div style=" margin-bottom: 8px;">
-            <label for="mapDropdown" style="font-size: 14px; color: #ECF0F5;">Kelompok Aset</label>
-            <select class="form-control" id="filter-aset" style="width: 100%; background-color: #ECF0F5;">
-                <option value="1">Aset TI</option>
-                <option value="2">Aset non-TI</option>
-            </select>
+        <div class="col-md-3 filterdata">
+            <label for="catDropdown" style="font-size: 15px; color: #ECF0F5;">Kategori Aset:</label>
+            <select class="btn btn-default dropdown-toggle form-control katgab" id="opsi-gab" style="width: 100%; background-color: #ECF0F5;">
+            </select>  
+        </div>
+
+        <div class="col-md-3 filterdata" style="display: none;"> 
+            <div style="margin-bottom: 8px;">
+                <label for="mapDropdown" style="font-size: 14px; color: #ECF0F5;">Kelompok Aset</label>
+                <select class="form-control" id="filter-aset" style="width: 100%; background-color: #ECF0F5;">
+                    <option value="1">Aset TI</option>
+                </select>
             </div>
         </div>
 
-        <div class="col-md-3 filterdata">
-            <label for="catDropdown" style="font-size: 15px; color: #ECF0F5;">Kategori Aset:</label>
-            <select class="btn btn-default dropdown-toggle form control katgab" id="opsi-gab" style="width: 100%; background-color: #ECF0F5;">
-            </select>  
+        <div class="col-md-3 filterdata"> 
+            <!-- Add content or functionality if necessary -->
         </div>
-        <div class="col-md-3 filterdata" style="border-radius:0px 5px 5px 0px;"> 
+
+        <div class="col-md-3 filterdata" style="border-radius: 0px 5px 5px 0px;"> 
+            <!-- Add content or functionality if necessary -->
         </div>
     </div>
 </div>
+
 
 <div class="container" style="margin-bottom: 20px;">
     <div class="row justify-content-center">
@@ -76,35 +82,6 @@
     </div>
 </div>
 
-<div class="container">
-    <div class="row justify-content-center">
-        
-        <!-- Grouped Bar Chart Peringkat Penggunaan Aset Rusak Berat -->
-        <div class="box box-default">
-            <div class="box-header with-border">
-                <h2 class="box-title" id="prov-title">Provinsi dengan Jumlah Aset Rusak Berat Tertinggi</h2>
-                <div class="box-tools pull-right">
-                    <button type="button" class="btn btn-box-tool" data-widget="collapse" aria-hidden="true">
-                        <i class="fas fa-minus" aria-hidden="true"></i>
-                    </button>
-                </div>
-            </div>
-            
-            <label for="provDropdown" style="font-size: 15px; color: #222D32;width: 20%; margin-left: 75%; font-weight:normal;">Wilayah:</label>
-            <select class="form-control prov" id="opsi-prov" style="width: 20%; margin-left: 75%;"">
-            </select>  
-            <div class="box-body">
-                <div class="row">
-                    <div class="col-md-12">
-                        <div class="chart-responsive">
-                            <canvas id="barGroupRusak2" style="height: 400px; width: 500px;"></canvas>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
 <!-- /.row -->
 
 
@@ -174,15 +151,11 @@ $('#filter-aset').change(function() {
 
     if (selectedValue === '1') {
         data = <?php echo json_encode($ti); ?>;
+        $('#opsi-gab').append('<option value="gerak">BMN Bergerak</option>');
         $.each(data, function(index, item) {
             $('#opsi-gab').append($('<option>').text(item.name).attr('value', item.id));
         });
-    } else if (selectedValue === '2') {
-        data = <?php echo json_encode($nonti); ?>;
-        $.each(data, function(index, item) {
-            $('#opsi-gab').append($('<option>').text(item.name).attr('value', item.id));
-        });
-    }
+    } 
 });
 
 
@@ -237,7 +210,7 @@ Highcharts.mapChart('mapcontainer', {
     },
 
     title: {
-        text: 'Rasio Aset Rusak Berat',
+        text: 'Rasio Aset Tidak Optimal Digunakan',
         style: {
             fontSize: '18px',
         }
@@ -355,10 +328,11 @@ function exportDataToExcel(data, regionNames) {
 
 function fetchDataAndUpdateChart(aggVal, asetType, valAset) {
     var selectedValue = $('#dropdownmap option:selected').text();
-    var newTitle = "Rasio Aset " + selectedValue + "  ( " + $('#opsi-gab option:selected').text() + ")";
+    var newTitle = "Rasio Aset " + $('#opsi-gab option:selected').text()  + " " + selectedValue + " Terhadap Jumlah Pegawai";
     var chart = Highcharts.charts[0];
     
-    return fetch(`{{ route('api.mapnasional.byid', ['agg' => ':agg', 'asetType' => ':asetType', 'asetValue' => ':asetValue']) }}`.replace(':agg', aggVal).replace(':asetType', asetType).replace(':asetValue', valAset), {
+    
+    return fetch(`{{ route('api.bmngerak.byid', ['agg' => ':agg', 'asetType' => ':asetType', 'asetValue' => ':asetValue']) }}`.replace(':agg', aggVal).replace(':asetType', asetType).replace(':asetValue', valAset), {
         method: 'GET',
         headers: {
             "X-Requested-With": 'XMLHttpRequest',
@@ -379,40 +353,20 @@ function fetchDataAndUpdateChart(aggVal, asetType, valAset) {
 }
 
 document.addEventListener("DOMContentLoaded", function() {
-    const agg = document.getElementById("dropdownmap");
+    const agg = $('#dropdownmap').val();
     const katAset = $('#opsi-gab').val();
-    fetchDataAndUpdateChart(agg, "katAset", katAset);
-    agg.addEventListener("change", function() {
+    $('#opsi-gab').val("gerak").change();
+    // fetchDataAndUpdateChart(agg, "katAset", "gerak");
+
+    $('#dropdownmap').on("change", function() {
+        const aggVal = $(this).val();
         const kelAset = $('#filter-aset').val();
         const katAset = $('#opsi-gab').val();
         var asetType = 'katAset'; 
         
-        fetchDataAndUpdateChart(agg.value, asetType, katAset).then(data => {
+        fetchDataAndUpdateChart(aggVal, asetType, katAset).then(data => {
             Highcharts.charts[0].series[0].setData(data);
         });
-    });
-
-    $('#dropdownmap, #filter-aset, #opsi-gab, #opsi-prov').change(function() {
-        var selectedValue = $('#dropdownmap option:selected').text();
-        var kategori = $('#opsi-gab option:selected').text();  
-        var golongan = $('#filter-aset option:selected').text();  
-        var wil = $('#opsi-prov option:selected').text();
-
-        if (golongan !== 'Seluruh Aset') {
-            kategori = " (" + golongan + ' ' + kategori + ") ";
-        } else {
-            kategori = " " + kategori;
-        }
-
-        if (wil == "" || wil == null){
-            wil = "BPS RI";
-        }       
-
-        var newprovTitle = 'Jumlah Aset '+ kategori + ' Menurut Kondisi pada ' + wil ;
-        var newkabkotTitle = 'Jumlah Aset '+ kategori + ' Menurut Kondisi pada ' + wil ;
-
-        $('#prov-title').text(newprovTitle);
-        $('#kabkot-title').text(newkabkotTitle);
     });
 
     $('#filter-aset').on("change", function() {
@@ -455,7 +409,7 @@ function updateHighmapsChart(data) {
     series.chart.redraw();
 
     var colorStops;
-    if (selectedValue === 'Rusak Berat') {
+    if (selectedValue === 'Tidak Optimal Digunakan') {
         colorStops = [
             [0, '#EFEFFF'], 
             [0.5, '#DE425B'],
@@ -476,125 +430,10 @@ function updateHighmapsChart(data) {
 
 }
 
-var barCharts = {}; 
-var optionBarGroupedChart = {
-    elements: {
-        bar: {
-            borderWidth: 2,
-        }
-    },
-            plugins: {
-                title: {
-                    display: true,
-                    text: "Chart.js Bar Chart - Stacked",
-                },
-            },
-            interaction: {
-                intersect: false,
-            },
-            scales: {
-                xAxes: [{
-                    ticks: {
-                        min: 0,
-                    },  
-                    scaleLabel: {
-                        display: true,
-                        labelString: "Jumlah Aset"
-                    }
-                }],
-                yAxes: [{
-                    scaleLabel: {
-                        display: true,
-                        labelString: "Provinsi"
-                    }
-                }],
-                x: {
-                    stacked: true,
-                  },
-                 y: {
-                   stacked: true,
-                 }
-            },
-            maintainAspectRatio: false,
-        };
 
-
-    function initializeBarChart(chartId, chartUrl, option) {
-        $.ajax({
-            type: 'GET',
-            url: chartUrl,
-            headers: {
-                "X-Requested-With": 'XMLHttpRequest',
-                "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr('content')
-            },
-            dataType: 'json',
-            success: function (data) {
-                if (barCharts[chartId]) {
-                    barCharts[chartId].destroy();
-                }       
-
-                barCharts[chartId] = new Chart(document.getElementById(chartId).getContext('2d'), {
-                    type: 'horizontalBar',
-                    data: data,
-                    options: option,
-                });
-            },
-            error: function (data) {
-                console.error("Ajax request failed:", data);
-            },
-        });
-    } 
-
-    initializeBarChart('barGroupRusak2', '{!! route('api.rank.byprov', ['id' => ':id','asetType' => ':asetType', 'asetValue' => ':asetValue', 'tingkat' => ':tingkat']) !!}'
-            .replace(':id', null)
-            .replace(':asetType', "katAset")
-            .replace(':asetValue', 1)
-            .replace(':tingkat', 3), optionBarGroupedChart);
 
 $(document).ready(function() {
     $('#filter-aset').val('1').change();
-    $('#opsi-gab').val('1').change();
-    updateChartsProv();
-
-    function updateChartsProv() {
-        var selectedNotes = $('#dropdownmap').val();
-        const kelAset = $('#filter-aset').val();
-        const katAset = $('#opsi-gab').val();
-        var asetType = 'katAset';
-        var tingkatan;
-        var prov = $('#opsi-prov').val();
-
-        if (katAset == null){
-            if (kelAset == 1) {
-                katAset = 1;
-            }
-
-            if (kelAset == 2) {
-                katAset = 118;
-            }
-        }
-
-        if (prov == "ri" ) {
-            tingkatan = 3;
-        } else {
-            tingkatan = null;
-        }
-
-        var ChartUrl = '{!! route('api.rank.byprov', ['id' => ':id','asetType' => ':asetType', 'asetValue' => ':asetValue', 'tingkat' => ':tingkat']) !!}'
-            .replace(':id', prov)
-            .replace(':asetType', asetType)
-            .replace(':asetValue', katAset)
-            .replace(':tingkat', tingkatan);
-
-        initializeBarChart('barGroupRusak2', ChartUrl, optionBarGroupedChart);
-    }
-
-    $('#dropdownmap, #filter-aset, #tingkatan, #opsi-gab, #opsi-prov').change(function() {
-        updateUnitDropdown();
-        updateChartsProv();
-    });
-
-
 });
 
 

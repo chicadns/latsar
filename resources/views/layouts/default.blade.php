@@ -452,17 +452,25 @@
                                             Laporan Bulanan
                                         </a>
                                     </li>
-                                    <li>
-                                        <a href="{{ url('sebaran-asset') }}">
-                                            <i class="fas fa-list" aria-hidden="true"></i>
-                                            Tingkat Pengelolaan Aset
+                                    <li class="treeview">
+                                        <a href="#"><i class="fas fa-magnifying-glass-chart fa-fw" aria-hidden="true"></i>
+                                            <span>Pendayagunaan Aset</span>
+                                            <i class="fa fa-angle-left pull-right"></i>
                                         </a>
-                                    </li>
-                                    <li>
-                                        <a href="{{ url('nasional') }}">
-                                            <i class="fas fa-list" aria-hidden="true"></i>
-                                            Tingkat Pendayagunaan Aset
-                                        </a>
+                                        <ul class="treeview-menu">
+                                            <li>
+                                                <a href="{{ url('sebaran-assetgerak') }}">
+                                                    <i class="fas fa-list" aria-hidden="true"></i>
+                                                    BMN TI Bergerak
+                                                </a>
+                                            </li>
+                                            <li>
+                                                <a href="{{ url('sebaran-asset') }}">
+                                                    <i class="fas fa-list" aria-hidden="true"></i>
+                                                    BMN Lainnya
+                                                </a>
+                                            </li>
+                                        </ul>
                                     </li>
                                     @endcan
                                     <li class="treeview">
@@ -496,7 +504,7 @@
                                     <li>
                                         <a href="{{ url('explore-asset') }}">
                                             <i class="fas fa-list" aria-hidden="true"></i>
-                                            Eksplorasi Kategori Aset
+                                            Umur Aset
                                         </a>
                                     </li>
                                 </ul>

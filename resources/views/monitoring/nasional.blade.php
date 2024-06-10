@@ -40,7 +40,6 @@
         <div class="col-md-3 filterdata"> 
             <label for="provDropdown" style="font-size: 15px; color: #ECF0F5;">Wilayah:</label>
             <select class="form-control prov" id="opsi-prov" style="width: 100%; background-color: #ECF0F5;">
-                
             </select>  
         </div>
 
@@ -62,7 +61,7 @@
                     </button>
                 </div>
             </div>
-            <select class="form-control" id="unitbagian" name="unitbagian" style="width: 20%; margin-left: 75%;">
+            <select class="form-control" id="unitbagian" name="unitbagian" style="width: 20%; margin-left: 75%; display: none;"">
                </select>
             <!-- /.box-header -->
             <div class="box-body">
@@ -91,7 +90,6 @@
                <select class="form-control" id="tingkatan" name="tingkatan" style="width: 20%; margin-left: 75%;">
                    <option value="1">Provinsi</option>
                    <option value="2">Kabupaten/Kota</option>
-                   <option value="3">Eselon 2/3</option>
                </select>
                <!-- /.box-header -->
                <div class="box-body">
@@ -150,6 +148,7 @@ $.ajax({
     success: function(data) {
         $('#opsi-prov').empty();
         $('#opsi-prov').append('<option value="all">Keseluruhan</option>');
+        $('#opsi-prov').append('<option value="ri">BPS RI</option>');
         $.each(data, function(key, value) {
             $('#opsi-prov').append('<option value="'+ value.id +'">'+ value.name +'</option>');
         });
@@ -159,6 +158,10 @@ $.ajax({
 function updateUnitDropdown() {
     var unitbagian = '#unitbagian'; 
     var prov = $('#opsi-prov').val(); 
+
+    if(prov != "all" && prov != null){
+        $('#unitbagian').show();
+    }
 
     if (prov == null){
         prov = 'all';
@@ -171,7 +174,7 @@ function updateUnitDropdown() {
             dataType: "json",
             success: function(data) {
                 $(unitbagian).empty();
-                $(unitbagian).append('<option value="all">Seluruh Unit Kerja</option>');
+                $(unitbagian).append('<option value="all">--</option>');
                 $.each(data, function(key, value) {
                     $(unitbagian).append('<option value="'+ value.id +'">'+ value.name +'</option>');
                 });
@@ -179,7 +182,7 @@ function updateUnitDropdown() {
         });
     } else {
         $(unitbagian).empty();
-        $(unitbagian).append('<option value="all">Seluruh Unit Kerja</option>');
+        $(unitbagian).append('<option value="all">--</option>');
     }
 }
 
@@ -345,11 +348,19 @@ $(document).ready(function() {
 
     function updateCharts() {
         var selectedNotes = $('#dropdownmap').val();
-        var tingkatan = $('#tingkatan').val();
         const kelAset = $('#filter-aset').val();
         const katAset = $('#opsi-gab').val();
         var asetType;
         var nilai = null;
+        var tingkatan;
+        var prov = $('#opsi-prov').val();
+
+        if (prov == "ri" ) {
+            tingkatan = 3;
+            $('#tingkatan').hide();
+        } else {
+            tingkatan = $('#tingkatan').val();
+        }
 
         if (katAset != null && katAset >= 1) {
             asetType = 'katAset';
@@ -362,9 +373,6 @@ $(document).ready(function() {
         var ChartUrl = '{!! route('api.unit.rank', ['tingkat' => ':tingkat','asetType' => ':asetType', 'asetValue' => ':asetValue']) !!}'.replace(':tingkat', tingkatan).replace(':asetType', asetType).replace(':asetValue', nilai);
         initializeBarChart('barGroupRusak', ChartUrl, optionBarGroupedChart);
         
-        var tingkatan = $('#tingkatan option:selected').text();
-        var newTitle = 'Perbandingan Jumlah Aset dan Pegawai pada Unit Kerja Tingkat ' + tingkatan ;
-        $('#prov-title').text(newTitle);
     }
 
     function updateChartsProv(prov) {
@@ -396,6 +404,10 @@ $(document).ready(function() {
         var asetType;
         var nilai = null;
 
+        if (prov == "ri" ) {
+            wil = 3;
+        }
+
         if (katAset != null && katAset >= 1) {
             asetType = 'katAset';
             nilai = katAset;
@@ -410,13 +422,14 @@ $(document).ready(function() {
     $('#dropdownmap, #filter-aset, #tingkatan, #opsi-gab, #opsi-prov').change(function() {
         var prov = $('#opsi-prov').val();
         updateUnitDropdown();
-        if (prov != 'all') {
+        if (prov != 'all' && prov != 'ri') {
             $('#prov-box').show();
             $('#ri-box').hide();
             updateChartsProv(prov);
-        } else {
+        }  else {
             $('#prov-box').hide();
             $('#ri-box').show();
+            $('#tingkatan').show();
             updateCharts();
         }
         updateLineChart(prov, 1);

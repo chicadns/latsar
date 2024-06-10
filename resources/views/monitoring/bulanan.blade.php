@@ -12,7 +12,7 @@
 @if ($kodeWil == "pusat")
 <div class="row">
     <div class="col-md-10">
-        <h4><strong>Aset Baru Bulan Ini</strong></h4>
+        <h4><strong>Aset yang Baru Ditambahkan Bulan Ini</strong></h4>
     </div>
     <div class="col-md-2">
         <div class="dropdown-container">
@@ -25,22 +25,22 @@
 <div class="row">
 
     <div class="col-md-2">
-    <div style=" color: white; text-align: center;">
-        <div style="margin-bottom: 5px; background-color: #70AB79; padding: 5px; border-radius: 2px; ">
-            <h4 style="font-size: 20px; color: #FFFFFF;"><strong>Jumlah</strong></h4>
-            <p id="asetBaru" style="font-size: 25px; margin: 0; font-weight: bold;""></p>
+        <div style=" color: white; text-align: center;">
+            <div style="margin-bottom: 5px; background-color: #70AB79; padding: 5px; border-radius: 2px; ">
+                <h4 style="font-size: 20px; color: #FFFFFF;"><strong>Jumlah</strong></h4>
+                <p id="asetBaru" style="font-size: 25px; margin: 0; font-weight: bold;""></p>
+            </div>
+            <div  style="margin-bottom: 5px; background-color: #70AB79; padding: 5px; border-radius: 2px; ">
+                <h4 style="font-size: 20px; color: #FFFFFF; "><strong>Total Nilai</strong></h4>
+                <p id="totalHarga" style="font-size: 25px; margin: 0;font-weight: bold;"></p>
+            </div>
         </div>
-        <div  style="margin-bottom: 5px; background-color: #70AB79; padding: 5px; border-radius: 2px; ">
-            <h4 style="font-size: 20px; color: #FFFFFF; "><strong>Total Nilai</strong></h4>
-            <p id="totalHarga" style="font-size: 25px; margin: 0;font-weight: bold;"></p>
-        </div>
-    </div>
     </div>
 
     <div class="col-md-6">
         <div class="box box-default">
             <div class="box-header with-border">
-                <h2 class="box-title">Jumlah Aset Baru Menurut Kategori</h2>
+                <h2 class="box-title">Jumlah Aset Baru Ditambahkan Menurut Kategori</h2>
                 <div class="box-tools pull-right">
                     <button type="button" class="btn btn-box-tool" data-widget="collapse" aria-hidden="true">
                         <i class="fas fa-minus" aria-hidden="true"></i>
@@ -79,7 +79,7 @@
                                         Total Nilai
                                     </th>
                                     <th class="col-sm-4" data-visible="true" data-field="new">
-                                        Aset Baru
+                                        Aset yang Ditambahkan
                                     </th>
                                 </tr>
                             </thead>
@@ -102,11 +102,11 @@
 <div class="row">
     <div class="col-md-2">
     <div style=" color: white; text-align: center;">
-        <div style="margin-bottom: 5px; background-color: #EF845F; padding: 5px; border-radius: 2px; ">
+        <div style="margin-bottom: 5px; background-color: #DE425B; padding: 5px; border-radius: 2px; ">
             <h4 style="font-size: 20px; color: #FFFFFF;"><strong>Jumlah</strong></h4>
             <p id="asetRusak" style="font-size: 25px; margin: 0;font-weight: bold;""></p>
         </div>
-        <div  style="margin-bottom: 5px; background-color: #EF845F; padding: 5px; border-radius: 2px; ">
+        <div  style="margin-bottom: 5px; background-color: #DE425B; padding: 5px; border-radius: 2px; ">
             <h4 style="font-size: 20px; color: #FFFFFF; "><strong>Total Aset Rusak</strong></h4>
             <p id="totalRusak" style="font-size: 25px; margin: 0;font-weight: bold;""></p>
         </div>
@@ -145,7 +145,7 @@
                             id="dashRusakSummary"
                             class="table table-striped snipe-table"
                             data-url="{{ route('api.monthly.summ', ['tipe' => 'rusak', 'month' => ':month', 'year' => ':year']) }}">
-                            <thead class="bg-primary text-white"  style="background-color:#EF845F;">
+                            <thead class="bg-primary text-white"  style="background-color:#DE425B;">
                                 <tr>
                                     <th class="col-sm-3" data-visible="true" data-field="unit">
                                         Unit Kerja
@@ -304,22 +304,32 @@ function initializeBarChart(chartId, chartUrl, option = optionBarChart) {
         success: function (data) {
             if (barCharts[chartId]) {
                 barCharts[chartId].destroy();
-            }       
+            }
 
-            var maxDataValue = Math.max(...data.datasets[0].data);
-            option.scales.xAxes[0].ticks.max = maxDataValue + 2;
+            if (data.labels.length === 0 || data.datasets[0].data.length === 0) {
+                // Jika tidak ada data, tampilkan pesan "No Data Found"
+                var ctx = document.getElementById(chartId).getContext('2d');
+                ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height); 
+                ctx.font = '15px Poppins';
+                ctx.textAlign = 'center';
+                ctx.fillText('Data Tidak Ditemukan', ctx.canvas.width/1.6, ctx.canvas.height / 2);
+            } else {
+                var maxDataValue = Math.max(...data.datasets[0].data);
+                option.scales.xAxes[0].ticks.max = maxDataValue + 2;
 
-            barCharts[chartId] = new Chart(document.getElementById(chartId).getContext('2d'), {
-                type: 'horizontalBar',
-                data: data,
-                options: option,
-            });
+                barCharts[chartId] = new Chart(document.getElementById(chartId).getContext('2d'), {
+                    type: 'horizontalBar',
+                    data: data,
+                    options: option,
+                });
+            }
         },
         error: function (data) {
             console.error("Ajax request failed:", data);
         },
     });
 }
+
 
     
 </script>

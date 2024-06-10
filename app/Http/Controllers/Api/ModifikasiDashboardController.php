@@ -26,6 +26,531 @@ use App\Models\Actionlog;
  */
 class ModifikasiDashboardController extends Controller
 {
+
+    public function getLaporan($tipe, $month = null, $year = null)
+    {
+        $startDate = null;
+        $endDate = null;
+    
+        if ($month !== null && $year !== null) {
+            $startDate = Carbon::create($year, $month, 1, 0, 0, 0)->startOfMonth();
+            $endDate = $startDate->copy()->endOfMonth();
+        }
+    
+        $actionlogs = Actionlog::with(['item' => function ($query) {
+            $query->select('id', 'name', 'model_id', 'purchase_cost', 'purchase_date', 'created_at');
+        }])
+            ->select('id', 'action_type', 'created_at', 'company_id', 'log_meta', 'item_type', 'item_id');
+    
+        if ($startDate && $endDate) {
+            $actionlogs->whereDate('created_at', '>=', $startDate)
+                       ->whereDate('created_at', '<=', $endDate);
+        }
+    
+        $actionlogs = $actionlogs->get();
+    
+        $counts = [];
+    
+        foreach ($actionlogs as $log) {
+            if ($log->item) {
+                $model = AssetModel::find($log->item->model_id);
+                if ($model) {
+                    $category = Category::find($model->category_id);
+                    if ($category) {
+                        $category_name = $category->name;
+                        if (!isset($counts[$category_name])) {
+                            $counts[$category_name] = 0;
+                        }
+                        if ($tipe == "baru" && $log->action_type === 'create') {
+                            $counts[$category_name]++;
+                        } elseif ($tipe == "rusak" && $log->action_type === 'update') {
+                            $logMeta = json_decode($log->log_meta, true);
+                            if (isset($logMeta['notes'])) {
+                                $oldNote = $logMeta['notes']['old'] ?? '';
+                                $newNote = $logMeta['notes']['new'] ?? '';
+                                if (strpos($oldNote, 'Baik') !== false && strpos($newNote, 'Rusak') !== false) {
+                                    $counts[$category_name]++;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    
+        $filteredCounts = array_filter($counts, function($count) {
+            return $count > 0;
+        });
+    
+        $labels = array_keys($filteredCounts);
+        $datasets = [
+            [
+                'data' => array_values($filteredCounts),
+                'backgroundColor' => $tipe == 'baru' ? '#70AB79' : '#DE425B'
+            ]
+        ];
+    
+        $result = [
+            'labels' => $labels,
+            'datasets' => $datasets
+        ];
+    
+        return response()->json($result);
+    }
+
+
+    public function getMonthlySumm($tipe, $month = null, $year = null)
+    {
+        $startDate = null;
+        $endDate = null;
+    
+        if ($month !== null && $year !== null) {
+            $startDate = Carbon::create($year, $month, 1, 0, 0, 0)->startOfMonth();
+            $endDate = $startDate->copy()->endOfMonth();
+        }
+    
+        $actionlogs = Actionlog::with(['item' => function ($query) {
+            $query->select('id', 'name', 'model_id', 'purchase_cost', 'purchase_date', 'created_at');
+        }])
+        ->select('id', 'action_type', 'created_at', 'company_id', 'log_meta', 'item_type', 'item_id');
+    
+        if ($startDate && $endDate) {
+            $actionlogs->whereDate('created_at', '>=', $startDate)
+                       ->whereDate('created_at', '<=', $endDate);
+        }
+    
+        $total = $actionlogs->count();
+        $actionlogs = $actionlogs->get();
+    
+        $responseRows = [];
+        $companyPurchaseCosts = [];
+        $companyNewCounts = [];
+    
+        foreach ($actionlogs as $log) {
+            $company = Company::find($log->company_id);
+            $log->company_name = $company ? $company->name : null;
+    
+            if ($log->item) {
+                $model = AssetModel::find($log->item->model_id);
+                $asset = Asset::find($log->item->id);
+    
+                if ($model) {
+                    $purchaseDate = Carbon::parse($log->item->purchase_date);
+                    $currentDate = Carbon::now();
+                    $ageInYears = $currentDate->diffInYears($purchaseDate);
+    
+                    $log->item->nup = $asset ? $asset->asset_tag : null;
+                    $log->item->age = $ageInYears;
+                    $log->item->category_id = $model->category_id;
+                    $log->item->category_name = Category::find($model->category_id)->name;
+                } else {
+                    $log->item->age = null;
+                    $log->item->nup = null;
+                    $log->item->category_id = null;
+                    $log->item->category_name = null;
+                }
+    
+                if ($tipe == "rusak" && $log->action_type === 'update') {
+                    $logMeta = json_decode($log->log_meta, true);
+                    if (isset($logMeta['notes'])) {
+                        $oldNote = $logMeta['notes']['old'] ?? '';
+                        $newNote = $logMeta['notes']['new'] ?? '';
+                        if (strpos($oldNote, 'Baik') !== false && strpos($newNote, 'Rusak') !== false) {
+                            $responseRows[] = [
+                                'unit' => $log->company_name,
+                                'kat' => $log->item->category_name,
+                                'nup' => $log->item->nup,
+                                'age' => $log->item->age
+                            ];
+                        }
+                    }
+                }
+    
+                if ($tipe == "baru" && $log->action_type === 'create') {
+                    $companyName = $log->company_name;
+                    $categoryName = $log->item->category_name;
+                    $purchaseCost = $log->item->purchase_cost;
+    
+                    if (!isset($companyPurchaseCosts[$companyName])) {
+                        $companyPurchaseCosts[$companyName] = 0;
+                        $companyNewCounts[$companyName] = [];
+                    }
+    
+                    $companyPurchaseCosts[$companyName] += $purchaseCost;
+    
+                    if (!isset($companyNewCounts[$companyName][$categoryName])) {
+                        $companyNewCounts[$companyName][$categoryName] = 0;
+                    }
+    
+                    $companyNewCounts[$companyName][$categoryName]++;
+                }
+            }
+        }
+    
+        foreach ($companyPurchaseCosts as $companyName => $totalPurchaseCost) {
+            $newCounts = [];
+            foreach ($companyNewCounts[$companyName] as $categoryName => $count) {
+                $newCounts[] = $count . ' ' . $categoryName;
+            }
+    
+            $responseRows[] = [
+                'unit' => $companyName,
+                'total' => $totalPurchaseCost,
+                'new' => implode(', ', $newCounts)
+            ];
+        }
+    
+        return response()->json([
+            'total' => $total,
+            'rows' => $responseRows
+        ], 200, ['Content-Type' => 'application/json;charset=utf8']);
+    }
+
+    public function getYearlySumm($id = null, $tingkat = null, $unit = null, $year = null)
+{
+    $companyNamePattern = "BPS Propinsi";
+    $companyNamePattern2 = ["BPS Kabupaten%", "BPS Kota%"];
+
+    // Fetch the BPS IDs based on the tingkat value
+    if ($tingkat == 3) {
+        $bpsIds = Company::where(function ($query) use ($companyNamePattern2) {
+            foreach ($companyNamePattern2 as $pattern) {
+                $query->orWhere('name', 'like', $pattern);
+            }
+        })->pluck('id')->toArray();
+    } elseif ($tingkat == 2) {
+        $bpsIds = Company::where('name', 'like', "$companyNamePattern%")->pluck('id')->toArray();
+    } elseif ($tingkat == 5) {
+        $bpsIds = Company::where('id', '<', 26)->pluck('id')->toArray();
+    }
+
+    // Base query with joins
+    $query = Asset::join('models', 'assets.model_id', '=', 'models.id')
+        ->join('categories', 'models.category_id', '=', 'categories.id')
+        ->join('companies', 'assets.company_id', '=', 'companies.id'); // Added companies join
+
+    // Filter by company IDs if tingkat is 2, 3, or 5
+    if (in_array($tingkat, [2, 3, 5])) {
+        $query->whereIn('assets.company_id', $bpsIds);
+    }
+
+    // Filter by year
+    if ($year != null) {
+        $query->whereYear(\DB::raw('IFNULL(assets.purchase_date, assets.created_at)'), $year);
+    } else {
+        // If no year is provided, use the current year
+        $year = date('Y');
+        $query->whereYear(\DB::raw('IFNULL(assets.purchase_date, assets.created_at)'), $year);
+    }
+
+    // Filter by category ID ranges
+    if (!is_null($id)) {
+        if ($id == 1) {
+            $query->whereIn('models.category_id', range(1, 97));
+        } elseif ($id == 2) {
+            $query->whereIn('models.category_id', range(118, 210));
+        }
+    }
+
+    // Select required fields and group by company name
+    $assetsCountByCompany = $query->selectRaw('
+            companies.name as company_name,
+            SUM(assets.purchase_cost) AS dana_cat
+        ')
+        ->groupBy('companies.name')
+        ->orderByDesc('dana_cat')
+        ->get();
+
+    // Prepare a detailed asset count query grouped by company and category
+    $assetDetailsQuery = $query->selectRaw('
+            companies.name as company_name,
+            categories.name as category_name,
+            COUNT(assets.id) as asset_count
+        ')
+        ->groupBy('companies.name', 'categories.name')
+        ->get();
+
+    // Transform asset details query result to a structured array
+    $assetDetailsByCompany = [];
+    foreach ($assetDetailsQuery as $detail) {
+        $assetDetailsByCompany[$detail->company_name][] = [
+            'category_name' => $detail->category_name,
+            'asset_count' => $detail->asset_count,
+        ];
+    }
+
+    // Prepare the response rows
+    $responseRows = [];
+    foreach ($assetsCountByCompany as $companyData) {
+        $companyName = $companyData->company_name;
+        $totalPurchaseCost = round($companyData->dana_cat / 1000000000, 2); // Convert to billions and round to 2 decimal places
+
+        $newCounts = [];
+        foreach ($assetDetailsByCompany[$companyName] as $detail) {
+            $newCounts[] = $detail['asset_count'] . ' ' . $detail['category_name'];
+        }
+
+        $responseRows[] = [
+            'unit' => $companyName,
+            'total' => $totalPurchaseCost,
+            'new' => implode(', ', $newCounts)
+        ];
+    }
+
+    // Return the response
+    return response()->json([
+        'rows' => $responseRows
+    ], 200, ['Content-Type' => 'application/json;charset=utf8']);
+}
+
+
+    public function getProvRank($asetType = 'kelAset', $asetValue = null, $notes = null)
+    {
+        $companyNamePattern = "BPS Propinsi";
+        $bpsIds = Company::where('name', 'like', "$companyNamePattern%")->pluck('id', 'kode_wil')->toArray();       
+
+        $companyCounts = [];
+        foreach ($bpsIds as $kodeWil => $id) {
+            $kodeProv = substr($kodeWil, 0, 2);
+            $provdanturunan = [];  
+            
+            if ($id == 36) {
+                $provdanturunan = Company::where('id', '>', 25)->where('kode_wil', 'like', $kodeProv . '%')->pluck('id')->toArray();
+                $provdanturunan = array_merge($provdanturunan, range(1, 25));
+            } elseif ($id > 25 && $id != 36) {
+                $provdanturunan = Company::where('id', '>', 25)->where('kode_wil', 'like', $kodeProv . '%')->pluck('id')->toArray();
+            } else {
+                $provdanturunan[] = $id;
+            }   
+
+            $query = Asset::join('models', 'assets.model_id', '=', 'models.id')
+    ->join('companies', 'assets.company_id', '=', 'companies.id')
+    ->selectRaw('
+        CASE 
+            WHEN companies.name LIKE "Direktorat%" THEN "Propinsi DKI Jakarta"
+            ELSE REPLACE(companies.name, "BPS ", "")
+        END as name,
+        SUM(CASE WHEN assets.notes LIKE "Rusak Ringan%" THEN 1 ELSE 0 END) AS worse_count,
+        SUM(CASE WHEN assets.notes LIKE "Rusak Berat%" THEN 1 ELSE 0 END) AS worst_count,
+        SUM(CASE WHEN assets.notes LIKE "Baik%" THEN 1 ELSE 0 END) AS good_count
+    ')
+    ->whereIn('assets.company_id', $provdanturunan);
+  
+
+            if ($asetType == 'kelAset') {
+                if (!is_null($asetValue)) {
+                    if ($asetValue == 1) {
+                        // Aset TI
+                        $query->whereIn('models.category_id', range(1, 97));
+                    } elseif ($asetValue == 2) {
+                        // Aset non-TI
+                        $query->whereIn('models.category_id', range(118, 210));
+                    }
+                } else {
+                    $query->whereIn('models.category_id', range(1, 210));
+                }
+            } elseif ($asetType == 'katAset') {
+                if (!is_null($asetValue)) {
+                    $query->where('models.category_id', $asetValue);
+                }
+            }   
+
+            $assetCounts = $query->first(); 
+
+            if ($assetCounts) {
+                $companyCounts[] = [
+                    'company_name' => $assetCounts->name,
+                    'Rusak Ringan' => $assetCounts->worse_count,
+                    'Rusak Berat' => $assetCounts->worst_count,
+                    'Baik' => $assetCounts->good_count
+                ];
+            }
+        }   
+
+        usort($companyCounts, function($a, $b) use ($notes){
+            if ($notes == 1) { 
+                return $b['Rusak Berat'] - $a['Rusak Berat'];
+            } elseif ($notes == 2) {
+                return $b['Rusak Ringan'] - $a['Rusak Ringan'];
+            } elseif ($notes == 3)  {
+                return $b['Baik'] - $a['Baik'];
+            }
+        }); 
+
+        $labels = [];
+        $datasets = [
+            [
+                "label" => "Rusak Ringan",
+                "backgroundColor" => $this->getColorForCategory('Rusak Ringan', '#F7BD7F'),
+                "data" => [],
+                "stack" => "Stack 1",
+            ],
+            [
+                "label" => "Rusak Berat",
+                "backgroundColor" => $this->getColorForCategory('Rusak Berat', '#EF845F'),
+                "data" => [],
+                "stack" => "Stack 1",
+            ],
+            [
+                "label" => "Baik",
+                "backgroundColor" => $this->getColorForCategory('Baik', '#70AB79'),
+                "data" => [],
+                "stack" => "Stack 0",
+            ],
+        ];  
+
+        $badCompanies = array_slice($companyCounts, 0, 8);
+        foreach ($badCompanies as $company) {
+            $labels[] = $company['company_name'];
+            $datasets[0]["data"][] = $company['Rusak Ringan'];
+            $datasets[1]["data"][] = $company['Rusak Berat'];
+            $datasets[2]["data"][] = $company['Baik'];
+        }   
+
+        return [
+            "labels" => $labels,
+            "datasets" => $datasets,
+        ];
+    }
+
+
+    public function getDataNasional($agg = 1, $asetType = 'kelAset', $asetValue = null) {
+        $companyNamePattern = "BPS Propinsi";
+        $bpsIds = Company::where('name', 'like', "$companyNamePattern%")->pluck('id', 'kode_wil')->toArray();     
+    
+        $petaId = [
+            1 => 'id-3700', 11 => 'id-ac', 51 => 'id-ba',  36 => 'id-bt',
+            17 => 'id-be', 34 => 'id-yo', 31 => 'id-jk', 75 => 'id-go', 
+            15 => 'id-ja', 32 => 'id-jr', 33 => 'id-jt', 35 => 'id-ji',
+            61 => 'id-kb', 63 => 'id-ks', 62 => 'id-kt', 64 => 'id-ki',
+            65 => 'id-ku', 19 => 'id-bb', 21 => 'id-kr', 18 => 'id-1024',
+            81 => 'id-ma', 82 => 'id-la', 52 => 'id-nb', 53 => 'id-nt',
+            94 => 'id-pa', 91 => 'id-ib', 14 => 'id-ri', 76 => 'id-sr', 
+            73 => 'id-se', 72 => 'id-st', 74 => 'id-sg',  71 => 'id-sw', 
+            13 => 'id-sb', 16 => 'id-sl', 12 => 'id-su', 
+        ];
+    
+        $rows = [];
+    
+        foreach ($bpsIds as $kodeWil => $id) {
+            $kodeProv = substr($kodeWil, 0, 2);
+            $provdanturunan = [];
+    
+            if ($id == 36) {
+                $provdanturunan = Company::where('kode_wil', 'like', $kodeProv . '%')->pluck('id')->toArray();
+                $provdanturunan = array_merge($provdanturunan, range(1, 25));
+            } elseif ($id > 25 && $id != 36) {
+                $provdanturunan = Company::where('kode_wil', 'like', $kodeProv . '%')->pluck('id')->toArray();
+            }
+    
+            $query = Asset::join('models', 'assets.model_id', '=', 'models.id')
+                    ->whereIn('assets.company_id', $provdanturunan);
+    
+            if ($asetType === 'kelAset') {
+                if (!is_null($asetValue)) {
+                    if ($asetValue == 1) {
+                        // Aset TI
+                        $query->whereIn('models.category_id', range(1, 97));
+                    } elseif ($asetValue == 2) {
+                        // Aset non-TI
+                        $query->whereIn('models.category_id', range(118, 210));
+                    }
+                }
+            } elseif ($asetType === 'katAset') {
+                if (!is_null($asetValue)) {
+                    $query->where('models.category_id', $asetValue);
+                }
+            }
+    
+            if ($agg == 1) { 
+                $value = floatval($query->select(
+                    \DB::raw('ROUND((SUM(assets.notes LIKE "Rusak Berat%") / COUNT(*)), 2) as worst_percentage')
+                )
+                ->value('worst_percentage'));
+            } elseif ($agg == 3) { 
+                $value = floatval($query->select(
+                    \DB::raw('ROUND(((SUM(assets.notes LIKE "Baik%") + SUM(assets.notes LIKE "Rusak Ringan%")) / COUNT(*)), 2) as good_percentage')
+                )
+                ->value('good_percentage'));
+            } 
+    
+            $id_area = isset($petaId[$kodeProv]) ? $petaId[$kodeProv] : '';
+            $rows[] = [
+                'id_area' => $id_area, 
+                'value' => $value
+            ];
+        }
+    
+        return ['rows' => $rows];
+    }
+
+
+    public function getDataGerak($agg = 1, $asetType = 'katAset', $asetValue = null) {
+        $companyNamePattern = "BPS Propinsi";
+        $bpsIds = Company::where('name', 'like', "$companyNamePattern%")->pluck('id', 'kode_wil')->toArray();     
+    
+        $petaId = [
+            1 => 'id-3700', 11 => 'id-ac', 51 => 'id-ba',  36 => 'id-bt',
+            17 => 'id-be', 34 => 'id-yo', 31 => 'id-jk', 75 => 'id-go', 
+            15 => 'id-ja', 32 => 'id-jr', 33 => 'id-jt', 35 => 'id-ji',
+            61 => 'id-kb', 63 => 'id-ks', 62 => 'id-kt', 64 => 'id-ki',
+            65 => 'id-ku', 19 => 'id-bb', 21 => 'id-kr', 18 => 'id-1024',
+            81 => 'id-ma', 82 => 'id-la', 52 => 'id-nb', 53 => 'id-nt',
+            94 => 'id-pa', 91 => 'id-ib', 14 => 'id-ri', 76 => 'id-sr', 
+            73 => 'id-se', 72 => 'id-st', 74 => 'id-sg',  71 => 'id-sw', 
+            13 => 'id-sb', 16 => 'id-sl', 12 => 'id-su', 
+        ];
+    
+        $rows = [];
+    
+        foreach ($bpsIds as $kodeWil => $id) {
+            $kodeProv = substr($kodeWil, 0, 2);
+            $provdanturunan = [];
+    
+            if ($id == 36) {
+                $provdanturunan = Company::where('kode_wil', 'like', $kodeProv . '%')->pluck('id')->toArray();
+                $provdanturunan = array_merge($provdanturunan, range(1, 25));
+            } elseif ($id > 25 && $id != 36) {
+                $provdanturunan = Company::where('kode_wil', 'like', $kodeProv . '%')->pluck('id')->toArray();
+            }
+
+            $userCount = User::whereIn('company_id', $provdanturunan)->count();
+    
+            $query = Asset::join('models', 'assets.model_id', '=', 'models.id')
+                    ->whereIn('assets.company_id', $provdanturunan);
+    
+                    if ($asetType === 'katAset') {
+                        if ($asetValue == "gerak") {
+                            $query->whereIn('models.category_id', [8,19,20,97]);
+                        } else {
+                            $query->where('models.category_id', $asetValue);
+                        }
+                    }
+                    
+                    
+            if ($agg == 1) { 
+                $value = floatval($query->select(
+                    \DB::raw("ROUND((SUM(assets.notes LIKE 'Rusak Berat%') / $userCount), 2) as worst_percentage")
+                )
+                ->value('worst_percentage'));
+            } elseif ($agg == 3) { 
+                $value = floatval($query->select(
+                    \DB::raw('ROUND(((SUM(assets.notes LIKE "Baik%") + SUM(assets.notes LIKE "Rusak Ringan%")) / COUNT(*)), 2) as good_percentage')
+                )
+                ->value('good_percentage'));
+            } 
+    
+            $id_area = isset($petaId[$kodeProv]) ? $petaId[$kodeProv] : '';
+            $rows[] = [
+                'id_area' => $id_area, 
+                'value' => $value
+            ];
+        }
+    
+        return ['rows' => $rows];
+    }
+
+
     public function getExplore($id = null, $tingkat = null, $unit = null) 
     {
         $datasets = [];
@@ -134,7 +659,6 @@ class ModifikasiDashboardController extends Controller
         foreach ($assetsCountByAge as $asset) {
             $ageGroupIndex = floor($asset->age / $interval);
     
-            // Accumulate counts for each condition within the corresponding age group
             $goodCounts[$ageGroupIndex] += $asset->good_count;
             $worseCounts[$ageGroupIndex] += $asset->worse_count;
             $worstCounts[$ageGroupIndex] += $asset->worst_count;
@@ -163,7 +687,7 @@ class ModifikasiDashboardController extends Controller
         $datasets[] = [
             "label" => "Rusak Berat",
             "data" => $worstCounts,
-            "backgroundColor" => "#EF845F",
+            "backgroundColor" => "#DE425B",
             "stack" => "Stack 1",
         ];
     
@@ -280,34 +804,26 @@ class ModifikasiDashboardController extends Controller
     $companyNamePattern = 'BPS Propinsi';
     $companyNamePattern2 = ['BPS Kabupaten%', 'BPS Kota%'];     
 
-    if ($tingkat == 3) {
+    if ($tingkat == 5) {
         $bpsIds = Company::where(function ($query) use ($companyNamePattern2) {
             foreach ($companyNamePattern2 as $pattern) {
                 $query->orWhere('name', 'like', $pattern);
             }
         })->pluck('id')->toArray();
-    } elseif ($tingkat == 2) {
+    } elseif ($tingkat == 3) {
         $bpsIds = Company::where('name', 'like', "$companyNamePattern%")->pluck('id')->toArray();  
-    }
+    } elseif ($tingkat == 2) {
+        $bpsIds = Company::where('id', '<', 26)->pluck('id')->toArray();  
+    }   
 
     $query = Asset::join('models', 'assets.model_id', '=', 'models.id')
         ->join('categories', 'models.category_id', '=', 'categories.id');
-
-        if ($status == 1) {
-            $query->where('assets.status_id', 1);
-        } elseif ($status == 2) {
-            $query->where('assets.status_id', 2)
-                  ->whereNull('assets.assigned_to');
-        } elseif ($status == 3) {
-            $query->where('assets.status_id', 2)
-                  ->whereNotNull('assets.assigned_to');
-        } elseif ($status == 4) {
-            $query->where('assets.status_id', 4);
-        }
         
-    if ($tingkat == 2 || $tingkat == 3) {
+    if ($tingkat == 2 || $tingkat == 3 || $tingkat == 5) {
         $query->whereIn('assets.company_id', $bpsIds);
-    } elseif ($tingkat == 4) {
+    } 
+    
+    if ($tingkat == 4 || $unit !="null") {
         $query->where('assets.company_id', $unit);
     }
 
@@ -336,7 +852,133 @@ class ModifikasiDashboardController extends Controller
 
     $assetsCountByCategory = $query->get();
 
-    // Calculate percentages and store in a new array
+    $categoriesWithWorstPercentages = [];
+    foreach ($assetsCountByCategory as $assetCounts) {
+        $total_assets = $assetCounts->total_assets;
+        if ($total_assets > 1) {
+            $percentRusakBerat = round(($assetCounts->worst_count / $total_assets), 2) * 100;
+            $percentRusakRingan = round(($assetCounts->worse_count / $total_assets), 2) * 100;
+            $percentBaik = round(($assetCounts->good_count / $total_assets), 2) * 100;
+            $categoriesWithWorstPercentages[] = [
+                'category_name' => $assetCounts->category_name,
+                'percentRusakBerat' => $percentRusakBerat,
+                'percentRusakRingan' => $percentRusakRingan,
+                'percentBaik' => $percentBaik,
+            ];
+        }
+    }
+    
+
+    // Sort by percentage of Rusak Berat in descending order
+    usort($categoriesWithWorstPercentages, function($a, $b) {
+            return ($b['percentRusakBerat']) - ($a['percentRusakBerat']);
+    });
+
+    // Prepare data for the top 20 categories
+    $labels = [];
+    $datasets = [
+        [
+            "label" => "Baik",
+            "backgroundColor" => $this->getColorForCategory('Baik', '#70AB79'),
+            "data" => [],
+            "stack" => "Stack 1",
+        ],
+        [
+            "label" => "Rusak Ringan",
+            "backgroundColor" => $this->getColorForCategory('Rusak Ringan', '#F7BD7F'),
+            "data" => [],
+            "stack" => "Stack 1",
+        ],
+        [
+            "label" => "Rusak Berat",
+            "backgroundColor" => "#DE425B",
+            "data" => [],
+            "stack" => "Stack 1",
+        ],
+    ];
+
+    $topCategories = array_slice($categoriesWithWorstPercentages, 0, 15);
+    foreach ($topCategories as $category) {
+        $labels[] = $category['category_name'];
+        $datasets[0]["data"][] = $category['percentBaik']/100;
+        $datasets[1]["data"][] = $category['percentRusakRingan']/100;
+        $datasets[2]["data"][] = $category['percentRusakBerat']/100;
+    }
+
+    return [
+        "labels" => $labels,
+        "datasets" => $datasets,
+    ];
+}
+
+
+public function getDanaPercentage($id = null, $tingkat = null, $unit = null, $years = 'all', $status = null)
+{
+    $companyNamePattern = 'BPS Propinsi';
+    $companyNamePattern2 = ['BPS Kabupaten%', 'BPS Kota%'];     
+
+    if ($tingkat == 5) {
+        $bpsIds = Company::where(function ($query) use ($companyNamePattern2) {
+            foreach ($companyNamePattern2 as $pattern) {
+                $query->orWhere('name', 'like', $pattern);
+            }
+        })->pluck('id')->toArray();
+    } elseif ($tingkat == 3) {
+        $bpsIds = Company::where('name', 'like', "$companyNamePattern%")->pluck('id')->toArray();  
+    } elseif ($tingkat == 2) {
+        $bpsIds = Company::where('id', '<', 26)->pluck('id')->toArray();  
+    }   
+
+    $query = Asset::join('models', 'assets.model_id', '=', 'models.id')
+        ->join('categories', 'models.category_id', '=', 'categories.id');
+
+        if ($status == 1) {
+            $query->where('assets.status_id', 1);
+        } elseif ($status == 2) {
+            $query->where('assets.status_id', 2)
+                  ->whereNull('assets.assigned_to');
+        } elseif ($status == 3) {
+            $query->where('assets.status_id', 2)
+                  ->whereNotNull('assets.assigned_to');
+        } elseif ($status == 4) {
+            $query->where('assets.status_id', 4);
+        }
+        
+    if ($tingkat == 2 || $tingkat == 3 || $tingkat == 5) {
+        $query->whereIn('assets.company_id', $bpsIds);
+    } 
+    
+    if ($tingkat == 4 || $unit !="null") {
+        $query->where('assets.company_id', $unit);
+    }
+
+    $query->selectRaw('
+    categories.name as category_name,
+    SUM(assets.purchase_cost) as total_assets,
+    SUM(CASE WHEN assets.notes LIKE "%Rusak Berat%" THEN assets.purchase_cost ELSE 0 END) AS worst_count,
+    SUM(CASE WHEN assets.notes LIKE "%Rusak Ringan%" THEN assets.purchase_cost ELSE 0 END) AS worse_count,
+    SUM(CASE WHEN assets.notes LIKE "%Baik%" THEN assets.purchase_cost ELSE 0 END) AS worst_count,
+    YEAR(IFNULL(assets.purchase_date, assets.created_at)) AS year
+');
+
+    
+    if ($years != 'all') {
+        $years = explode(',', $years);
+        $query->whereIn(\DB::raw('YEAR(IFNULL(assets.purchase_date, assets.created_at))'), $years);
+    }
+
+    $query->groupBy('categories.name');
+
+    if (!is_null($id)) {
+        if ($id == 1) {
+            $query->whereIn('models.category_id', range(1, 97));
+        } elseif ($id == 2) {
+            $query->whereIn('models.category_id', range(118, 210));
+        }
+    }
+
+    $assetsCountByCategory = $query->get();
+
     $categoriesWithWorstPercentages = [];
     foreach ($assetsCountByCategory as $assetCounts) {
         $total_assets = $assetCounts->total_assets;
@@ -511,7 +1153,7 @@ class ModifikasiDashboardController extends Controller
     }
 
 
-    public function getUnitRankbyProv($id = null, $asetType = 'kelAset', $asetValue = null)
+    public function getUnitRankbyProv($id = null, $asetType = 'kelAset', $asetValue = null, $tingkat = null)
     {
         $kodeWil = Company::where('id', $id)->pluck('kode_wil')->first(); 
 
@@ -523,13 +1165,12 @@ class ModifikasiDashboardController extends Controller
                 // $bpsIds = array_merge($bpsIds, range(1, 25));
             } elseif ($id > 25 && $id != 36) {
                 $bpsIds = Company::where('kode_wil', 'like', $kodeProv . '%')->pluck('id')->toArray();
-            } else {
-                $bpsIds = [];
-            }
-        } else {
-            $bpsIds = [];
+            } 
         }
 
+        if ($tingkat == 3){
+            $bpsIds = range(1, 25);
+        }
     
         $labels = [];
         $datasets = [
@@ -547,13 +1188,7 @@ class ModifikasiDashboardController extends Controller
             ],
             [
                 "label" => "Rusak Berat",
-                "backgroundColor" => $this->getColorForCategory('Rusak Berat', '#EF845F'),
-                "data" => [],
-                "stack" => "Stack 1",
-            ],
-            [
-                "label" => "Pegawai",
-                "backgroundColor" => '#00876C',
+                "backgroundColor" =>  '#DE425B',
                 "data" => [],
                 "stack" => "Stack 0",
             ],
@@ -593,15 +1228,13 @@ class ModifikasiDashboardController extends Controller
                 }
     
             $assetCounts = $query->first();
-            $userCount = User::where('company_id', $companyId)->count();
     
             $companyCounts[] = [
                 'company_name' => $assetCounts->name,
                 'Baik' => $assetCounts->good_count,
                 'Rusak Ringan' => $assetCounts->worse_count,
                 'Rusak Berat' => $assetCounts->worst_count,
-                'Total Aset' => $assetCounts->total_count,
-                'Pegawai' => $userCount ?? 0
+                'Total Aset' => $assetCounts->total_count
             ];
         }
     
@@ -617,7 +1250,6 @@ class ModifikasiDashboardController extends Controller
             $datasets[0]["data"][] = $company['Baik'];
             $datasets[1]["data"][] = $company['Rusak Ringan'];
             $datasets[2]["data"][] = $company['Rusak Berat'];
-            $datasets[3]["data"][] = $company['Pegawai'];
             }
         }
     
@@ -626,6 +1258,8 @@ class ModifikasiDashboardController extends Controller
             "datasets" => $datasets,
         ];
     }
+
+
 
 
     
@@ -658,7 +1292,7 @@ class ModifikasiDashboardController extends Controller
         $datasets = [
             [
                 "label" => "Rusak Berat",
-                "backgroundColor" => $this->getColorForCategory('Rusak Berat', '#EF845F'),
+                "backgroundColor" => "#DE425B",
                 "data" => [],
                 "stack" => "Stack 1",
             ],
@@ -843,82 +1477,128 @@ class ModifikasiDashboardController extends Controller
         ];
     }
 
-
-    public function getProvRank($asetType = 'kelAset', $asetValue = null, $notes = null)
+    public function getAssetbyTahun($id = null, $asetType = 'kelAset', $asetValue = null, $wil = 1)
     {
-        $companyNamePattern = "BPS Propinsi";
-        $bpsIds = Company::where('name', 'like', "$companyNamePattern%")->pluck('id', 'kode_wil')->toArray();       
-
-        $companyCounts = [];
-        foreach ($bpsIds as $kodeWil => $id) {
-            $kodeProv = substr($kodeWil, 0, 2);
-            $provdanturunan = [];  
-            
-            if ($id == 36) {
-                $provdanturunan = Company::where('id', '>', 25)->where('kode_wil', 'like', $kodeProv . '%')->pluck('id')->toArray();
-                $provdanturunan = array_merge($provdanturunan, range(1, 25));
-            } elseif ($id > 25 && $id != 36) {
-                $provdanturunan = Company::where('id', '>', 25)->where('kode_wil', 'like', $kodeProv . '%')->pluck('id')->toArray();
-            } else {
-                $provdanturunan[] = $id;
-            }   
-
-            $query = Asset::join('models', 'assets.model_id', '=', 'models.id')
-    ->join('companies', 'assets.company_id', '=', 'companies.id')
-    ->selectRaw('
-        CASE 
-            WHEN companies.name LIKE "Direktorat%" THEN "Propinsi DKI Jakarta"
-            ELSE REPLACE(companies.name, "BPS ", "")
-        END as name,
-        SUM(CASE WHEN assets.notes LIKE "Rusak Ringan%" THEN 1 ELSE 0 END) AS worse_count,
-        SUM(CASE WHEN assets.notes LIKE "Rusak Berat%" THEN 1 ELSE 0 END) AS worst_count,
-        SUM(CASE WHEN assets.notes LIKE "Baik%" THEN 1 ELSE 0 END) AS good_count
-    ')
-    ->whereIn('assets.company_id', $provdanturunan);
-  
-
-            if ($asetType == 'kelAset') {
-                if (!is_null($asetValue)) {
-                    if ($asetValue == 1) {
-                        // Aset TI
-                        $query->whereIn('models.category_id', range(1, 97));
-                    } elseif ($asetValue == 2) {
-                        // Aset non-TI
-                        $query->whereIn('models.category_id', range(118, 210));
-                    }
-                } else {
-                    $query->whereIn('models.category_id', range(1, 210));
-                }
-            } elseif ($asetType == 'katAset') {
-                if (!is_null($asetValue)) {
-                    $query->where('models.category_id', $asetValue);
-                }
-            }   
-
-            $assetCounts = $query->first(); 
-
-            if ($assetCounts) {
-                $companyCounts[] = [
-                    'company_name' => $assetCounts->name,
-                    'Rusak Ringan' => $assetCounts->worse_count,
-                    'Rusak Berat' => $assetCounts->worst_count,
-                    'Baik' => $assetCounts->good_count
-                ];
-            }
+        if ($id != 'all') {
+            $kodeWil = Company::where('id', $id)->pluck('kode_wil')->first();
         }   
 
-        usort($companyCounts, function($a, $b) use ($notes){
-            if ($notes == 1) { 
-                return $b['Rusak Berat'] - $a['Rusak Berat'];
-            } elseif ($notes == 2) {
-                return $b['Rusak Ringan'] - $a['Rusak Ringan'];
-            } elseif ($notes == 3)  {
-                return $b['Baik'] - $a['Baik'];
+        $query = Asset::join('models', 'assets.model_id', '=', 'models.id')
+                ->selectRaw('
+                    YEAR(IFNULL(assets.purchase_date, assets.created_at)) AS year,
+                    SUM(CASE WHEN assets.notes LIKE "Rusak Berat%" THEN 1 ELSE 0 END) AS worst_count,
+                    SUM(CASE WHEN assets.notes LIKE "Rusak Ringan%" THEN 1 ELSE 0 END) AS worse_count,
+                    SUM(CASE WHEN assets.notes LIKE "Baik%" THEN 1 ELSE 0 END) AS good_count
+                '); 
+
+                if ($wil == 1) {
+                    if (isset($kodeWil) && substr($kodeWil, -2) == '00') {
+                        $kodeProv = substr($kodeWil, 0, 2);
+                
+                        if ($id == 36) {
+                            $bpsIds = Company::where('id', '>', 25)
+                                ->where('kode_wil', 'like', $kodeProv . '%')
+                                ->pluck('id')
+                                ->toArray();
+                            $query->whereIn('assets.company_id', $bpsIds);
+                        } elseif ($id > 25 && $id != 36) {
+                            $bpsIds = Company::where('kode_wil', 'like', $kodeProv . '%')
+                                ->pluck('id')
+                                ->toArray();
+                            $query->whereIn('assets.company_id', $bpsIds);
+                        }
+                    }
+                } else if ($wil == 3) {
+                    $bpsIds = Company::where('id', '<', 26)
+                        ->pluck('id')
+                        ->toArray();
+                    $query->whereIn('assets.company_id', $bpsIds);
+                } else {
+                    $query->where('assets.company_id', $id);
+                }
+                  
+
+        if ($asetType == 'kelAset') {
+            if (!is_null($asetValue)) {
+                if ($asetValue == 1) {
+                    // Aset TI
+                    $query->whereIn('models.category_id', range(1, 97));
+                } elseif ($asetValue == 2) {
+                    // Aset non-TI
+                    $query->whereIn('models.category_id', range(118, 210));
+                }
+            } else {
+                $query->whereIn('models.category_id', range(1, 210));
             }
-        }); 
+        } elseif ($asetType == 'katAset' && !is_null($asetValue)) {
+            $query->where('models.category_id', $asetValue);
+        }   
+
+        $assetsCountByYear = $query->groupBy('year')->get();    
 
         $labels = [];
         $datasets = [
+            [
+                "label" => "Rusak Berat",
+                "borderColor" => $this->getColorForCategory('Rusak Berat', '#EF845F'),
+                "data" => [],
+                "fill" => false,
+                "tension" => 0.1,
+            ],
+            [
+                "label" => "Rusak Ringan",
+                "borderColor" => $this->getColorForCategory('Rusak Ringan', '#F7BD7F'),
+                "data" => [],
+                "fill" => false,
+                "tension" => 0.1,
+            ],
+            [
+                "label" => "Baik",
+                "borderColor" => $this->getColorForCategory('Baik', '#70AB79'),
+                "data" => [],
+                "fill" => false,
+                "tension" => 0.1,
+            ],
+        ];  
+
+        foreach ($assetsCountByYear as $asset) {
+            $labels[] = $asset->year; 
+            $datasets[0]["data"][] = $asset->worst_count;
+            $datasets[1]["data"][] = $asset->worse_count;
+            $datasets[2]["data"][] = $asset->good_count;
+        }       
+
+        $result = [
+            "labels" => $labels,
+            "datasets" => $datasets
+        ];  
+        return response()->json($result);
+    }
+
+    public function getAsetDisewa()
+    {
+        $assetsCountByCategory = Asset::join('models', 'assets.model_id', '=', 'models.id')
+            ->join('categories', 'models.category_id', '=', 'categories.id')
+            ->where('assets.notes', 'LIKE', '%Digunakan%Lain%')
+            ->selectRaw('
+                categories.name as category_name,
+                COUNT(*) as total_assets,
+                SUM(CASE WHEN assets.notes LIKE "Rusak Berat%" THEN 1 ELSE 0 END) AS worst_count,
+                SUM(CASE WHEN assets.notes LIKE "Rusak Ringan%" THEN 1 ELSE 0 END) AS worse_count,
+                SUM(CASE WHEN assets.notes LIKE "Baik%" THEN 1 ELSE 0 END) AS good_count
+            ')
+            ->groupBy('categories.name')
+            ->orderByDesc('total_assets')
+            ->get();    
+
+        $labels = [];
+        $datasets = [
+            [
+                "label" => "Baik",
+                "backgroundColor" => $this->getColorForCategory('Baik', '#70AB79'),
+                "data" => [],
+                "stack" => "Stack 1",
+            ],
             [
                 "label" => "Rusak Ringan",
                 "backgroundColor" => $this->getColorForCategory('Rusak Ringan', '#F7BD7F'),
@@ -931,20 +1611,15 @@ class ModifikasiDashboardController extends Controller
                 "data" => [],
                 "stack" => "Stack 1",
             ],
-            [
-                "label" => "Baik",
-                "backgroundColor" => $this->getColorForCategory('Baik', '#70AB79'),
-                "data" => [],
-                "stack" => "Stack 0",
-            ],
+            
         ];  
 
-        $badCompanies = array_slice($companyCounts, 0, 8);
-        foreach ($badCompanies as $company) {
-            $labels[] = $company['company_name'];
-            $datasets[0]["data"][] = $company['Rusak Ringan'];
-            $datasets[1]["data"][] = $company['Rusak Berat'];
-            $datasets[2]["data"][] = $company['Baik'];
+        foreach ($assetsCountByCategory as $assetnotes) {
+            $labels[] = $assetnotes->category_name; 
+
+            $datasets[0]["data"][] = $assetnotes->good_count;
+            $datasets[1]["data"][] = $assetnotes->worse_count;
+            $datasets[2]["data"][] = $assetnotes->worst_count;
         }   
 
         return [
@@ -953,6 +1628,176 @@ class ModifikasiDashboardController extends Controller
         ];
     }
 
+    public function getAsetUnused()
+    {
+        $assetsCountByCategory = Asset::join('models', 'assets.model_id', '=', 'models.id')
+            ->join('categories', 'models.category_id', '=', 'categories.id')   
+            ->where('assets.notes', 'LIKE', '%Tidak%Digunakan%')
+            ->selectRaw('
+                categories.name as category_name,
+                COUNT(*) as total_assets,
+                SUM(CASE WHEN assets.notes LIKE "Rusak Berat%" THEN 1 ELSE 0 END) AS worst_count,
+                SUM(CASE WHEN assets.notes LIKE "Rusak Ringan%" THEN 1 ELSE 0 END) AS worse_count,
+                SUM(CASE WHEN assets.notes LIKE "Baik%" THEN 1 ELSE 0 END) AS good_count
+            ')
+            ->groupBy('categories.name')
+            ->orderByDesc('total_assets')
+            ->get();    
+
+        $labels = [];
+        $datasets = [
+            [
+                "label" => "Baik",
+                "backgroundColor" => $this->getColorForCategory('Baik', '#70AB79'),
+                "data" => [],
+                "stack" => "Stack 1",
+            ],
+            [
+                "label" => "Rusak Ringan",
+                "backgroundColor" => $this->getColorForCategory('Rusak Ringan', '#F7BD7F'),
+                "data" => [],
+                "stack" => "Stack 1",
+            ],
+            [
+                "label" => "Rusak Berat",
+                "backgroundColor" => $this->getColorForCategory('Rusak Berat', '#EF845F'),
+                "data" => [],
+                "stack" => "Stack 1",
+            ],
+            
+        ];  
+
+        foreach ($assetsCountByCategory as $assetnotes) {
+            $labels[] = $assetnotes->category_name; 
+
+            $datasets[0]["data"][] = $assetnotes->good_count;
+            $datasets[1]["data"][] = $assetnotes->worse_count;
+            $datasets[2]["data"][] = $assetnotes->worst_count;
+        }   
+
+        return [
+            "labels" => $labels,
+            "datasets" => $datasets,
+        ];
+    }
+
+    public function getAsetSewaInfo()
+    {
+        $assetsInfo = Asset::join('models', 'assets.model_id', '=', 'models.id')
+            ->join('categories', 'models.category_id', '=', 'categories.id')
+            ->join('companies', 'assets.company_id', '=', 'companies.id')
+            ->where('assets.notes', 'LIKE', '%Digunakan%Lain%')
+            ->select(
+                'companies.name as unitkerja',
+                'categories.name as category_name',
+                'assets.asset_tag as nup',
+                'assets._snipeit_nilai_buku_18 as nilaibuku',
+                'assets.purchase_cost as harga',
+                'assets.purchase_date',
+                'assets.created_at',
+                \DB::raw('
+                    CASE 
+                        WHEN assets.purchase_date > 0 THEN assets.purchase_date
+                        WHEN assets.created_at > 0 THEN assets.created_at
+                    END AS age_date'
+                )
+            )
+            ->get();
+    
+        $assetsInfoData = $assetsInfo->map(function ($item) {
+            $ageDate = $item->age_date;
+            $now = new \DateTime();
+            $ageDate = new \DateTime($ageDate);
+            $interval = $now->diff($ageDate);
+            $years = $interval->y;
+            $months = $interval->m;
+            $umur = "{$years} tahun {$months} bulan";
+    
+            return [
+                'unitkerja' => $item->unitkerja,
+                'category' => $item->category_name,
+                'nup' => $item->nup,
+                'umur' => $umur,
+                'harga' => $item->harga,
+                'nilaibuku' => $item->nilaibuku,
+            ];
+        });
+    
+        $total = $assetsInfoData->count();
+    
+        $result = [
+            'total' => $total,
+            'rows' => $assetsInfoData->toArray(),
+        ];
+    
+        return response()->json($result);
+    }
+    
+    
+    public function getUnusedAsetInfo()
+    {
+        $assetsInfo = Asset::join('models', 'assets.model_id', '=', 'models.id')
+            ->join('categories', 'models.category_id', '=', 'categories.id')
+            ->join('companies', 'assets.company_id', '=', 'companies.id')
+            ->where('assets.notes', 'LIKE', '%Tidak%Digunakan%')
+            ->select(
+                'companies.name as unitkerja',
+                'categories.name as category_name',
+                'assets.asset_tag as nup',
+                'assets._snipeit_nilai_buku_18 as nilaibuku',
+                'assets.purchase_cost as harga',
+                'assets.purchase_date',
+                'assets.created_at',
+                \DB::raw('
+                    CASE 
+                        WHEN assets.purchase_date > 0 THEN assets.purchase_date
+                        WHEN assets.created_at > 0 THEN assets.created_at
+                    END AS age_date'
+                )
+            )
+            ->get();
+    
+        $assetsInfoData = $assetsInfo->map(function ($item) {
+            $ageDate = $item->age_date;
+            $now = new \DateTime();
+            $ageDate = new \DateTime($ageDate);
+            $interval = $now->diff($ageDate);
+            $years = $interval->y;
+            $months = $interval->m;
+            $umur = "{$years} tahun {$months} bulan";
+    
+            return [
+                'unitkerja' => $item->unitkerja,
+                'category' => $item->category_name,
+                'nup' => $item->nup,
+                'umur' => $umur,
+                'harga' => $item->harga,
+                'nilaibuku' => $item->nilaibuku,
+            ];
+        });
+    
+        $total = $assetsInfoData->count();
+    
+        $result = [
+            'total' => $total,
+            'rows' => $assetsInfoData->toArray(),
+        ];
+    
+        return response()->json($result);
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
     public function getHardwareNotes($id = null, $tingkat = null, $unit = null, $years = 'all', $status = null)
@@ -960,15 +1805,17 @@ class ModifikasiDashboardController extends Controller
         $companyNamePattern = "BPS Propinsi";
         $companyNamePattern2 = ["BPS Kabupaten%", "BPS Kota%"];     
 
-        if ($tingkat == 3) {
+        if ($tingkat == 5) {
             $bpsIds = Company::where(function ($query) use ($companyNamePattern2) {
                 foreach ($companyNamePattern2 as $pattern) {
                     $query->orWhere('name', 'like', $pattern);
                 }
             })->pluck('id')->toArray();
-        } elseif ($tingkat == 2) {
+        } elseif ($tingkat == 3) {
             $bpsIds = Company::where('name', 'like', "$companyNamePattern%")->pluck('id')->toArray();  
-        }       
+        } elseif ($tingkat == 2) {
+            $bpsIds = Company::where('id', '<', 26)->pluck('id')->toArray();  
+        }            
 
         $query = Asset::join('models', 'assets.model_id', '=', 'models.id');
 
@@ -984,9 +1831,11 @@ class ModifikasiDashboardController extends Controller
             $query->where('assets.status_id', 4);
         }
         
-        if ($tingkat == 2 || $tingkat == 3) {
+        if ($tingkat == 2 || $tingkat == 3 || $tingkat == 5) {
             $query->whereIn('assets.company_id', $bpsIds);
-        } elseif ($tingkat == 4) {
+        } 
+        
+        if ($tingkat == 4 || $unit !="null") {
             $query->where('assets.company_id', $unit);
         }
 
@@ -1108,118 +1957,13 @@ class ModifikasiDashboardController extends Controller
         ];
     }
 
-    public function getAsetDisewa()
-    {
-        $assetsCountByCategory = Asset::join('models', 'assets.model_id', '=', 'models.id')
-            ->join('categories', 'models.category_id', '=', 'categories.id')
-            ->where('assets.notes', 'LIKE', '%Digunakan%Lain%')
-            ->selectRaw('
-                categories.name as category_name,
-                COUNT(*) as total_assets,
-                SUM(CASE WHEN assets.notes LIKE "Rusak Berat%" THEN 1 ELSE 0 END) AS worst_count,
-                SUM(CASE WHEN assets.notes LIKE "Rusak Ringan%" THEN 1 ELSE 0 END) AS worse_count,
-                SUM(CASE WHEN assets.notes LIKE "Baik%" THEN 1 ELSE 0 END) AS good_count
-            ')
-            ->groupBy('categories.name')
-            ->orderByDesc('total_assets')
-            ->get();    
 
-        $labels = [];
-        $datasets = [
-            [
-                "label" => "Baik",
-                "backgroundColor" => $this->getColorForCategory('Baik', '#70AB79'),
-                "data" => [],
-                "stack" => "Stack 1",
-            ],
-            [
-                "label" => "Rusak Ringan",
-                "backgroundColor" => $this->getColorForCategory('Rusak Ringan', '#F7BD7F'),
-                "data" => [],
-                "stack" => "Stack 1",
-            ],
-            [
-                "label" => "Rusak Berat",
-                "backgroundColor" => $this->getColorForCategory('Rusak Berat', '#EF845F'),
-                "data" => [],
-                "stack" => "Stack 1",
-            ],
-            
-        ];  
-
-        foreach ($assetsCountByCategory as $assetnotes) {
-            $labels[] = $assetnotes->category_name; 
-
-            $datasets[0]["data"][] = $assetnotes->good_count;
-            $datasets[1]["data"][] = $assetnotes->worse_count;
-            $datasets[2]["data"][] = $assetnotes->worst_count;
-        }   
-
-        return [
-            "labels" => $labels,
-            "datasets" => $datasets,
-        ];
-    }
-
-    public function getAsetUnused()
-    {
-        $assetsCountByCategory = Asset::join('models', 'assets.model_id', '=', 'models.id')
-            ->join('categories', 'models.category_id', '=', 'categories.id')   
-            ->where('assets.notes', 'LIKE', '%Tidak%Digunakan%')
-            ->selectRaw('
-                categories.name as category_name,
-                COUNT(*) as total_assets,
-                SUM(CASE WHEN assets.notes LIKE "Rusak Berat%" THEN 1 ELSE 0 END) AS worst_count,
-                SUM(CASE WHEN assets.notes LIKE "Rusak Ringan%" THEN 1 ELSE 0 END) AS worse_count,
-                SUM(CASE WHEN assets.notes LIKE "Baik%" THEN 1 ELSE 0 END) AS good_count
-            ')
-            ->groupBy('categories.name')
-            ->orderByDesc('total_assets')
-            ->get();    
-
-        $labels = [];
-        $datasets = [
-            [
-                "label" => "Baik",
-                "backgroundColor" => $this->getColorForCategory('Baik', '#70AB79'),
-                "data" => [],
-                "stack" => "Stack 1",
-            ],
-            [
-                "label" => "Rusak Ringan",
-                "backgroundColor" => $this->getColorForCategory('Rusak Ringan', '#F7BD7F'),
-                "data" => [],
-                "stack" => "Stack 1",
-            ],
-            [
-                "label" => "Rusak Berat",
-                "backgroundColor" => $this->getColorForCategory('Rusak Berat', '#EF845F'),
-                "data" => [],
-                "stack" => "Stack 1",
-            ],
-            
-        ];  
-
-        foreach ($assetsCountByCategory as $assetnotes) {
-            $labels[] = $assetnotes->category_name; 
-
-            $datasets[0]["data"][] = $assetnotes->good_count;
-            $datasets[1]["data"][] = $assetnotes->worse_count;
-            $datasets[2]["data"][] = $assetnotes->worst_count;
-        }   
-
-        return [
-            "labels" => $labels,
-            "datasets" => $datasets,
-        ];
-    }
-
-    
-    public function getLatestCat($id = null, $tingkat = null, $unit = null, $years = 'all', $status = null)
+    public function getHighestDanaCat($id = null, $tingkat = null, $unit = null, $year = null)
     {
         $companyNamePattern = "BPS Propinsi";
-        $companyNamePattern2 = ["BPS Kabupaten%", "BPS Kota%"];     
-
+        $companyNamePattern2 = ["BPS Kabupaten%", "BPS Kota%"];
+    
+        // Fetch the BPS IDs based on the tingkat value
         if ($tingkat == 3) {
             $bpsIds = Company::where(function ($query) use ($companyNamePattern2) {
                 foreach ($companyNamePattern2 as $pattern) {
@@ -1227,92 +1971,378 @@ class ModifikasiDashboardController extends Controller
                 }
             })->pluck('id')->toArray();
         } elseif ($tingkat == 2) {
-            $bpsIds = Company::where('name', 'like', "$companyNamePattern%")->pluck('id')->toArray();  
-        }       
+            $bpsIds = Company::where('name', 'like', "$companyNamePattern%")->pluck('id')->toArray();
+        }   elseif ($tingkat == 5) {
+            $bpsIds = Company::where('id', '<', 26)->pluck('id')->toArray();  
+        }
 
+    
+        // Base query with joins
         $query = Asset::join('models', 'assets.model_id', '=', 'models.id')
             ->join('categories', 'models.category_id', '=', 'categories.id');
+    
+        // Filter by company IDs if tingkat is 2 or 3
+        if ($tingkat == 2 || $tingkat == 3 || $tingkat == 5) {
+            $query->whereIn('assets.company_id', $bpsIds);
+        } 
 
-            if ($status == 1) {
-                $query->where('assets.status_id', 1);
-            } elseif ($status == 2) {
-                $query->where('assets.status_id', 2)
-                      ->whereNull('assets.assigned_to');
-            } elseif ($status == 3) {
-                $query->where('assets.status_id', 2)
-                      ->whereNotNull('assets.assigned_to');
-            } elseif ($status == 4) {
-                $query->where('assets.status_id', 4);
+        // Filter by year
+        if ($year != null) {
+            $query->whereYear(\DB::raw('IFNULL(assets.purchase_date, assets.created_at)'), $year);
+        } else {
+            // If no year is provided, use the current year
+            $year = date('Y');
+            $query->whereYear(\DB::raw('IFNULL(assets.purchase_date, assets.created_at)'), $year);
+        }
+    
+        // Filter by category ID ranges
+        if (!is_null($id)) {
+            if ($id == 1) {
+                $query->whereIn('models.category_id', range(1, 97));
+            } elseif ($id == 2) {
+                $query->whereIn('models.category_id', range(118, 210));
             }
-            
-            if ($tingkat == 2 || $tingkat == 3) {
-                $query->whereIn('assets.company_id', $bpsIds);
-            } elseif ($tingkat == 4) {
-                $query->where('assets.company_id', $unit);
-            }
-
-        $query->selectRaw('
+        }
+    
+        // Select required fields and group by category name
+        $assetsCountByCategory = $query->selectRaw('
                 categories.name as category_name,
-                COUNT(*) as total_assets,
-                SUM(CASE WHEN assets.notes LIKE "Rusak Berat%" THEN 1 ELSE 0 END) AS worst_count,
-                SUM(CASE WHEN assets.notes LIKE "Rusak Ringan%" THEN 1 ELSE 0 END) AS worse_count,
-                SUM(CASE WHEN assets.notes LIKE "Baik%" THEN 1 ELSE 0 END) AS good_count
-            ');
-
-            if ($years != 'all') {
-                $years = explode(',', $years);
-                $query->whereIn(\DB::raw('YEAR(IFNULL(assets.purchase_date, assets.created_at))'), $years);
-            } 
-
-            $query->groupBy('categories.name')
-                    ->orderByDesc('total_assets');
-       
-            if (!is_null($id)) {
-                if ($id == 1) {
-                    $query->whereIn('models.category_id', range(1, 97));
-                } elseif ($id == 2) {
-                    $query->whereIn('models.category_id', range(118, 210));
-                }
+                SUM(assets.purchase_cost) AS dana_cat,
+                COUNT(assets.id) AS asset_count
+            ')
+            ->groupBy('categories.name')
+            ->orderByDesc('dana_cat')
+            ->get();
+    
+        // Calculate percentage and prepare result array
+        $categoriesWithDanaPercentages = [];
+        foreach ($assetsCountByCategory as $assetdana) {
+            $danaCat = $assetdana->dana_cat;
+            $assetCount = $assetdana->asset_count;
+            if ($danaCat > 0) {
+                $danaCat = round(($danaCat / 1000000000), 2); // Convert to billions
+                $categoriesWithDanaPercentages[] = [
+                    'category_name' => $assetdana->category_name,
+                    'dana_cat' => $danaCat,
+                    'asset_count' => $assetCount,
+                ];
             }
+        }
     
-        $assetsCountByCategory = $query->limit(30)->get();
+        // Sort by dana_cat in descending order
+        usort($categoriesWithDanaPercentages, function($a, $b) {
+            return ($b['dana_cat']) - ($a['dana_cat']);
+        });
     
+        // Prepare labels and datasets for the top categories
         $labels = [];
         $datasets = [
             [
-                "label" => "Baik",
+                "label" => "Nilai",
                 "backgroundColor" => $this->getColorForCategory('Baik', '#70AB79'),
                 "data" => [],
-                "stack" => "Stack 1",
+                "assetCounts" => [],
             ],
-            [
-                "label" => "Rusak Ringan",
-                "backgroundColor" => $this->getColorForCategory('Rusak Ringan', '#F7BD7F'),
-                "data" => [],
-                "stack" => "Stack 1",
-            ],
-            [
-                "label" => "Rusak Berat",
-                "backgroundColor" => $this->getColorForCategory('Rusak Berat', '#EF845F'),
-                "data" => [],
-                "stack" => "Stack 1",
-            ],
-            
         ];
     
-        foreach ($assetsCountByCategory as $assetnotes) {
-            $labels[] = $assetnotes->category_name;
+        $topCategories = array_slice($categoriesWithDanaPercentages, 0, 7);
+        $otherCategories = array_slice($categoriesWithDanaPercentages, 7);
     
-            $datasets[0]["data"][] = $assetnotes->good_count;
-            $datasets[1]["data"][] = $assetnotes->worse_count;
-            $datasets[2]["data"][] = $assetnotes->worst_count;
+        foreach ($topCategories as $category) {
+            $labels[] = $category['category_name'];
+            $datasets[0]["data"][] = $category['dana_cat'];
+            $datasets[0]["assetCounts"][] = $category['asset_count'];
         }
     
+        // Calculate the total for "Lainnya"
+        $totalLainnya = array_reduce($otherCategories, function($carry, $item) {
+            return $carry + $item['dana_cat'];
+        }, 0);
+    
+        $totalLainnyaCount = array_reduce($otherCategories, function($carry, $item) {
+            return $carry + $item['asset_count'];
+        }, 0);
+    
+        // Add "Lainnya" to the labels and data
+        if ($totalLainnya > 0) {
+            $labels[] = "Lainnya";
+            $datasets[0]["data"][] = round($totalLainnya, 2); // Ensure 2 decimal places
+            $datasets[0]["assetCounts"][] = $totalLainnyaCount;
+        }
+    
+        // Return the result with labels, data, and additional info for hover
         return [
             "labels" => $labels,
             "datasets" => $datasets,
         ];
     }
+    
+
+
+    public function getHighestUnit($id = null, $tingkat = null, $unit = null, $year = null)
+{
+    $companyNamePattern = "BPS Propinsi";
+    $companyNamePattern2 = ["BPS Kabupaten%", "BPS Kota%"];
+
+    // Fetch the BPS IDs based on the tingkat value
+    if ($tingkat == 3) {
+        $bpsIds = Company::where(function ($query) use ($companyNamePattern2) {
+            foreach ($companyNamePattern2 as $pattern) {
+                $query->orWhere('name', 'like', $pattern);
+            }
+        })->pluck('id')->toArray();
+    } elseif ($tingkat == 2) {
+        $bpsIds = Company::where('name', 'like', "$companyNamePattern%")->pluck('id')->toArray();
+    } elseif ($tingkat == 5) {
+        $bpsIds = Company::where('id', '<', 26)->pluck('id')->toArray();
+    }
+
+    // Base query with joins
+    $query = Asset::join('models', 'assets.model_id', '=', 'models.id')
+        ->join('categories', 'models.category_id', '=', 'categories.id')
+        ->join('companies', 'assets.company_id', '=', 'companies.id'); // Added companies join
+
+    // Filter by company IDs if tingkat is 2, 3, or 5
+    if (in_array($tingkat, [2, 3, 5])) {
+        $query->whereIn('assets.company_id', $bpsIds);
+    }
+
+    // Filter by year
+    if ($year != null) {
+        $query->whereYear(\DB::raw('IFNULL(assets.purchase_date, assets.created_at)'), $year);
+    } else {
+        // If no year is provided, use the current year
+        $year = date('Y');
+        $query->whereYear(\DB::raw('IFNULL(assets.purchase_date, assets.created_at)'), $year);
+    }
+
+    // Filter by category ID ranges
+    if (!is_null($id)) {
+        if ($id == 1) {
+            $query->whereIn('models.category_id', range(1, 97));
+        } elseif ($id == 2) {
+            $query->whereIn('models.category_id', range(118, 210));
+        }
+    }
+
+    // Select required fields and group by company name
+    $assetsCountByCompany = $query->selectRaw('
+            companies.name as company_name,
+            SUM(assets.purchase_cost) AS dana_cat
+        ')
+        ->groupBy('companies.name')
+        ->orderByDesc('dana_cat')
+        ->get();
+
+    // Prepare a detailed asset count query grouped by company and category
+    $assetDetailsQuery = $query->selectRaw('
+            companies.name as company_name,
+            categories.name as category_name,
+            COUNT(assets.id) as asset_count
+        ')
+        ->groupBy('companies.name', 'categories.name')
+        ->get();
+
+    // Transform asset details query result to a structured array
+    $assetDetailsByCompany = [];
+    foreach ($assetDetailsQuery as $detail) {
+        $assetDetailsByCompany[$detail->company_name][] = [
+            'category_name' => $detail->category_name,
+            'asset_count' => $detail->asset_count,
+        ];
+    }
+
+    // Calculate percentage and prepare result array
+    $companiesWithDanaPercentages = [];
+    foreach ($assetsCountByCompany as $companyData) {
+        $danaCat = $companyData->dana_cat;
+        if ($danaCat > 0) {
+            $danaCat = round($danaCat / 1000000000, 2); // Convert to billions and round to 2 decimal places
+            $companiesWithDanaPercentages[] = [
+                'company_name' => $companyData->company_name,
+                'dana_cat' => $danaCat,
+                'asset_details' => $assetDetailsByCompany[$companyData->company_name] ?? [],
+            ];
+        }
+    }
+
+    // Sort by dana_cat in descending order
+    usort($companiesWithDanaPercentages, function($a, $b) {
+        return ($b['dana_cat']) - ($a['dana_cat']);
+    });
+
+    // Prepare labels and datasets for the top companies
+    $labels = [];
+    $datasets = [
+        [
+            "label" => "Nilai",
+            "backgroundColor" => $this->getColorForCategory('Baik', '#70AB79'),
+            "data" => [],
+            "assetDetails" => [],
+        ],
+    ];
+
+    $topCompanies = array_slice($companiesWithDanaPercentages, 0, 7);
+    $otherCompanies = array_slice($companiesWithDanaPercentages, 7);
+
+    foreach ($topCompanies as $company) {
+        $labels[] = $company['company_name'];
+        $datasets[0]["data"][] = $company['dana_cat'];
+        $datasets[0]["assetDetails"][] = $company['asset_details'];
+    }
+
+    // Calculate the total for "Lainnya"
+    $totalLainnya = array_reduce($otherCompanies, function($carry, $item) {
+        return $carry + $item['dana_cat'];
+    }, 0);
+
+    $totalLainnyaDetails = [];
+    foreach ($otherCompanies as $company) {
+        foreach ($company['asset_details'] as $detail) {
+            $found = false;
+            foreach ($totalLainnyaDetails as &$existingDetail) {
+                if ($existingDetail['category_name'] == $detail['category_name']) {
+                    $existingDetail['asset_count'] += $detail['asset_count'];
+                    $found = true;
+                    break;
+                }
+            }
+            if (!$found) {
+                $totalLainnyaDetails[] = $detail;
+            }
+        }
+    }
+
+    // Add "Lainnya" to the labels and data
+    if ($totalLainnya > 0) {
+        $labels[] = "Unit Kerja Lainnya";
+        $datasets[0]["data"][] = round($totalLainnya, 2);
+        $datasets[0]["assetDetails"][] = $totalLainnyaDetails;
+    }
+
+    // Return the result with labels and data
+    return [
+        "labels" => $labels,
+        "datasets" => $datasets,
+    ];
+}
+
+    
+
+    public function getLatestCat($id = null, $tingkat = null, $unit = null, $years = 'all', $status = null)
+{
+    $companyNamePattern = 'BPS Propinsi';
+    $companyNamePattern2 = ['BPS Kabupaten%', 'BPS Kota%'];     
+    
+    if ($tingkat == 5) {
+        $bpsIds = Company::where(function ($query) use ($companyNamePattern2) {
+            foreach ($companyNamePattern2 as $pattern) {
+                $query->orWhere('name', 'like', $pattern);
+            }
+        })->pluck('id')->toArray();
+    } elseif ($tingkat == 3) {
+        $bpsIds = Company::where('name', 'like', "$companyNamePattern%")->pluck('id')->toArray();  
+    } elseif ($tingkat == 2) {
+        $bpsIds = Company::where('id', '<', 26)->pluck('id')->toArray();  
+    }   
+    
+    $query = Asset::join('models', 'assets.model_id', '=', 'models.id')
+        ->join('categories', 'models.category_id', '=', 'categories.id');
+        
+    if ($tingkat == 2 || $tingkat == 3 || $tingkat == 5) {
+        $query->whereIn('assets.company_id', $bpsIds);
+    } 
+    
+    if ($tingkat == 4 || $unit != "null") {
+        $query->where('assets.company_id', $unit);
+    }
+    
+    $query->selectRaw('
+            categories.name as category_name,
+            COUNT(*) as total_assets,
+            SUM(CASE WHEN assets.notes LIKE "Rusak Berat%" THEN 1 ELSE 0 END) AS worst_count,
+            SUM(CASE WHEN assets.notes LIKE "Rusak Ringan%" THEN 1 ELSE 0 END) AS worse_count,
+            SUM(CASE WHEN assets.notes LIKE "Baik%" THEN 1 ELSE 0 END) AS good_count
+        ');
+    
+    if ($years != 'all') {
+        $years = explode(',', $years);
+        $query->whereIn(\DB::raw('YEAR(IFNULL(assets.purchase_date, assets.created_at))'), $years);
+    }
+    
+    $query->groupBy('categories.name');
+    
+    if (!is_null($id)) {
+        if ($id == 1) {
+            $query->whereIn('models.category_id', range(1, 97));
+        } elseif ($id == 2) {
+            $query->whereIn('models.category_id', range(118, 210));
+        }
+    }
+    
+    $assetsCountByCategory = $query->get();
+    
+    $categoriesWithWorstPercentages = [];
+    foreach ($assetsCountByCategory as $assetCounts) {
+        $total_assets = $assetCounts->total_assets;
+        if ($total_assets > 1) {
+            $categoriesWithWorstPercentages[] = [
+                'category_name' => $assetCounts->category_name,
+                'jmlRusakBerat' => $assetCounts->worst_count,
+                'jmlRusakRingan' => $assetCounts->worse_count,
+                'jmlBaik' => $assetCounts->good_count,
+            ];
+        }
+    }
+    
+    // Sort by the count of Rusak Berat in descending order
+    usort($categoriesWithWorstPercentages, function ($a, $b) {
+        return $b['jmlRusakBerat'] -  $a['jmlRusakBerat'];
+    });
+    
+    
+    
+    // Prepare data for the top 15 categories
+    $labels = [];
+    $datasets = [
+        [
+            "label" => "Rusak Berat",
+            "backgroundColor" => "#DE425B",
+            "data" => [],
+            "stack" => "Stack 0",
+        ],
+        [
+            "label" => "Baik",
+            "backgroundColor" => $this->getColorForCategory('Baik', '#70AB79'),
+            "data" => [],
+            "stack" => "Stack 1",
+        ],
+        [
+            "label" => "Rusak Ringan",
+            "backgroundColor" => $this->getColorForCategory('Rusak Ringan', '#F7BD7F'),
+            "data" => [],
+            "stack" => "Stack 1",
+        ],
+        
+    ];
+    
+    $topCategories = array_slice($categoriesWithWorstPercentages, 0, 7);
+    foreach ($topCategories as $category) {
+    $labels[] = $category['category_name'];
+    $datasets[0]["data"][] = $category['jmlRusakBerat'];
+    $datasets[1]["data"][] = $category['jmlBaik']; // Use index 1 for "Rusak Ringan"
+    $datasets[2]["data"][] = $category['jmlRusakRingan']; // Use index 2 for "Rusak Berat"
+}
+    
+    return [
+        "labels" => $labels,
+        "datasets" => $datasets,
+    ];
+}
+
+
+    
+    
     
     private function getColorForCategory($category, $defaultColor)
     {
@@ -1320,7 +2350,7 @@ class ModifikasiDashboardController extends Controller
             case 'Baik':
                 return '#70AB79';
             case 'Rusak Berat':
-                return '#EF845F';
+                return '#DE425B';
             default:
                 return ($defaultColor != '') ? $defaultColor : '#F7BD7F'; 
         }
@@ -1331,25 +2361,27 @@ class ModifikasiDashboardController extends Controller
         $companyNamePattern = "BPS Propinsi";
         $companyNamePattern2 = ["BPS Kabupaten%", "BPS Kota%"];     
 
-        if ($tingkat == 3) { 
-            // Level kabkota
+        if ($tingkat == 5) {
             $bpsIds = Company::where(function ($query) use ($companyNamePattern2) {
                 foreach ($companyNamePattern2 as $pattern) {
                     $query->orWhere('name', 'like', $pattern);
                 }
             })->pluck('id')->toArray();
-        } elseif ($tingkat == 2) {
-            // Level provinsi
+        } elseif ($tingkat == 3) {
             $bpsIds = Company::where('name', 'like', "$companyNamePattern%")->pluck('id')->toArray();  
-        }       
+        } elseif ($tingkat == 2) {
+            $bpsIds = Company::where('id', '<', 26)->pluck('id')->toArray();  
+        } 
 
         $query = Asset::join('models', 'assets.model_id', '=', 'models.id');
 
-            if ($tingkat == 2 || $tingkat == 3) {
-                $query->whereIn('assets.company_id', $bpsIds);
-            } elseif ($tingkat == 4) {
-                $query->where('assets.company_id', $unit);
-            }
+        if ($tingkat == 2 || $tingkat == 3 || $tingkat == 5) {
+            $query->whereIn('assets.company_id', $bpsIds);
+        } 
+        
+        if ($tingkat == 4 || $unit !="null") {
+            $query->where('assets.company_id', $unit);
+        }
 
         if (!is_null($id)) {
             if ($id == 1) {
@@ -1395,281 +2427,14 @@ class ModifikasiDashboardController extends Controller
         return $result;
     }
 
-    public function getAssetbyTahun($id = null, $asetType = 'kelAset', $asetValue = null, $wil = 1)
-    {
-        if ($id != 'all') {
-            $kodeWil = Company::where('id', $id)->pluck('kode_wil')->first();
-        }   
-
-        $query = Asset::join('models', 'assets.model_id', '=', 'models.id')
-                ->selectRaw('
-                    YEAR(IFNULL(assets.purchase_date, assets.created_at)) AS year,
-                    SUM(CASE WHEN assets.notes LIKE "Rusak Berat%" THEN 1 ELSE 0 END) AS worst_count,
-                    SUM(CASE WHEN assets.notes LIKE "Rusak Ringan%" THEN 1 ELSE 0 END) AS worse_count,
-                    SUM(CASE WHEN assets.notes LIKE "Baik%" THEN 1 ELSE 0 END) AS good_count
-                '); 
-
-                if ($wil == 1) {
-                    if (isset($kodeWil) && substr($kodeWil, -2) == '00') {
-                        $kodeProv = substr($kodeWil, 0, 2);
-                
-                        if ($id == 36) {
-                            $bpsIds = Company::where('id', '>', 25)
-                                ->where('kode_wil', 'like', $kodeProv . '%')
-                                ->pluck('id')
-                                ->toArray();
-                            $query->whereIn('assets.company_id', $bpsIds);
-                        } elseif ($id > 25 && $id != 36) {
-                            $bpsIds = Company::where('kode_wil', 'like', $kodeProv . '%')
-                                ->pluck('id')
-                                ->toArray();
-                            $query->whereIn('assets.company_id', $bpsIds);
-                        }
-                    }
-                } else {
-                    $query->where('assets.company_id', $id);
-                }
-                  
-
-        if ($asetType == 'kelAset') {
-            if (!is_null($asetValue)) {
-                if ($asetValue == 1) {
-                    // Aset TI
-                    $query->whereIn('models.category_id', range(1, 97));
-                } elseif ($asetValue == 2) {
-                    // Aset non-TI
-                    $query->whereIn('models.category_id', range(118, 210));
-                }
-            } else {
-                $query->whereIn('models.category_id', range(1, 210));
-            }
-        } elseif ($asetType == 'katAset' && !is_null($asetValue)) {
-            $query->where('models.category_id', $asetValue);
-        }   
-
-        $assetsCountByYear = $query->groupBy('year')->get();    
-
-        $labels = [];
-        $datasets = [
-            [
-                "label" => "Rusak Berat",
-                "borderColor" => $this->getColorForCategory('Rusak Berat', '#EF845F'),
-                "data" => [],
-                "fill" => false,
-                "tension" => 0.1,
-            ],
-            [
-                "label" => "Rusak Ringan",
-                "borderColor" => $this->getColorForCategory('Rusak Ringan', '#F7BD7F'),
-                "data" => [],
-                "fill" => false,
-                "tension" => 0.1,
-            ],
-            [
-                "label" => "Baik",
-                "borderColor" => $this->getColorForCategory('Baik', '#70AB79'),
-                "data" => [],
-                "fill" => false,
-                "tension" => 0.1,
-            ],
-        ];  
-
-        foreach ($assetsCountByYear as $asset) {
-            $labels[] = $asset->year; 
-            $datasets[0]["data"][] = $asset->worst_count;
-            $datasets[1]["data"][] = $asset->worse_count;
-            $datasets[2]["data"][] = $asset->good_count;
-        }       
-
-        $result = [
-            "labels" => $labels,
-            "datasets" => $datasets
-        ];  
-        return response()->json($result);
-    }
-
-
-    public function getDataNasional($agg = 1, $asetType = 'kelAset', $asetValue = null) {
-        $companyNamePattern = "BPS Propinsi";
-        $bpsIds = Company::where('name', 'like', "$companyNamePattern%")->pluck('id', 'kode_wil')->toArray();     
     
-        $petaId = [
-            1 => 'id-3700', 11 => 'id-ac', 51 => 'id-ba',  36 => 'id-bt',
-            17 => 'id-be', 34 => 'id-yo', 31 => 'id-jk', 75 => 'id-go', 
-            15 => 'id-ja', 32 => 'id-jr', 33 => 'id-jt', 35 => 'id-ji',
-            61 => 'id-kb', 63 => 'id-ks', 62 => 'id-kt', 64 => 'id-ki',
-            65 => 'id-ku', 19 => 'id-bb', 21 => 'id-kr', 18 => 'id-1024',
-            81 => 'id-ma', 82 => 'id-la', 52 => 'id-nb', 53 => 'id-nt',
-            94 => 'id-pa', 91 => 'id-ib', 14 => 'id-ri', 76 => 'id-sr', 
-            73 => 'id-se', 72 => 'id-st', 74 => 'id-sg',  71 => 'id-sw', 
-            13 => 'id-sb', 16 => 'id-sl', 12 => 'id-su', 
-        ];
-    
-        $rows = [];
-    
-        foreach ($bpsIds as $kodeWil => $id) {
-            $kodeProv = substr($kodeWil, 0, 2);
-            $provdanturunan = [];
-    
-            if ($id == 36) {
-                $provdanturunan = Company::where('kode_wil', 'like', $kodeProv . '%')->pluck('id')->toArray();
-                $provdanturunan = array_merge($provdanturunan, range(1, 25));
-            } elseif ($id > 25 && $id != 36) {
-                $provdanturunan = Company::where('kode_wil', 'like', $kodeProv . '%')->pluck('id')->toArray();
-            }
-    
-            $query = Asset::join('models', 'assets.model_id', '=', 'models.id')
-                    ->whereIn('assets.company_id', $provdanturunan);
-    
-            if ($asetType === 'kelAset') {
-                if (!is_null($asetValue)) {
-                    if ($asetValue == 1) {
-                        // Aset TI
-                        $query->whereIn('models.category_id', range(1, 97));
-                    } elseif ($asetValue == 2) {
-                        // Aset non-TI
-                        $query->whereIn('models.category_id', range(118, 210));
-                    }
-                }
-            } elseif ($asetType === 'katAset') {
-                if (!is_null($asetValue)) {
-                    $query->where('models.category_id', $asetValue);
-                }
-            }
-    
-            if ($agg == 1) { 
-                $value = floatval($query->select(
-                    \DB::raw('ROUND((SUM(assets.notes LIKE "Rusak Berat%") / COUNT(*)) * 100, 2) as worst_percentage')
-                )
-                ->value('worst_percentage'));
-            } elseif ($agg == 2) { 
-                $value = floatval($query->select(
-                    \DB::raw('ROUND((SUM(assets.notes LIKE "Rusak Ringan%") / COUNT(*)) * 100, 2) as worse_percentage')
-                )
-                ->value('worse_percentage'));
-            } elseif ($agg == 3) { 
-                $value = floatval($query->select(
-                    \DB::raw('ROUND((SUM(assets.notes LIKE "Baik%") / COUNT(*)) * 100, 2) as good_percentage')
-                )
-                ->value('good_percentage'));
-            } 
-    
-            $id_area = isset($petaId[$kodeProv]) ? $petaId[$kodeProv] : '';
-            $rows[] = [
-                'id_area' => $id_area, 
-                'value' => $value
-            ];
-        }
-    
-        return ['rows' => $rows];
-    }
 
 
     
-    public function getAsetSewaInfo()
-{
-    $assetsInfo = Asset::join('models', 'assets.model_id', '=', 'models.id')
-        ->join('categories', 'models.category_id', '=', 'categories.id')
-        ->join('companies', 'assets.company_id', '=', 'companies.id')
-        ->where('assets.notes', 'LIKE', '%Digunakan%Lain%')
-        ->select(
-            'companies.name as unitkerja',
-            'categories.name as category_name',
-            'assets.asset_tag as nup',
-            'assets._snipeit_nilai_buku_18 as nilaibuku',
-            'assets.purchase_cost as harga',
-            'assets.purchase_date',
-            'assets.created_at',
-            \DB::raw('
-                CASE 
-                    WHEN assets.purchase_date > 0 THEN assets.purchase_date
-                    WHEN assets.created_at > 0 THEN assets.created_at
-                END AS age_date'
-            )
-        )
-        ->get();
-
-    $assetsInfoData = $assetsInfo->map(function ($item) {
-        $ageDate = $item->age_date;
-        $now = new \DateTime();
-        $ageDate = new \DateTime($ageDate);
-        $interval = $now->diff($ageDate);
-        $years = $interval->y;
-        $months = $interval->m;
-        $umur = "{$years} tahun {$months} bulan";
-
-        return [
-            'unitkerja' => $item->unitkerja,
-            'category' => $item->category_name,
-            'nup' => $item->nup,
-            'umur' => $umur,
-            'harga' => $item->harga,
-            'nilaibuku' => $item->nilaibuku,
-        ];
-    });
-
-    $total = $assetsInfoData->count();
-
-    $result = [
-        'total' => $total,
-        'rows' => $assetsInfoData->toArray(),
-    ];
-
-    return response()->json($result);
-}
 
 
-public function getUnusedAsetInfo()
-{
-    $assetsInfo = Asset::join('models', 'assets.model_id', '=', 'models.id')
-        ->join('categories', 'models.category_id', '=', 'categories.id')
-        ->join('companies', 'assets.company_id', '=', 'companies.id')
-        ->where('assets.notes', 'LIKE', '%Tidak%Digunakan%')
-        ->select(
-            'companies.name as unitkerja',
-            'categories.name as category_name',
-            'assets.asset_tag as nup',
-            'assets._snipeit_nilai_buku_18 as nilaibuku',
-            'assets.purchase_cost as harga',
-            'assets.purchase_date',
-            'assets.created_at',
-            \DB::raw('
-                CASE 
-                    WHEN assets.purchase_date > 0 THEN assets.purchase_date
-                    WHEN assets.created_at > 0 THEN assets.created_at
-                END AS age_date'
-            )
-        )
-        ->get();
+    
 
-    $assetsInfoData = $assetsInfo->map(function ($item) {
-        $ageDate = $item->age_date;
-        $now = new \DateTime();
-        $ageDate = new \DateTime($ageDate);
-        $interval = $now->diff($ageDate);
-        $years = $interval->y;
-        $months = $interval->m;
-        $umur = "{$years} tahun {$months} bulan";
-
-        return [
-            'unitkerja' => $item->unitkerja,
-            'category' => $item->category_name,
-            'nup' => $item->nup,
-            'umur' => $umur,
-            'harga' => $item->harga,
-            'nilaibuku' => $item->nilaibuku,
-        ];
-    });
-
-    $total = $assetsInfoData->count();
-
-    $result = [
-        'total' => $total,
-        'rows' => $assetsInfoData->toArray(),
-    ];
-
-    return response()->json($result);
-}
 
 
     public function getHardwareInfo()
@@ -1750,186 +2515,6 @@ public function getUnusedAsetInfo()
         return response()->json($result);
     }
 
-
-    public function getLaporan($tipe, $month = null, $year = null)
-    {
-        $startDate = null;
-        $endDate = null;
-    
-        if ($month !== null && $year !== null) {
-            $startDate = Carbon::create($year, $month, 1, 0, 0, 0)->startOfMonth();
-            $endDate = $startDate->copy()->endOfMonth();
-        }
-    
-        $actionlogs = Actionlog::with(['item' => function ($query) {
-            $query->select('id', 'name', 'model_id', 'purchase_cost', 'purchase_date', 'created_at');
-        }])
-            ->select('id', 'action_type', 'created_at', 'company_id', 'log_meta', 'item_type', 'item_id');
-    
-        if ($startDate && $endDate) {
-            $actionlogs->whereDate('created_at', '>=', $startDate)
-                       ->whereDate('created_at', '<=', $endDate);
-        }
-    
-        $actionlogs = $actionlogs->get();
-    
-        $counts = [];
-    
-        foreach ($actionlogs as $log) {
-            if ($log->item) {
-                $model = AssetModel::find($log->item->model_id);
-                if ($model) {
-                    if ($tipe == "baru" && $log->action_type === 'create') {
-                        $category_name = Category::find($model->category_id)->name;
-                        if (!isset($counts[$category_name])) {
-                            $counts[$category_name] = 0;
-                        }
-                        $counts[$category_name]++;
-                    } elseif ($tipe == "rusak" && $log->action_type === 'update') {
-                        $category_name = Category::find($model->category_id)->name;
-                        if (!isset($counts[$category_name])) {
-                            $counts[$category_name] = 0;
-                        }
-                        $logMeta = json_decode($log->log_meta, true);
-                        if (isset($logMeta['notes'])) {
-                            $oldNote = $logMeta['notes']['old'] ?? '';
-                            $newNote = $logMeta['notes']['new'] ?? '';
-                            if (strpos($oldNote, 'Baik') !== false && strpos($newNote, 'Rusak') !== false) {
-                                $counts[$category_name]++;
-                            }
-                        }
-                    }
-                }
-            }
-        }
-    
-        $labels = array_keys($counts);
-        $datasets = [
-            [
-                'data' => array_values($counts),
-                'backgroundColor' => $tipe == 'baru' ? '#70AB79' : '#EF845F'
-            ]
-        ];
-    
-        $result = [
-            'labels' => $labels,
-            'datasets' => $datasets
-        ];
-    
-        return response()->json($result);
-    }
-   
-
-    public function getMonthlySumm($tipe, $month = null, $year = null)
-{
-    // $this->authorize('reports.view'); 
-    
-    $startDate = null;
-    $endDate = null;
-
-    if ($month !== null && $year !== null) {
-        $startDate = Carbon::create($year, $month, 1, 0, 0, 0)->startOfMonth();
-        $endDate = $startDate->copy()->endOfMonth();
-    }
-
-    $actionlogs = Actionlog::with(['item' => function ($query) {
-        $query->select('id', 'name', 'model_id', 'purchase_cost', 'purchase_date', 'created_at');
-    }])
-    ->select('id', 'action_type', 'created_at', 'company_id', 'log_meta', 'item_type', 'item_id');
-
-    if ($startDate && $endDate) {
-        $actionlogs->whereDate('created_at', '>=', $startDate)
-                   ->whereDate('created_at', '<=', $endDate);
-    }
-
-    $total = $actionlogs->count();
-    $actionlogs = $actionlogs->get();
-    $responseRows = [];
-    $totalPurchaseCost = 0;
-
-    $responseRows = [];
-$companyPurchaseCosts = [];
-$companyNewCounts = [];
-
-foreach ($actionlogs as $log) {
-    $company = Company::find($log->company_id);
-    $log->company_name = $company ? $company->name : null;
-
-    if ($log->item) {
-        $model = AssetModel::find($log->item->model_id);
-        $asset = Asset::find($log->item->id);
-
-        if ($model) {
-            $purchaseDate = Carbon::parse($log->item->purchase_date);
-            $currentDate = Carbon::now();
-            $ageInYears = $currentDate->diffInYears($purchaseDate);
-
-            $log->item->nup = $asset ? $asset->asset_tag : null;
-            $log->item->age = $ageInYears;
-            $log->item->category_id = $model->category_id;
-            $log->item->category_name = Category::find($model->category_id)->name;
-        } else {
-            $log->item->age = null;
-            $log->item->nup = null;
-            $log->item->category_id = null;
-            $log->item->category_name = null;
-        }
-
-        if ($tipe == "rusak" && $log->action_type === 'update') {
-            $logMeta = json_decode($log->log_meta, true);
-            if (isset($logMeta['notes'])) {
-                $oldNote = $logMeta['notes']['old'] ?? '';
-                $newNote = $logMeta['notes']['new'] ?? '';
-                if (strpos($oldNote, 'Baik') !== false && strpos($newNote, 'Rusak') !== false) {
-                    $responseRows[] = [
-                        'unit' => $log->company_name,
-                        'kat' => $log->item->category_name,
-                        'nup' => $log->item->nup,
-                        'age' => $log->item->age
-                    ];
-                }
-            }
-        }
-
-        if ($tipe == "baru" && $log->action_type === 'create') {
-            $companyName = $log->company_name;
-            $categoryName = $log->item->category_name;
-            $purchaseCost = $log->item->purchase_cost;
-
-            if (!isset($companyPurchaseCosts[$companyName])) {
-                $companyPurchaseCosts[$companyName] = 0;
-                $companyNewCounts[$companyName] = [];
-            }
-
-            $companyPurchaseCosts[$companyName] += $purchaseCost;
-
-            if (!isset($companyNewCounts[$companyName][$categoryName])) {
-                $companyNewCounts[$companyName][$categoryName] = 0;
-            }
-
-            $companyNewCounts[$companyName][$categoryName]++;
-        }
-    }
-}
-
-foreach ($companyPurchaseCosts as $companyName => $totalPurchaseCost) {
-    $newCounts = [];
-    foreach ($companyNewCounts[$companyName] as $categoryName => $count) {
-        $newCounts[] = $count . ' ' . $categoryName;
-    }
-
-    $responseRows[] = [
-        'unit' => $companyName,
-        'total' => $totalPurchaseCost,
-        'new' => implode(', ', $newCounts)
-    ];
-}
-
-    return response()->json([
-        'total' => $total,
-        'rows' => $responseRows
-    ], 200, ['Content-Type' => 'application/json;charset=utf8']);
-}
 
 
 }

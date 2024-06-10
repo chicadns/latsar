@@ -18,7 +18,7 @@
 
 <div class="row" style="margin-bottom: 50px;">
     <div class="col-md-12"> 
-        <h2><strong>Rangkuman Informasi Aset</strong></h2>
+        <h2><strong>Umur dan Kondisi Aset</strong></h2>
     </div>
 
     <div class="col-md-12"> 
@@ -37,7 +37,6 @@
                 <label for="groupDropdown" style="font-size: 16px; color: #ECF0F5;">Jenis:</label>
                 <select class="form-control filterti" id="filter-ti" style="width: 100%; background-color: #ECF0F5;">
                     <option value="hardwareti">Peralatan dan Mesin Khusus TIK</option>
-                    <option value="tinowujud">Aset Tak Berwujud</option>
                 </select>               
 
                 <select class="form-control filternonti" id="filter-nonti" style="width: 100%; background-color: #ECF0F5;">
@@ -90,27 +89,8 @@
     </div>
 </div>
 
-<div class="container">
-    <div class="row justify-content-center">
-        <div class="col-md-12">
-
-            <!-- Bubble Chart Informasi Aset-->
-            <div id="bubble" class="box box-default">
-                <div class="box-header with-border">
-                    <h2 class="box-title" id="summary-title">Perbandingan Merek: Persentase Aset Berkondisi Baik, Harga Rata-rata, dan Jumlah Aset</h2>
-                    <div class="box-tools pull-right">
-                        <button type="button" class="btn btn-box-tool" data-widget="collapse" aria-hidden="true">
-                            <i class="fas fa-minus" aria-hidden="true"></i>
-                        </button>
-                    </div>
-                </div>
-                <!-- /.box-header -->
-                <div class="box-body">
-                    <div class="chart-responsive">
-                        <canvas id="bubbleInfo" style="height: 500px; width: 600px;"></canvas>
-                    </div> <!-- ./chart-responsive -->
-                </div><!-- /.box-body -->
-            </div> <!-- /.box -->
+    <div class="row">
+        <div class="col-md-10">
 
             <!-- Histogram Sebaran Usia Aset-->
             <div class="box box-default">
@@ -134,8 +114,38 @@
             </div> <!-- /.box -->
 
         </div>
+        <div class="col-md-2">
+            <div style=" color: white;">
+                <div style="display: flex; flex-direction: column; gap: 10px;">
+                    <div style="padding: 5px; border-radius: 2px; ">
+                        <h4 id="sctotal" style="font-size: 25px; color: #222D32;font-weight: bold;"></h4>
+                        <p  id="scjudul" style="font-size: 20px; margin: 0; color: #222D32; margin-bottom: 5px;"></p>
+                    </div>
+                    <div style="background-color: #70AB79; padding: 10px; border-radius: 2px; border: 1px solid #000;">
+                        <h4 id="scbaik" style="font-size: 23px; color: #FFFFFF; margin: 0 0 5px 0;"></h4>
+                        <p style="font-size: 20px; margin: 0;">Dalam Kondisi Baik</p>
+                    </div>                  
+
+                    <div style="background-color: #FAC517; padding: 10px; border-radius: 2px; border: 1px solid #000;">
+                        <h4 id="scumur" style="font-size: 23px; color: #FFFFFF; margin: 0 0 5px 0;"></h4>
+                        
+                        <p style="font-size: 20px; margin: 0;">Penggunaan Lebih dari 10 Tahun</p>
+
+                    </div>                  
+                    <div style="background-color: #DE425B; padding: 10px; border-radius: 2px; border: 1px solid #000;">
+                        <h4 id="scrusak" style="font-size: 23px; color: #FFFFFF; margin: 0 0 5px 0;"></h4>
+                        <p style="font-size: 20px; margin: 0;">Tidak Dapat Digunakan</p>
+                    </div>                  
+                </div>
+
+            </div>
+        </div>
     </div>
-</div>
+    <div>
+        
+        <h4 id="scumur" style="font-size: 23px; color: #FFFFFF; margin: 0 0 5px 0;"></h4>
+
+    </div>
 
 
 @stop
@@ -169,104 +179,6 @@ function updateBrandDropdown() {
         $(brandDropdownId).append('<option value="all">Seluruh Aset</option>');
     }
 }
-
-var bubbleCharts = {}; 
-var optionBubbleChart = {
-    tooltips: {
-        callbacks: {
-            label: function(tooltipItem, data) {
-                var datasetLabel = data.datasets[tooltipItem.datasetIndex].label || "";
-                var xLabel = "Rata-rata Harga Aset = " + tooltipItem.xLabel;
-                var yLabel = tooltipItem.yLabel + "% " + "Aset " + "Berkondisi Baik";
-                var zLabel = data.datasets[tooltipItem.datasetIndex].data[tooltipItem.index].r + "% dari kategori aset ini bermerek " + datasetLabel;
-                return [datasetLabel, xLabel, yLabel, zLabel];
-            }
-        }
-    },
-    responsive: true,
-    maintainAspectRatio: false,
-    scales: {
-        xAxes: [{
-            ticks: {
-                beginAtZero: true,
-                callback: function(value, index, values) {
-                    return value.toLocaleString('id-ID', { style: 'currency', currency: 'IDR' });
-                }
-            },
-            scaleLabel: {
-                display: true,
-                labelString: "Rata-rata Nilai Perolehan Pertama (IDR)",
-            },
-        }],
-        yAxes: [{
-            ticks: {
-                max: 100
-            },
-            scaleLabel: {
-                display: true,
-                labelString: "Persentase Aset Berkondisi Baik", 
-            },
-        }],
-    },
-    legend: {
-        display: true,
-        position: 'bottom', 
-    },
-};
-
-
-function initializeBubbleChart(chartId, chartUrl) {
-    $.ajax({
-        type: 'GET',
-        url: chartUrl,
-        headers: {
-            "X-Requested-With": 'XMLHttpRequest',
-            "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr('content')
-        },
-        dataType: 'json',
-        success: function (data) {
-            if (bubbleCharts[chartId]) {
-                bubbleCharts[chartId].destroy();
-            }       
-
-            bubbleCharts[chartId] = new Chart(document.getElementById(chartId).getContext('2d'), {
-                type: 'bubble',
-                data: data,
-                options: optionBubbleChart,
-                plugins: [{
-                    afterDatasetsDraw: function(chart, easing) {
-                        var ctx = chart.ctx;
-
-                        chart.data.datasets.forEach(function(dataset, i) {
-                            var meta = chart.getDatasetMeta(i);
-                            if (meta.type == "bubble") { 
-                                meta.data.forEach(function(element, index) {
-                                    ctx.fillStyle = 'rgb(0, 0, 0)';
-                                    var fontSize = 13;
-                                    var fontStyle = 'normal';
-                                    var fontFamily = 'Helvetica Neue';
-                                    ctx.font = Chart.helpers.fontString(fontSize, fontStyle, fontFamily);
-
-                                    var dataString = dataset.data[index].toString();
-                                    ctx.textAlign = 'center';
-                                    ctx.textBaseline = 'middle';
-
-                                    var padding = 15;
-                                    var position = element.tooltipPosition();
-                                    ctx.fillText(dataset.title, position.x, position.y + (2 * fontSize) - padding);
-                                });
-                            } 
-                        });
-                    }
-                }]
-            });
-        },
-        error: function (data) {
-            console.error("Ajax request failed:", data);
-        },
-    });
-}
-
 
 var histoCharts = {}; 
 var optionHistoChart = {
@@ -341,20 +253,24 @@ $(document).ready(function() {
         }
 
         var category = $('#opsi-gab option:selected').text();  
+        var newageTitle = 'Sebaran Umur Aset '+ category;
+        $.ajax({
+                url: '/masamanfaat/' + selectedItemId + '/' + tingkat + '/' + unit,
+                type: 'GET',
+                success: function(data) {
+                    console.log(data);
+                    $('#scjudul').text('Aset ' + category);
+                    $('#sctotal').text(data.total + ' NUP');
+                    $('#scbaik').text(data.baik);
+                    $('#scumur').text(data.berumur_lebih_10_tahun);
+                    $('#scrusak').text(data.rusak_berat);
+                },
+                error: function(xhr, status, error) {
+                    console.error('AJAX Error: ' + status + error);
+                }
+            });
         
-        if (selectedItemId == 95 || selectedItemId == 96 || (selectedItemId >= 161 && selectedItemId <= 210)) {
-            var newageTitle = 'Sebaran Umur Aset '+ category;
-            $('#bubble').hide();
-        } else {
-            var newageTitle = 'Sebaran Umur Aset '+ category + ' Berdasarkan Merek';
-            $('#bubble').show();
-        }
-        
-        var newsumTitle = 'Perbandingan Merek ' + category + ' : Persentase Kualitas Aset, Harga Rata-rata, dan Jumlah Aset';
-        
-        initializeBubbleChart('bubbleInfo', '{!! route('api.explore.cat', ['id' => ':id', 'tingkat' => ':tingkat', 'unit' => ':unit']) !!}'.replace(':id', selectedItemId).replace(':tingkat', tingkat).replace(':unit', unit));
         initializeHistoChart('histoAge3',  '{!! route('api.age.group', ['id' => ':id', 'tingkat' => ':tingkat', 'unit' => ':unit', 'merek' => ':merek']) !!}'.replace(':id', selectedItemId).replace(':tingkat', tingkat).replace(':unit', unit).replace(':merek', merek));
-        $('#summary-title').text(newsumTitle);
         $('#age-title').text(newageTitle);
     }
 
@@ -409,7 +325,7 @@ $(document).ready(function() {
         } else if (selectedValue === '2') {
             $('.filterti').hide();
             $('.filternonti').show();
-            $('#filter-nonti').val('transport').change();
+            $('#opsi-gab').val('hardwareti');
             appendOptionsToOpsiGab('transport');
         }
         updateBrandDropdown();

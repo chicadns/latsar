@@ -532,6 +532,99 @@ Route::group(['prefix' => 'v1', 'middleware' => ['api', 'throttle:api']], functi
       * Modified by Theresia R. 2024. STIS.
       */
       Route::group(['prefix' => 'dashboard'], function () {
+
+        Route::get('monthlychart/{tipe}/{month}/{year}',
+            [
+                Api\ModifikasiDashboardController::class, 
+                'getLaporan'
+            ]
+        )->name('api.laporan.bulanan');
+
+        Route::get('monthlysumm/{tipe}/{month}/{year}',
+            [
+                Api\ModifikasiDashboardController::class, 
+                'getMonthlySumm'
+            ]
+        )->name('api.monthly.summ');
+
+        Route::get('yearlysumm/{id}/{tingkat}/{unit}/{years}',
+            [
+                Api\ModifikasiDashboardController::class, 
+                'getYearlySumm'
+            ]
+        )->name('api.yearly.summ');
+
+        Route::get('provrank/{asetType}/{asetValue}/kondisi={notes}',
+            [
+                Api\ModifikasiDashboardController::class, 
+                'getProvRank'
+            ]
+        )->name('api.prov.rank');
+
+        Route::get('mapnasional/{agg}/{asetType}/{asetValue}',
+        [
+            Api\ModifikasiDashboardController::class, 
+            'getDataNasional'
+        ]
+        )->name('api.mapnasional.byid');
+
+        Route::get('mapgerak/{agg}/{asetType}/{asetValue}',
+        [
+            Api\ModifikasiDashboardController::class, 
+            'getDataGerak'
+        ]
+        )->name('api.bmngerak.byid');
+
+        Route::get('unitrank/{tingkat}/{asetType}/{asetValue}',
+            [
+                Api\ModifikasiDashboardController::class, 
+                'getUnitRank'
+            ]
+        )->name('api.unit.rank');
+
+        Route::get('rankbyprov/{id}/{asetType}/{asetValue}/{tingkat}',
+            [
+                Api\ModifikasiDashboardController::class, 
+                'getUnitRankbyProv'
+            ]
+        )->name('api.rank.byprov');
+
+        Route::get('asetyearly/{id}/{asetType}/{asetValue}/{wil}',
+            [
+                Api\ModifikasiDashboardController::class, 
+                'getAssetbyTahun'
+            ]
+        )->name('api.aset.yearly');
+
+        Route::get('sewaaset',
+            [
+                Api\ModifikasiDashboardController::class, 
+                'getAsetDisewa'
+            ]
+        )->name('api.sewa.aset');
+
+        Route::get('unusedaset',
+            [
+                Api\ModifikasiDashboardController::class, 
+                'getAsetUnused'
+            ]
+        )->name('api.unused.aset');
+
+        Route::get('asetsewa/summary',
+        [
+            Api\ModifikasiDashboardController::class, 
+            'getAsetSewaInfo'
+        ]
+        )->name('api.assets.sewa.info');
+
+        Route::get('unusedaset/summary',
+        [
+            Api\ModifikasiDashboardController::class, 
+            'getUnusedAsetInfo'
+        ]
+        )->name('api.unused.assets.info');
+
+
         Route::get('explore/{id}/{tingkat}/{unit}',
             [
                 Api\ModifikasiDashboardController::class, 
@@ -567,6 +660,20 @@ Route::group(['prefix' => 'v1', 'middleware' => ['api', 'throttle:api']], functi
             ]
         )->name('api.worst.percentage');
 
+        Route::get('highestpercent/{id}/{tingkat}/{unit}/tahun={years}',
+            [
+                Api\ModifikasiDashboardController::class, 
+                'getHighestDanaCat'
+            ]
+        )->name('api.highest.cat');
+
+        Route::get('highestunit/{id}/{tingkat}/{unit}/tahun={years}',
+            [
+                Api\ModifikasiDashboardController::class, 
+                'getHighestUnit'
+            ]
+        )->name('api.highest.unit');
+
         Route::get('assetrank/{tingkat}/{asetType}/{asetValue}/kondisi={notes}',
             [
                 Api\ModifikasiDashboardController::class, 
@@ -574,26 +681,14 @@ Route::group(['prefix' => 'v1', 'middleware' => ['api', 'throttle:api']], functi
             ]
         )->name('api.condi.rank');
 
-        Route::get('provrank/{asetType}/{asetValue}/kondisi={notes}',
-            [
-                Api\ModifikasiDashboardController::class, 
-                'getProvRank'
-            ]
-        )->name('api.prov.rank');
 
-        Route::get('unitrank/{tingkat}/{asetType}/{asetValue}',
+        Route::get('danapercent/{id}/{tingkat}/{unit}/tahun={years}/{status}',
             [
                 Api\ModifikasiDashboardController::class, 
-                'getUnitRank'
+                'getDanaPercentage'
             ]
-        )->name('api.unit.rank');
-
-        Route::get('rankbyprov/{id}/{asetType}/{asetValue}',
-            [
-                Api\ModifikasiDashboardController::class, 
-                'getUnitRankbyProv'
-            ]
-        )->name('api.rank.byprov');
+        )->name('api.dana.percentage');
+        
 
         Route::get('notes/{id}/{tingkat}/{unit}/tahun={years}/{status}',
             [
@@ -609,34 +704,7 @@ Route::group(['prefix' => 'v1', 'middleware' => ['api', 'throttle:api']], functi
             ]
         )->name('api.worst.cat');
 
-        Route::get('sewaaset',
-            [
-                Api\ModifikasiDashboardController::class, 
-                'getAsetDisewa'
-            ]
-        )->name('api.sewa.aset');
-
-        Route::get('unusedaset',
-            [
-                Api\ModifikasiDashboardController::class, 
-                'getAsetUnused'
-            ]
-        )->name('api.unused.aset');
-
-        Route::get('monthlychart/{tipe}/{month}/{year}',
-            [
-                Api\ModifikasiDashboardController::class, 
-                'getLaporan'
-            ]
-        )->name('api.laporan.bulanan');
-
-        Route::get('monthlysumm/{tipe}/{month}/{year}',
-            [
-                Api\ModifikasiDashboardController::class, 
-                'getMonthlySumm'
-            ]
-        )->name('api.monthly.summ');
-
+        
         Route::get('latestcat/{id}/{tingkat}/{unit}/tahun={years}/{status}',
             [
                 Api\ModifikasiDashboardController::class, 
@@ -650,34 +718,7 @@ Route::group(['prefix' => 'v1', 'middleware' => ['api', 'throttle:api']], functi
                 'getFirstValue'
             ]
         )->name('api.first.value');
-
-        Route::get('asetyearly/{id}/{asetType}/{asetValue}/{wil}',
-            [
-                Api\ModifikasiDashboardController::class, 
-                'getAssetbyTahun'
-            ]
-        )->name('api.aset.yearly');
-
-        Route::get('mapnasional/{agg}/{asetType}/{asetValue}',
-        [
-            Api\ModifikasiDashboardController::class, 
-            'getDataNasional'
-        ]
-        )->name('api.mapnasional.byid');
-
-        Route::get('asetsewa/summary',
-        [
-            Api\ModifikasiDashboardController::class, 
-            'getAsetSewaInfo'
-        ]
-        )->name('api.assets.hardware.info');
-
-        Route::get('unusedaset/summary',
-        [
-            Api\ModifikasiDashboardController::class, 
-            'getUnusedAsetInfo'
-        ]
-        )->name('api.unused.assets.info');
+        
     });
 
 
