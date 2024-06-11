@@ -46,7 +46,7 @@
                     <label for="groupDropdown" style="font-size: 16px; color: #ECF0F5;">Lokasi:</label>
                     <select class="form-control level" id="filter-lv" style="width: 100%; background-color: #ECF0F5;">
                         <option value="1">Seluruh Unit Kerja</option>
-                        <option value="2">BPS RI</option>   <!--option value="4">Satuan Unit Kerja</option> -->
+                        <option value="2">BPS Pusat</option>   <!--option value="4">Satuan Unit Kerja</option> -->
                         <option value="3">BPS Provinsi</option>
                         <option value="5">BPS Kabupaten/Kota</option>
                     </select>  
@@ -56,7 +56,7 @@
 
         <div class="col-md-3 filterdata"> 
             <div id="unit-satuan" style="display:none;">
-                <label for="companyDropdown" style="font-size: 16px; color: #ECF0F5;">Satuan Unit:</label>
+                <label for="companyDropdown" style="font-size: 16px; color: #ECF0F5;">Satuan/Unit Kerja:</label>
                 <input type="hidden" id="kode-wil" value="{{ $kodeWil }}">
                 <select class="btn btn-default dropdown-toggle form-control filterunit" id="filter-unitkerja" style="width: 100%; background-color: #ECF0F5;">
                 </select>  
@@ -583,7 +583,7 @@ $(document).ready(function() {
             $('#filter-unitkerja').empty();
             if (kodeWil !== "kabkot") {
                 if (kodeWil === "pusat") {
-                    $('#filter-unitkerja').append($('<option>').text('Seluruh Unit Kerja').attr('value', '')); 
+                    $('#filter-unitkerja').append($('<option>').text('Seluruh Satuan/Unit Kerja').attr('value', '')); 
                 } else if (kodeWil === "prov") {
                     $('#filter-turunan').append($('<option>').text('Seluruh Unit Kerja Terkait').attr('value', '')); 
                     unit = $('#filter-turunan').val();
@@ -598,7 +598,11 @@ $(document).ready(function() {
         } else if (selectedLv == 2 || selectedLv == 3 || selectedLv == 5) {
             $('#unit-satuan').show();
             $('#filter-unitkerja').empty();
-            $('#filter-unitkerja').append($('<option>').text('Seluruh Unit Kerja').attr('value', ''));
+            if (selectedLv == 2 ) {
+                $('#filter-unitkerja').append($('<option>').text('Seluruh Satuan Unit').attr('value', ''));
+            } else {
+                $('#filter-unitkerja').append($('<option>').text('Seluruh Unit Kerja').attr('value', ''));
+            }
             
             var data;
             if (selectedLv == 2) {

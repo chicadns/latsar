@@ -73,7 +73,7 @@
                             <thead class="bg-primary text-white"  style="background-color:#70AB79;">
                                 <tr>
                                     <th class="col-sm-4" data-visible="true" data-field="unit">
-                                        Unit Kerja
+                                        Satuan/Unit Kerja
                                     </th>
                                     <th class="col-sm-4" data-visible="true" data-field="total">
                                         Total Nilai
@@ -148,7 +148,7 @@
                             <thead class="bg-primary text-white"  style="background-color:#DE425B;">
                                 <tr>
                                     <th class="col-sm-3" data-visible="true" data-field="unit">
-                                        Unit Kerja
+                                        Satuan/Unit Kerja
                                     </th>
                                     <th class="col-sm-3" data-visible="true" data-field="kat">
                                         Kategori

@@ -2134,24 +2134,6 @@ public function getDanaPercentage($id = null, $tingkat = null, $unit = null, $ye
         ->orderByDesc('dana_cat')
         ->get();
 
-    // Prepare a detailed asset count query grouped by company and category
-    $assetDetailsQuery = $query->selectRaw('
-            companies.name as company_name,
-            categories.name as category_name,
-            COUNT(assets.id) as asset_count
-        ')
-        ->groupBy('companies.name', 'categories.name')
-        ->get();
-
-    // Transform asset details query result to a structured array
-    $assetDetailsByCompany = [];
-    foreach ($assetDetailsQuery as $detail) {
-        $assetDetailsByCompany[$detail->company_name][] = [
-            'category_name' => $detail->category_name,
-            'asset_count' => $detail->asset_count,
-        ];
-    }
-
     // Calculate percentage and prepare result array
     $companiesWithDanaPercentages = [];
     foreach ($assetsCountByCompany as $companyData) {
@@ -2161,7 +2143,6 @@ public function getDanaPercentage($id = null, $tingkat = null, $unit = null, $ye
             $companiesWithDanaPercentages[] = [
                 'company_name' => $companyData->company_name,
                 'dana_cat' => $danaCat,
-                'asset_details' => $assetDetailsByCompany[$companyData->company_name] ?? [],
             ];
         }
     }
@@ -2178,7 +2159,6 @@ public function getDanaPercentage($id = null, $tingkat = null, $unit = null, $ye
             "label" => "Nilai",
             "backgroundColor" => $this->getColorForCategory('Baik', '#70AB79'),
             "data" => [],
-            "assetDetails" => [],
         ],
     ];
 
@@ -2188,7 +2168,6 @@ public function getDanaPercentage($id = null, $tingkat = null, $unit = null, $ye
     foreach ($topCompanies as $company) {
         $labels[] = $company['company_name'];
         $datasets[0]["data"][] = $company['dana_cat'];
-        $datasets[0]["assetDetails"][] = $company['asset_details'];
     }
 
     // Calculate the total for "Lainnya"
@@ -2196,28 +2175,10 @@ public function getDanaPercentage($id = null, $tingkat = null, $unit = null, $ye
         return $carry + $item['dana_cat'];
     }, 0);
 
-    $totalLainnyaDetails = [];
-    foreach ($otherCompanies as $company) {
-        foreach ($company['asset_details'] as $detail) {
-            $found = false;
-            foreach ($totalLainnyaDetails as &$existingDetail) {
-                if ($existingDetail['category_name'] == $detail['category_name']) {
-                    $existingDetail['asset_count'] += $detail['asset_count'];
-                    $found = true;
-                    break;
-                }
-            }
-            if (!$found) {
-                $totalLainnyaDetails[] = $detail;
-            }
-        }
-    }
-
     // Add "Lainnya" to the labels and data
     if ($totalLainnya > 0) {
         $labels[] = "Unit Kerja Lainnya";
         $datasets[0]["data"][] = round($totalLainnya, 2);
-        $datasets[0]["assetDetails"][] = $totalLainnyaDetails;
     }
 
     // Return the result with labels and data
@@ -2226,6 +2187,7 @@ public function getDanaPercentage($id = null, $tingkat = null, $unit = null, $ye
         "datasets" => $datasets,
     ];
 }
+
 
     
 

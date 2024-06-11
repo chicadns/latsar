@@ -42,8 +42,8 @@
             <div style="margin-bottom: 8px;">
                 <label for="mapDropdown" style="font-size: 14px; color: #ECF0F5;">Pilih Kondisi Aset:</label>
                 <select class="form-control" id="dropdownmap" style="width: 100%; background-color: #ECF0F5;">
-                    <option value="1">Tidak Optimal Digunakan</option>
                     <option value="3">Baik Digunakan</option>
+                    <option value="1">Rusak Berat</option>
                 </select>
             </div>
         </div> 
@@ -151,7 +151,7 @@ $('#filter-aset').change(function() {
 
     if (selectedValue === '1') {
         data = <?php echo json_encode($ti); ?>;
-        $('#opsi-gab').append('<option value="gerak">BMN Bergerak</option>');
+        $('#opsi-gab').append('<option value="gerak">BMN TI Bergerak</option>');
         $.each(data, function(index, item) {
             $('#opsi-gab').append($('<option>').text(item.name).attr('value', item.id));
         });
@@ -210,7 +210,7 @@ Highcharts.mapChart('mapcontainer', {
     },
 
     title: {
-        text: 'Rasio Aset Tidak Optimal Digunakan',
+        text: 'Rasio BMN TI Bergerak Baik Digunakan terhadap Jumlah Pegaawai',
         style: {
             fontSize: '18px',
         }
@@ -409,7 +409,7 @@ function updateHighmapsChart(data) {
     series.chart.redraw();
 
     var colorStops;
-    if (selectedValue === 'Tidak Optimal Digunakan') {
+    if (selectedValue === 'Rusak Berat') {
         colorStops = [
             [0, '#EFEFFF'], 
             [0.5, '#DE425B'],

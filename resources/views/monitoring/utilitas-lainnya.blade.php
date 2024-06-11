@@ -68,7 +68,7 @@
                                         Nilai Buku
                                     </th>
                                     <th class="col-sm-3" data-visible="true" data-field="unitkerja">
-                                        Unit Kerja
+                                        Satuan/Unit Kerja
                                     </th>
                                 </tr>
                             </thead>
@@ -140,7 +140,7 @@
                                         Nilai Buku
                                     </th>
                                     <th class="col-sm-3" data-visible="true" data-field="unitkerja">
-                                        Unit Kerja
+                                        Satuan/Unit Kerja
                                     </th>
                                 </tr>
                             </thead>

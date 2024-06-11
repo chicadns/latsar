@@ -42,8 +42,8 @@
             <div style=" margin-bottom: 8px;">
             <label for="mapDropdown" style="font-size: 14px; color: #ECF0F5;">Pilih Kondisi Aset:</label>
             <select class="form-control" id="dropdownmap" style="width: 100%; background-color: #ECF0F5;">
-                <option value="1">Rusak Berat</option>
                 <option value="3">Baik Digunakan</option>
+                <option value="1">Rusak Berat</option>
             </select>
             </div>
         </div> 
@@ -90,7 +90,7 @@
                 </div>
             </div>
             
-            <label for="provDropdown" style="font-size: 15px; color: #222D32;width: 20%; margin-left: 75%; font-weight:normal;">Wilayah:</label>
+            <label for="provDropdown" style="font-size: 15px; color: #222D32;width: 20%; margin-left: 75%; font-weight:normal;">Lokasi:</label>
             <select class="form-control prov" id="opsi-prov" style="width: 20%; margin-left: 75%;"">
             </select>  
             <div class="box-body">

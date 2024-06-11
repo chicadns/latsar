@@ -61,10 +61,10 @@
 
         <div class="col-md-3 filterdata" style="border-radius:0px 5px 5px 0px;"> 
             @if ($kodeWil != "kabkot")
-            <label for="companyDropdown" style="font-size: 16px; color: #ECF0F5;">Unit Kerja:</label>
+            <label for="companyDropdown" style="font-size: 16px; color: #ECF0F5;">Lokasi:</label>
                 <select class="btn btn-default dropdown-toggle form control filterunit" id="filter-unitkerja" style="width: 100%; background-color: #ECF0F5;">
                     @if ($kodeWil == "pusat")
-                        <option value="pusat">Seluruh Unit Kerja</option>
+                        <option value="pusat">Seluruh Satuan/Unit Kerja</option>
                     @else
                         <option value="pusat">Seluruh Unit Kerja Terkait</option>
                     @endif

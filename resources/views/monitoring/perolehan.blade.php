@@ -29,36 +29,37 @@
         <h2><strong>Nilai Perolehan Pertama</strong></h2>
     </div>
 
-    <div class="col-md-12"> 
-        <div class="col-md-3 filterdata" style="border-radius: 5px 0px 0px 5px;"> 
+    <div class="col-md-12">
+    <div class="row">
+        <div class="col-md-3 filterdata" style="border-radius: 5px 0px 0px 5px;">
             <div style="margin-bottom: 8px;">
                 <label for="hardwareDropdown" style="font-size: 16px; color: #ECF0F5;">Kelompok Aset:</label>
                 <select class="form-control" id="filter-aset" style="width: 100%; background-color: #ECF0F5;">
                     <option class="dropdown-item" value="1">Aset TI</option>
                     <option class="dropdown-item" value="2">Aset non-TI</option>
                 </select>
-            </div> 
+            </div>
         </div>
 
-        <div class="col-md-3 filterdata"> 
+        <div class="col-md-3 filterdata">
             @if ($kodeWil == "pusat")
-                <div style="margin-bottom: 8px;">
-                    <label for="groupDropdown" style="font-size: 16px; color: #ECF0F5;">Lokasi:</label>
-                    <select class="form-control level" id="filter-lv" style="width: 100%; background-color: #ECF0F5;">
-                        <option value="1">Seluruh Unit Kerja</option>
-                        <option value="5">BPS RI</option>   
-                        <option value="2">BPS Provinsi</option>
-                        <option value="3">BPS Kabupaten/Kota</option>
-                    </select>  
-                </div>
-        </div> 
+            <div style="margin-bottom: 8px;">
+                <label for="groupDropdown" style="font-size: 16px; color: #ECF0F5;">Alokasi:</label>
+                <select class="form-control level" id="filter-lv" style="width: 100%; background-color: #ECF0F5;">
+                    <option value="1">Seluruh Unit Kerja</option>
+                    <option value="5">BPS RI</option>
+                    <option value="2">BPS Provinsi</option>
+                    <option value="3">BPS Kabupaten/Kota</option>
+                </select>
+            </div>
+        </div>
 
-        <div class="col-md-3 filterdata"> 
+        <div class="col-md-3 filterdata">
             <div id="unit-satuan" style="display:none;">
                 <label for="companyDropdown" style="font-size: 16px; color: #ECF0F5;">Unit Kerja:</label>
                 <input type="hidden" id="kode-wil" value="{{ $kodeWil }}">
                 <select class="btn btn-default dropdown-toggle form-control filterunit" id="filter-unitkerja" style="width: 100%; background-color: #ECF0F5;">
-                </select>  
+                </select>
             </div>
             @endif
 
@@ -66,20 +67,19 @@
                 <label for="companyDropdown" style="font-size: 16px; color: #ECF0F5;">Unit Kerja:</label>
                 <input type="hidden" id="kode-wil" value="{{ $kodeWil }}">
                 <select class="btn btn-default dropdown-toggle form-control filterunit" id="filter-turunan" style="width: 100%; background-color: #ECF0F5;">
-                </select>  
+                </select>
             </div>
-        </div> 
-
-        <div class="col-md-3 filterdata" style="border-radius: 0px 5px 5px 0px;"> 
-                <label for="thnDropdown" style="font-size: 16px; color: #ECF0F5;">Tahun Pembelian:</label>
-                <input type="hidden" id="thn" value="{{ $years }}">
-                <div class="row" style="display:flex; width:100%;">
-                    <select id="end-year" class="form-control year-select filtertahun" style="width: 125px;" >
-                    </select>
-                </div>
         </div>
-        
+
+        <div class="col-md-3 filterdata" style="border-radius: 0px 5px 5px 0px;">
+            <label for="thnDropdown" style="font-size: 16px; color: #ECF0F5;">Tahun Pembelian:</label>
+            <input type="hidden" id="thn" value="{{ $years }}">
+            <select id="end-year" class="form-control year-select filtertahun" style="width: 100%; background-color: #ECF0F5;">
+            </select>
+        </div>
     </div>
+</div>
+
 </div>
 
     <div class="row justify-content-center">
@@ -128,7 +128,7 @@
         <div class="col-md-6">
             <div class="box box-default">
                 <div class="box-header with-border">
-                    <h2 class="box-title">Total Nilai Perolehan Pertama Aset Tertinggi Menurut Satuan Unit</h2>
+                    <h2 class="box-title">Total Nilai Perolehan Pertama Aset Tertinggi Menurut Satuan/Unit Kerja</h2>
                     <div class="box-tools pull-right">
                         <button type="button" class="btn btn-box-tool" data-widget="collapse" aria-hidden="true">
                             <i class="fas fa-minus" aria-hidden="true"></i>
@@ -164,7 +164,7 @@
                             <thead class="bg-primary text-white"  style="background-color:#70AB79;">
                                 <tr>
                                     <th class="col-sm-4" data-visible="true" data-field="unit">
-                                        Unit Kerja
+                                        Satuan/Unit Kerja
                                     </th>
                                     <th class="col-sm-4" data-visible="true" data-field="new">
                                         Aset Baru
@@ -263,18 +263,8 @@ var optionBarChart1 = {
         var dataset = chart.datasets[tooltipItem.datasetIndex];
         var index = tooltipItem.index;
         var percentKat = dataset.data[index];
-        var assetDetails = dataset.assetDetails[index];
-        
-        // Inisialisasi teks untuk detail
-        var detailsText = '';
-
-        // Loop melalui setiap detail aset dan tambahkan ke teks detail
-        assetDetails.forEach(function(detail) {
-            detailsText += detail.category_name + ': ' + detail.asset_count + ' items\n';
-        });
-
         // Mengembalikan teks label dengan informasi detail aset
-        return dataset.label + ': Rp' + percentKat + ' Miliar\n' + detailsText;
+        return dataset.label + ': Rp' + percentKat + ' Miliar\n';
     }
 }
 
@@ -319,20 +309,21 @@ function initializeBarChart(chartId, chartUrl, option = optionBarChart) {
             }       
 
             if (data.labels.length === 0 || data.datasets[0].data.length === 0) {
-                // Jika tidak ada data, tampilkan pesan "No Data Found"
+                // Jika tidak ada data, tampilkan pesan "Data Tidak Ditemukan"
                 var ctx = document.getElementById(chartId).getContext('2d');
                 ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height); 
-                ctx.font = '15px Poppins';
-                ctx.textAlign = 'center';
-                ctx.fillText('Data Tidak Ditemukan', ctx.canvas.width/2, ctx.canvas.height / 2);
+                ctx.font = '18px Poppins';
+                ctx.textAlign = 'center'; // Mengatur teks agar berada di tengah horizontal
+                ctx.textBaseline = 'middle'; // Mengatur teks agar berada di tengah vertikal
+                ctx.fillText('Data Tidak Ditemukan', ctx.canvas.width / 1.6, ctx.canvas.height / 2); // Menampilkan teks di tengah kanvas
             } else {
-
                 barCharts[chartId] = new Chart(document.getElementById(chartId).getContext('2d'), {
                     type: 'horizontalBar',
                     data: data,
                     options: option,
                 });
             }
+
         },
         error: function (data) {
             console.error("Ajax request failed:", data);
