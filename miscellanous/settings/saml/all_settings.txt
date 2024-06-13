@@ -1,8 +1,8 @@
 ID Entity:
-https://simpati.bps.go.id/public
+https://mania.bps.go.id/public
 
 URL Assertion Consumer Service (ACS)
-https://simpati.bps.go.id/public/saml/ACS
+https://mania.bps.go.id/public/saml/ACS
 
 Public Certificate
 -----BEGIN CERTIFICATE-----
@@ -28,7 +28,7 @@ MO2xDuCeWHPtabBSDNC6mQ==
 -----END CERTIFICATE-----
 
 Metadata URL:
-https://simpati.bps.go.id/public/saml/metadata
+https://mania.bps.go.id/public/saml/metadata
 
 SAML Idp Metadata:
 <?xml version="1.0" encoding="UTF-8"?>

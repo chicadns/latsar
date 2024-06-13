@@ -20,7 +20,7 @@ return [
     | make the SSL offloading other location as required by the application or its packages.
     */
 
-    'base_url' => 'https://simpati.bps.go.id/public/saml',
+    'base_url' => 'https://mania.bps.go.id/public/saml',
 
 
 ];

@@ -220,6 +220,7 @@ class SamlController extends Controller
         $sloUrl = $auth->processSLO(true, null, $retrieveParametersFromServer, null, true);
         $errors = $auth->getErrors();
 
+        Log::info('SLO URL: ' . $sloUrl);
         if (! empty($errors)) {
             Log::error('There was an error with SAML SLS: '.implode(', ', $errors));
             Log::error('Reason: '.$auth->getLastErrorReason());

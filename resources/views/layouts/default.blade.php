@@ -429,14 +429,14 @@
                 <!-- sidebar: style can be found in sidebar.less -->
                 <section class="sidebar">
                     <!-- sidebar menu: : style can be found in sidebar.less -->
+                    @can('admin')
                     <ul class="sidebar-menu" data-widget="tree">
-                        @can('admin')
                             <li {!! (\Request::route()->getName()=='home' ? ' class="active"' : '') !!} class="firstnav">
                                 <a href="{{ route('home') }}">
                                     <i class="fas fa-home fa-fw" aria-hidden="true"></i> <span>{{ trans('general.dashboard') }}</span>
                                 </a>
                             </li>
-                        @endcan
+                        
                         @can('index', \App\Models\Asset::class)
                             <li class="treeview menu-open" style="height: auto;">
                                 <a href="#"><i class="fas fa-magnifying-glass-chart fa-fw" aria-hidden="true"></i>
@@ -472,6 +472,12 @@
                                             </li>
                                         </ul>
                                     </li>
+                                    <li>
+                                        <a href="{{ url('perolehan-asset') }}">
+                                            <i class="fas fa-list" aria-hidden="true"></i>
+                                            Nilai Perolehan Pertama
+                                        </a>
+                                    </li>
                                     @endcan
                                     <li class="treeview">
                                         <a href="#"><i class="fas fa-magnifying-glass-chart fa-fw" aria-hidden="true"></i>
@@ -496,12 +502,6 @@
                                         </ul>
                                     </li>
                                     <li>
-                                        <a href="{{ url('perolehan-asset') }}">
-                                            <i class="fas fa-list" aria-hidden="true"></i>
-                                            Nilai Perolehan Pertama
-                                        </a>
-                                    </li>
-                                    <li>
                                         <a href="{{ url('explore-asset') }}">
                                             <i class="fas fa-list" aria-hidden="true"></i>
                                             Umur Aset
@@ -509,6 +509,7 @@
                                     </li>
                                 </ul>
                             </li>
+                            @endcan
 
                             <li class="treeview{{ (Request::is('statuslabels/*') || Request::is('hardware/maintenances')
                                 || (Request::query('status') == 'AssetTI1' || Request::query('status') == 'AssetTI2')
@@ -683,7 +684,6 @@
                                     </li>
                                 </ul>
                             </li>
-                        @endcan
 
                         {{-- Barang Non-IT --}}
                         @can('view', \App\Models\Accessory::class)
@@ -697,7 +697,7 @@
                         <ul class="treeview-menu">
                             <li class="treeview{{ ((!Request::query('status') == 'AssetNonTI*') || Request::query('status') == 'Allstuff' || Request::query('status') == 'Allocated' || Request::query('status') == 'Available' ? ' active' : '') }}">
                                 <a href="#"><i class="fas fa-magnifying-glass-chart fa-fw" aria-hidden="true"></i>
-                                    <span>Perangkat Non-IT Per Status</span>
+                                    <span>Perangkat Non-TI Per Status</span>
                                     <i class="fa fa-angle-left pull-right"></i>
                                 </a>
 
@@ -1065,6 +1065,32 @@
 
 
                     </ul>
+                    @endcan
+                    @if (! (auth()->user()->can('admin') || auth()->user()->can('superadmin')))
+                        <ul class="sidebar-menu" data-widget="tree">
+                            <li {!! (\Request::route()->getName()=='home' ? ' class="active"' : '') !!} class="firstnav">
+                                <a href="{{ route('home') }}">
+                                    <i class="fas fa-home fa-fw" aria-hidden="true"></i> <span>{{ trans('general.dashboard') }}</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="{{ url('process_file') }}">
+                                    <i class="fas fa-file-code"></i> <span>Pengajuan Alokasi</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="{{ url('process_file') }}">
+                                    <i class="fas fa-file-code"></i> <span>Pengembalian Perangkat</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="{{ url('process_file') }}">
+                                    <i class="fas fa-file-code"></i> <span>Status Pemeliharaan Perangkat TI</span>
+                                </a>
+                            </li>
+                        </ul>
+                    @endif
+                    
                 </section>
                 <!-- /.sidebar -->
             </aside>
