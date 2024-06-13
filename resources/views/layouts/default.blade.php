@@ -436,7 +436,6 @@
                                     <i class="fas fa-home fa-fw" aria-hidden="true"></i> <span>{{ trans('general.dashboard') }}</span>
                                 </a>
                             </li>
-                        @endcan
                         @can('index', \App\Models\Asset::class)
                             <li class="treeview menu-open" style="height: auto;">
                                 <a href="#"><i class="fas fa-magnifying-glass-chart fa-fw" aria-hidden="true"></i>
@@ -495,12 +494,14 @@
                                             @endcan
                                         </ul>
                                     </li>
+                                    @can('superadmin')
                                     <li>
                                         <a href="{{ url('perolehan-asset') }}">
                                             <i class="fas fa-list" aria-hidden="true"></i>
                                             Nilai Perolehan Pertama
                                         </a>
                                     </li>
+                                    @endcan
                                     <li>
                                         <a href="{{ url('explore-asset') }}">
                                             <i class="fas fa-list" aria-hidden="true"></i>
@@ -509,6 +510,7 @@
                                     </li>
                                 </ul>
                             </li>
+                            @endcan
 
                             <li class="treeview{{ (Request::is('statuslabels/*') || Request::is('hardware/maintenances')
                                 || (Request::query('status') == 'AssetTI1' || Request::query('status') == 'AssetTI2')
