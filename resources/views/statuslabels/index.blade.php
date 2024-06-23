@@ -142,15 +142,23 @@
                   trans  ='{{ trans('admin/statuslabels/table.undeployable') }}';
 
                   break;
-              case 'allocated':
-                  text_color = 'blue';
-                  icon_style = 'fa-square';
-                  trans = '{{ trans('general.allocated') }}';
-                  break;
-              case 'available':
+                  case 'available':
                   text_color = 'green';
                   icon_style = 'fa-square';
                   trans = '{{ trans('general.available') }}';
+                  
+                  break;
+              case 'unavailable':
+                  text_color = 'red';
+                  icon_style = 'fa-square';
+                  trans = '{{ trans('admin/statuslabels/table.undeployable') }}';
+                  
+                  break;
+              case 'repair':
+                  text_color = 'orange';
+                  icon_style = 'fa-square';
+                  trans = '{{ trans('general.repair') }}';
+                  
                   break;
               default:
                   text_color = 'red';

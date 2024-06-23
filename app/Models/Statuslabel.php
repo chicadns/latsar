@@ -83,9 +83,11 @@ class Statuslabel extends SnipeModel
         } elseif (($this->pending == '0') && ($this->archived == '0') && ($this->deployable == '1') && ($this->non_it_stuff == '0')) {
             return 'deployable';
         } elseif (($this->pending == '0') && ($this->archived == '0') && ($this->deployable == '0') && ($this->non_it_stuff == '1')) {
-            return 'allocated';
+            return 'unavailable';
         } elseif (($this->pending == '0') && ($this->archived == '0') && ($this->deployable == '1') && ($this->non_it_stuff == '1')) {
             return 'available';
+        } elseif (($this->pending == '1') && ($this->archived == '0') && ($this->deployable == '0') && ($this->non_it_stuff == '1')) {
+            return 'repair';
         }
     }
 
@@ -128,7 +130,7 @@ class Statuslabel extends SnipeModel
             ->where('non_it_stuff', '=', 0);
     }
 
-    public function scopeAllocated()
+    public function scopeUnavailable()
     {
         return $this->where('pending', '=', 0)
             ->where('archived', '=', 0)
@@ -142,6 +144,14 @@ class Statuslabel extends SnipeModel
             ->where('archived', '=', 0)
             ->where('deployable', '=', 1)
             ->where('non_it_stuff', '=', 1);
+    }
+    
+    public function scopeRepair()
+    {
+        return $this->where('pending', '=', 1)
+                    ->where('archived', '=', 0)
+                    ->where('deployable', '=', 0)
+                    ->where('non_it_stuff', '=', 1);
     }
 
     /**

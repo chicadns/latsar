@@ -78,6 +78,8 @@ class ConsumablesTransactionController extends Controller
     {
         $this->authorize('create', ConsumableTransaction::class);
         $consumable = new ConsumableTransaction();
+        $current_user = Auth::user();
+        $groups = json_decode($current_user['groups'], true);
 
         $consumable->company_id             = $request->input('company_id_2');
         $consumable->company_user           = $request->input('company_user');
@@ -124,7 +126,11 @@ class ConsumablesTransactionController extends Controller
                 }
             }
             if ($success){
-                return redirect()->route('consumablestransaction.index')->with('success', trans('admin/consumables/message.create.success'));
+                if (!$current_user->isSuperUser() && $groups[0]['name'] == 'Pengguna') {
+                    return redirect()->route('view-assets')->with('success', trans('admin/consumables/message.create.success'));
+                } else {
+                    return redirect()->route('consumablestransaction.index')->with('success', trans('admin/consumables/message.create.success'));
+                }
             }
         }
 
@@ -145,6 +151,12 @@ class ConsumablesTransactionController extends Controller
     {
         if (($item = ConsumableTransaction::find($consumableId)) && ($itemdetails = ConsumableDetails::where('transaction_id', $consumableId)->get())) {
             $this->authorize($item);
+            $current_user = Auth::user();
+            $groups = json_decode($current_user['groups'], true);
+            
+            if ($current_user->isSuperUser() || $groups[0]['name'] != 'Pengguna') {
+                $item->employee_num = $current_user->nip_baru;
+            }
 
             foreach ($itemdetails as $detail) {
                 $detail->consumable_name = ConsumableOnComp::find($detail->consumable_id)->name;
@@ -152,13 +164,17 @@ class ConsumablesTransactionController extends Controller
                 $detail->consumable_min = ConsumableOnComp::find($detail->consumable_id)->min_amt;
                 $detail->category_name = Category::find($detail->category_id)->name;
             }
+            
             $access_user = true;
-            $current_user = Auth::user();
 
             return view('consumablestransaction/edit', compact('item', 'itemdetails', 'current_user', 'access_user'));
         }
 
-        return redirect()->route('consumablestransaction.index')->with('error', trans('admin/consumables/message.does_not_exist'));
+        if (!$current_user->isSuperUser() && $groups[0]['name'] == 'Pengguna') {
+            return redirect()->route('view-assets')->with('error', trans('admin/consumables/message.does_not_exist'));
+        } else {
+            return redirect()->route('consumablestransaction.index')->with('error', trans('admin/consumables/message.does_not_exist'));
+        }
     }
 
     /**
@@ -176,9 +192,15 @@ class ConsumablesTransactionController extends Controller
     {
         $consumable = ConsumableTransaction::find($consumableId);
         $change_qty = $consumable->state;
+        $current_user = Auth::user();
+        $groups = json_decode($current_user['groups'], true);
         
         if (is_null($consumable)) {
-            return redirect()->route('consumablestransaction.index')->with('error', trans('admin/consumables/message.does_not_exist'));
+            if (!$current_user->isSuperUser() && $groups[0]['name'] == 'Pengguna') {
+                return redirect()->route('view-assets')->with('error', trans('admin/consumables/message.does_not_exist'));
+            } else {
+                return redirect()->route('consumablestransaction.index')->with('error', trans('admin/consumables/message.does_not_exist'));
+            }
         }
         
         $this->authorize($consumable);
@@ -257,7 +279,11 @@ class ConsumablesTransactionController extends Controller
                 }
             }
             if ($successupdate) {
-                return redirect()->route('consumablestransaction.index')->with('success', trans('admin/consumables/message.update.success'));
+                if (!$current_user->isSuperUser() && $groups[0]['name'] == 'Pengguna') {
+                    return redirect()->route('view-assets')->with('success', trans('admin/consumables/message.update.success'));
+                } else {
+                    return redirect()->route('consumablestransaction.index')->with('success', trans('admin/consumables/message.update.success'));
+                }
             }
         }
 
@@ -275,14 +301,24 @@ class ConsumablesTransactionController extends Controller
      */
     public function destroy($consumableId)
     {
+        $current_user = Auth::user();
+        $groups = json_decode($current_user['groups'], true);
         if (is_null($consumable = ConsumableTransaction::find($consumableId))) {
-            return redirect()->route('consumablestransaction.index')->with('error', trans('admin/consumables/message.not_found'));
+            if (!$current_user->isSuperUser() && $groups[0]['name'] == 'Pengguna') {
+                return redirect()->route('view-assets')->with('error', trans('admin/consumables/message.not_found'));
+            } else {
+                return redirect()->route('consumablestransaction.index')->with('error', trans('admin/consumables/message.not_found'));
+            }
         } else {
             // $this->authorize($consumable);
             $consumable->delete();
             ConsumableDetails::where('transaction_id', $consumableId)->delete();
             // Redirect to the locations management page
-            return redirect()->route('consumablestransaction.index')->with('success', trans('admin/consumables/message.delete.success'));
+            if ($groupName == 'Pengguna') {
+                return redirect()->route('view-assets')->with('success', trans('admin/consumables/message.delete.success'));
+            } else {
+                return redirect()->route('consumablestransaction.index')->with('success', trans('admin/consumables/message.delete.success'));
+            }
         }
     }
 
@@ -300,12 +336,17 @@ class ConsumablesTransactionController extends Controller
     {
         $consumable = ConsumableTransaction::find($consumableId);
         $this->authorize($consumabletransaction);
+        $current_user = Auth::user();
+        $groups = json_decode($current_user['groups'], true);
         if (isset($consumabletransaction->id)) {
             return view('consumablestransaction/view', compact('consumable'));
         }
 
-        return redirect()->route('consumablestransaction.index')
-            ->with('error', trans('admin/consumables/message.does_not_exist'));
+        if (!$current_user->isSuperUser() && $groups[0]['name'] == 'Pengguna') {
+            return redirect()->route('view-assets')->with('error', trans('admin/consumables/message.does_not_exist'));
+        } else {
+            return redirect()->route('consumablestransaction.index')->with('error', trans('admin/consumables/message.does_not_exist'));
+        }
     }
 
     public function getDataConsumables($consumableId = null)

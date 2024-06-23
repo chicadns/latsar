@@ -732,4 +732,9 @@ class License extends Depreciable
     {
         return $query->where('category_id', '>', 97)->where('category_id', '<', 118);
     }
+
+    public function scopeCategoryTI2($query)
+    {
+        return $query->where('category_id', '=', 10)->orWhere('category_id', '=', 16);
+    }
 }

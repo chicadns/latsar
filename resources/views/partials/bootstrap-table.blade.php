@@ -252,7 +252,8 @@
                   'archived': '{{ strtolower(trans('general.archived')) }}',
                   'pending': '{{ strtolower(trans('general.pending')) }}',
                   'allocated': '{{ strtolower(trans('general.allocated')) }}',
-                  'available': '{{ strtolower(trans('general.available')) }}'
+                  'available': '{{ strtolower(trans('general.available')) }}',
+                  'repair': '{{ strtolower(trans('general.repair')) }}',
                 }
 
                 switch (value.status_meta) {
@@ -278,6 +279,11 @@
                         break;
                     case 'available':
                         text_color = 'green';
+                        icon_style = 'fa-square';
+                        text_help = '';
+                        break;
+                    case 'repair':
+                        text_color = 'orange';
                         icon_style = 'fa-square';
                         text_help = '';
                         break;

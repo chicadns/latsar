@@ -28,8 +28,8 @@ class TransactionDashboardTransformer
             'category_id'   => ($consumable->category_id) ? ['id' => $consumable->category->id, 'name' => ($consumable->category->name)] : null,
             'name'          => e($consumable->consumable->name),
             'purchase_cost' => Helper::formatCurrencyOutput($consumable->purchase_cost),
-            // 'qty'           => ($consumable->types == 'Pemasukkan') ? $consumable->total_qty : $consumable->total_qty2,
-            'qty'           => $consumable->total_qty,
+            'qty'           => ($consumable->types == 'Pemasukkan') ? $consumable->total_qty : $consumable->total_qty2,
+            //'qty'           => $consumable->total_qty,
             'total_cost'    => ($consumable->types == 'Pemasukkan') ? Helper::formatCurrencyOutput($consumable->total_qty*$consumable->purchase_cost) : Helper::formatCurrencyOutput($consumable->total_qty2*$consumable->purchase_cost)
         ];
 

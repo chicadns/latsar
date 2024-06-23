@@ -17,6 +17,7 @@ use App\Http\Controllers\ManufacturersController;
 use App\Http\Controllers\ModalController;
 use App\Http\Controllers\MonitoringController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\ProcessFileController;
 use App\Http\Controllers\ReportsController;
 use App\Http\Controllers\SettingsController;
 use App\Http\Controllers\StatuslabelsController;
@@ -85,6 +86,10 @@ Route::group(['middleware' => 'auth'], function () {
 
     Route::resource('locations', LocationsController::class, [
         'parameters' => ['location' => 'location_id'],
+    ]);
+
+    Route::resource('processfile', ProcessFileController::class, [
+        'parameters' => ['process' => 'process_id'],
     ]);
 
 

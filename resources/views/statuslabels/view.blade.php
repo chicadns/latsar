@@ -1,7 +1,7 @@
 @extends('layouts/default')
 {{-- Page title --}}
 @section('title')
-    {{ $statuslabel->name }} {{ trans('general.assets') }}
+    {{ $statuslabel->name }} {{-- trans('general.assets') --}}
     @parent
 @stop
 

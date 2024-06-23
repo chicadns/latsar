@@ -231,17 +231,17 @@
                                                 </a>
                                             </li>
                                         @endcan
-                                        @can('create', \App\Models\License::class)
+                                        <!-- @can('create', \App\Models\License::class)
                                             <li {!! (Request::is('licenses/create') ? 'class="active"' : '') !!}>
                                                 <a href="{{ route('licenses.create') }}" tabindex="-1">
                                                     <i class="far fa-save fa-fw" aria-hidden="true"></i>
                                                     {{ trans('general.license') }}
                                                 </a>
                                             </li>
-                                            @endcan
+                                            @endcan -->
                                             @can('create', \App\Models\Accessory::class)
                                             <li {!! (Request::is('accessories/create') ? 'class="active"' : '') !!}>
-                                                 <a href="{{ route('accessories.create')}}" tabindex="-1">
+                                                 <a href="{{ route('hardware.create', ['status' => 'Allstuff']) }}" tabindex="-1">
                                                      <i class="fa fa-file-alt fa-fw"></i>
                                                      {{ trans('general.accessory') }}
                                                 </a>
@@ -436,8 +436,7 @@
                                     <i class="fas fa-home fa-fw" aria-hidden="true"></i> <span>{{ trans('general.dashboard') }}</span>
                                 </a>
                             </li>
-
-                        @endcan
+                        
                         @can('index', \App\Models\Asset::class)
                             <li class="treeview menu-open" style="height: auto;">
                                 <a href="#"><i class="fas fa-magnifying-glass-chart fa-fw" aria-hidden="true"></i>
@@ -502,14 +501,6 @@
                                             @endcan
                                         </ul>
                                     </li>
-                                    @can('superadmin')
-                                    <li>
-                                        <a href="{{ url('perolehan-asset') }}">
-                                            <i class="fas fa-list" aria-hidden="true"></i>
-                                            Nilai Perolehan Pertama
-                                        </a>
-                                    </li>
-                                    @endcan
                                     <li>
                                         <a href="{{ url('explore-asset') }}">
                                             <i class="fas fa-list" aria-hidden="true"></i>
@@ -580,12 +571,12 @@
                                                     ({{ (isset($total_undeployable_sidebar)) ? $total_undeployable_sidebar : '' }})
                                                 </a>
                                             </li>
-                                            <li{!! (Request::query('status') == 'Archived' ? ' class="active"' : '') !!}><a href="{{ url('hardware?status=Archived') }}"><i class="fas fa-boxes-packing fa-fw"></i>
-                                                    <!-- {{ trans('general.all') }} -->
+                                            <!-- <li{!! (Request::query('status') == 'Archived' ? ' class="active"' : '') !!}><a href="{{ url('hardware?status=Archived') }}"><i class="fas fa-boxes-packing fa-fw"></i>
+                                                    {{ trans('general.all') }}
                                                     {{ trans('admin/hardware/general.archived') }}
                                                     ({{ (isset($total_archived_sidebar)) ? $total_archived_sidebar : '' }})
                                                     </a>
-                                            </li>
+                                            </li> -->
 
                                     <!-- <li class="divider">&nbsp;</li> -->
 
@@ -671,7 +662,7 @@
                                                 </a>
                                             </li>
                                             <li{!! (Request::query('status') == 'AssetTI2' ? ' class="active"' : '') !!}>
-                                                <a href="{{ url('hardware?status=AssetTI2') }}">
+                                                <a href="{{ url('licenses?status=AssetTI2') }}">
                                                     <i class="fas fa-list" aria-hidden="true"></i>
                                                     Aset Tak Berwujud
                                                     ({{ (isset($total_categoryti2_sidebar)) ? $total_categoryti2_sidebar : '' }})
@@ -697,14 +688,14 @@
                         {{-- Barang Non-IT --}}
                         @can('view', \App\Models\Accessory::class)
                         <li class="treeview{{ (Request::query('status') == 'AssetNonTI1' || Request::query('status') == 'AssetNonTI2' || Request::query('status') == 'AssetNonTI3' || Request::query('status') == 'AssetNonTI4' || Request::query('status') == 'AssetNonTI5' || Request::query('status') == 'AssetNonTI6' || Request::query('status') == 'AssetNonTI7' || Request::query('status') == 'AssetNonTI8' || Request::query('status') == 'AssetNonTI9' || Request::query('status') == 'AssetNonTI10' 
-                            || Request::query('status') == 'Allstuff' || Request::query('status') == 'Allocated' || Request::query('status') == 'Available' ? ' active' : '') }}">
+                            || Request::query('status') == 'Allstuff' || Request::query('status') == 'Allocated' || Request::query('status') == 'Available' || Request::query('status') == 'Unavailable' || Request::query('status') == 'Repair' ? ' active' : '') }}">
                         <a href="#"><i class="fas fa-file-alt fa-fw" aria-hidden="true"></i>
                             <span>{{ trans('general.accessories') }}</span>
                             <i class="fa fa-angle-left pull-right"></i>
                         </a>
 
                         <ul class="treeview-menu">
-                            <li class="treeview{{ ((!Request::query('status') == 'AssetNonTI*') || Request::query('status') == 'Allstuff' || Request::query('status') == 'Allocated' || Request::query('status') == 'Available' ? ' active' : '') }}">
+                            <li class="treeview{{ ((!Request::query('status') == 'AssetNonTI*') || Request::query('status') == 'Allstuff' || Request::query('status') == 'Allocated' || Request::query('status') == 'Available' || Request::query('status') == 'Unavailable' || Request::query('status') == 'Repair' ? ' active' : '') }}">
                                 <a href="#"><i class="fas fa-magnifying-glass-chart fa-fw" aria-hidden="true"></i>
                                     <span>Perangkat Non-TI Per Status</span>
                                     <i class="fa fa-angle-left pull-right"></i>
@@ -733,19 +724,21 @@
                                             ({{ (isset($total_available_sidebar)) ? $total_available_sidebar : '' }})
                                         </a>
                                     </li>
-                                    {{-- <li{!! (Request::query('status') == 'Pending' ? ' class="active"' : '') !!}><a href="{{ url('accessories?status=Pending') }}"><i class="fas fa-wrench fa-fw"></i>
+                                    <li{!! (Request::query('status') == 'Unavailable' ? ' class="active"' : '') !!}>
+                                        <a href="{{ url('hardware?status=Unavailable') }}"><i class="fas fa-wrench fa-fw"></i>
                                             <!-- {{ trans('general.all') }} -->
-                                            {{ trans('general.pending') }}
-                                            ({{ (isset($total_pending_sidebar)) ? $total_pending_sidebar : '' }})
+                                            Tidak Teralokasikan
+                                            ({{ (isset($total_unavailable_sidebar)) ? $total_unavailable_sidebar : '' }})
                                         </a>
                                     </li>
-                                    <li{!! (Request::query('status') == 'Undeployable' ? ' class="active"' : '') !!} ><a href="{{ url('accessories?status=Undeployable') }}"><i class="fas fa-square-xmark fa-fw"></i>
+                                    <li{!! (Request::query('status') == 'Repair' ? ' class="active"' : '') !!} >
+                                        <a href="{{ url('hardware?status=Repair') }}"><i class="fas fa-square-xmark fa-fw"></i>
                                             <!-- {{ trans('general.all') }} -->
-                                            {{ trans('general.undeployable') }}
-                                            ({{ (isset($total_undeployable_sidebar)) ? $total_undeployable_sidebar : '' }})
+                                            {{ trans('general.repair') }}
+                                            ({{ (isset($total_repair_sidebar)) ? $total_repair_sidebar : '' }})
                                         </a>
                                     </li>
-                                    <li{!! (Request::query('status') == 'Archived' ? ' class="active"' : '') !!}><a href="{{ url('accessories?status=Archived') }}"><i class="fas fa-boxes-packing fa-fw"></i>
+                                    {{-- <li{!! (Request::query('status') == 'Archived' ? ' class="active"' : '') !!}><a href="{{ url('accessories?status=Archived') }}"><i class="fas fa-boxes-packing fa-fw"></i>
                                             <!-- {{ trans('general.all') }} -->
                                             {{ trans('admin/hardware/general.archived') }}
                                             ({{ (isset($total_archived_sidebar)) ? $total_archived_sidebar : '' }})
@@ -838,14 +831,14 @@
                         </li>
                         @endcan
 
-                        @can('view', \App\Models\License::class)
+                        <!-- @can('view', \App\Models\License::class)
                             <li{!! (Request::is('licenses*') && (!Request::query('status') == 'AssetNonTI3') ? ' class="active"' : '') !!}>
                                 <a href="{{ route('licenses.index') }}">
                                     <i class="fa fa-save fa-fw"></i>
                                     <span>{{ trans('general.licenses') }}</span>
                                 </a>
                             </li>
-                        @endcan
+                        @endcan -->
                         <!-- @can('index', \App\Models\Accessory::class)
                             <li{!! (Request::is('accessories*') ? ' class="active"' : '') !!}>
                                 <a href="{{ route('accessories.index') }}">
@@ -1083,17 +1076,17 @@
                                 </a>
                             </li>
                             <li>
-                                <a href="{{ url('process_file') }}">
+                                <a href="{{ url('processfile') }}">
                                     <i class="fas fa-file-code"></i> <span>Pengajuan Alokasi</span>
                                 </a>
                             </li>
                             <li>
-                                <a href="{{ url('process_file') }}">
+                                <a href="{{ url('processfile') }}">
                                     <i class="fas fa-file-code"></i> <span>Pengembalian Perangkat</span>
                                 </a>
                             </li>
                             <li>
-                                <a href="{{ url('process_file') }}">
+                                <a href="{{ url('processfile') }}">
                                     <i class="fas fa-file-code"></i> <span>Status Pemeliharaan Perangkat TI</span>
                                 </a>
                             </li>

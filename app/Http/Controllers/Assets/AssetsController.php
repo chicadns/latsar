@@ -130,6 +130,7 @@ class AssetsController extends Controller
             $asset->order_number            = $request->input('order_number');
             $asset->notes                   = $request->input('notes');
             $asset->bmn                     = $request->input('bmn', null);
+            $asset->non_it_stuff            = $request->input('non_it_stuff');
             $asset->user_id                 = Auth::id();
             $asset->archived                = '0';
             $asset->physical                = '1';

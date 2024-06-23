@@ -68,6 +68,20 @@ class AssetCountForSidebar
         }
 
         try {
+            $total_unavailable_sidebar = Asset::Unavailable()->count();
+            view()->share('total_unavailable_sidebar', $total_unavailable_sidebar);
+        } catch (\Exception $e) {
+            \Log::debug($e);
+        }
+        
+        try {
+            $total_repair_sidebar = Asset::Repair()->count();
+            view()->share('total_repair_sidebar', $total_repair_sidebar);
+        } catch (\Exception $e) {
+            \Log::debug($e);
+        }
+
+        try {
             $total_categoryti1_sidebar = Asset::CategoryTI1()->count();
             view()->share('total_categoryti1_sidebar', $total_categoryti1_sidebar);
         } catch (\Exception $e) {
@@ -75,7 +89,7 @@ class AssetCountForSidebar
         }
 
         try {
-            $total_categoryti2_sidebar = Asset::CategoryTI2()->count();
+            $total_categoryti2_sidebar = License::CategoryTI2()->count();
             view()->share('total_categoryti2_sidebar', $total_categoryti2_sidebar);
         } catch (\Exception $e) {
             \Log::debug($e);

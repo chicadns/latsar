@@ -451,7 +451,11 @@ class AssetPresenter extends Presenter
     public function statusMeta()
     {
         if ($this->model->assigned) {
-            return 'deployed';
+            if ($this->model->non_it_stuff == 1) {
+                return 'allocated';
+            } else if ($this->model->non_it_stuff == 0) {
+                return 'deployed';
+            }
         }
 
         return $this->model->assetstatus->getStatuslabelType();

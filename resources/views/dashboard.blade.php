@@ -65,9 +65,8 @@
   </div>
 
   <!-- PERANGKAT LUNAK -->
-  <div class="col-lg-2 col-xs-6">
+  <!-- <div class="col-lg-2 col-xs-6">
      <a href="{{ route('licenses.index') }}">
-    <!-- small box -->
     <div class="small-box bg-maroon">
       <div class="inner">
         <h3>{{ number_format($counts['license']) }}</h3>
@@ -81,7 +80,7 @@
         @endcan
     </div>
      </a>
-  </div><!-- ./col -->
+  </div> -->
 
 
   <!-- <div class="col-lg-2 col-xs-6">

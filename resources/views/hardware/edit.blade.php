@@ -7,6 +7,45 @@
     'formAction' => ($item->id) ? route('hardware.update', ['hardware' => $item->id]) : route('hardware.store'),
 ])
 
+@section('title0')
+@if (Request::get('status'))
+@if (Request::get('status')=='Allstuff')
+<input type="text" style="display: none" name="non_it_stuff" id="non_it_stuff" value="1">
+@elseif (Request::get('status')=='Allocated')
+<input type="text" style="display: none" name="non_it_stuff" id="non_it_stuff" value="1">
+@elseif (Request::get('status')=='Available')
+<input type="text" style="display: none" name="non_it_stuff" id="non_it_stuff" value="1">
+@elseif (Request::get('status')=='Unavailable')
+<input type="text" style="display: none" name="non_it_stuff" id="non_it_stuff" value="1">
+@elseif (Request::get('status')=='Repair')
+<input type="text" style="display: none" name="non_it_stuff" id="non_it_stuff" value="1">
+@elseif (Request::get('status')=='AssetNonTI1')
+<input type="text" style="display: none" name="non_it_stuff" id="non_it_stuff" value="1">
+@elseif (Request::get('status')=='AssetNonTI2')
+<input type="text" style="display: none" name="non_it_stuff" id="non_it_stuff" value="1">
+@elseif (Request::get('status')=='AssetNonTI3')
+<input type="text" style="display: none" name="non_it_stuff" id="non_it_stuff" value="1">
+@elseif (Request::get('status')=='AssetNonTI4')
+<input type="text" style="display: none" name="non_it_stuff" id="non_it_stuff" value="1">
+@elseif (Request::get('status')=='AssetNonTI5')
+<input type="text" style="display: none" name="non_it_stuff" id="non_it_stuff" value="1">
+@elseif (Request::get('status')=='AssetNonTI6')
+<input type="text" style="display: none" name="non_it_stuff" id="non_it_stuff" value="1">
+@elseif (Request::get('status')=='AssetNonTI7')
+<input type="text" style="display: none" name="non_it_stuff" id="non_it_stuff" value="1">
+@elseif (Request::get('status')=='AssetNonTI8')
+<input type="text" style="display: none" name="non_it_stuff" id="non_it_stuff" value="1">
+@elseif (Request::get('status')=='AssetNonTI9')
+<input type="text" style="display: none" name="non_it_stuff" id="non_it_stuff" value="1">
+@elseif (Request::get('status')=='AssetNonTI10')
+<input type="text" style="display: none" name="non_it_stuff" id="non_it_stuff" value="1">
+@else
+<input type="text" style="display: none" name="non_it_stuff" id="non_it_stuff" value="0">
+@endif
+@endif
+
+@stop
+
 
 {{-- Page content --}}
 @section('inputFields')
@@ -66,6 +105,7 @@
 
 
     @include ('partials.forms.edit.status', [ 'required' => 'true'])
+    @yield('title0')
     @if (!$item->id)
         @include ('partials.forms.checkout-selector', ['user_select' => 'true','asset_select' => 'true', 'location_select' => 'true', 'style' => 'display:none;'])
         @include ('partials.forms.edit.user-select', ['translated_name' => trans('admin/hardware/form.checkout_to'), 'fieldname' => 'assigned_user', 'style' => 'display:none;', 'required' => 'false'])

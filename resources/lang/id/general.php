@@ -255,6 +255,7 @@ return [
     'recent_activity'		=> 'Aktivitas Terakhir',
     'remaining'             => 'Sisa',
     'remove_company'        => 'Hapus Asosiasi Perusahaan',
+    'repair'                => 'Dalam Perbaikan',
     'reports'				=> 'Laporan',
     'restored'				=> 'kembalikan',
     'restore'				=> 'Pulihkan',

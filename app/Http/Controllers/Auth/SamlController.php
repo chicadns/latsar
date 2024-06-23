@@ -178,19 +178,32 @@ class SamlController extends Controller
                 'state' => substr($samlAttributes['organisasi'][0], 0, 2),
                 'zip' => substr($samlAttributes['organisasi'][0], 4, 3),
                 'avatar' => $samlAttributes['foto'][0],
-                'permissions' => $permissions,
+                //'permissions' => $permissions,
                 'company_id' => $company_id,
                 'manager_id' => $manager_id,
                 'department_id' => $department_id,
             ]
             );
+
+        //tambahkan pengkondisian dimana jika data pengguna sudah tersedia, permissions tidak perlu diubah sama sekali (mencegah data akses pengguna berubah saat login)
+        if ($user_saml->wasRecentlyCreated) {
+            $user_saml->permissions = $permissions;
+            $user_saml->save();
+        }
         
         $update_assets_company_id = Asset::where('assigned_to', $id_nip)->update(['company_id' => $company_id]);
         // $user_saml->saveOrFail();
-        $hasPenggunaRole = DB::table('users_groups')->where('user_id', $id_nip)->where('group_id', '4')->exists();
+        //$hasPenggunaRole = DB::table('users_groups')->where('user_id', $id_nip)->where('group_id', '4')->exists();
         
-        if(!$hasPenggunaRole) {
-            $user_saml->groups()->sync(['4' => ['user_id' => $id_nip]], false);    
+        //if(!$hasPenggunaRole) {
+        //    $user_saml->groups()->sync([4 => ['user_id' => $id_nip]], false);    
+        //}
+
+        //kode diganti agar memastikan peran tidak dilihat berdasarkan user_id = 4 saja
+        $hasRole = DB::table('users_groups')->where('user_id', $id_nip)->whereIn('group_id', [1, 2, 3])->exists();
+        
+        if (!$hasRole) {
+            $user_saml->groups()->sync([4 => ['user_id' => $id_nip]], false);
         }
         } catch (\Exception $e){
             echo $e->getMessage();
@@ -216,8 +229,8 @@ class SamlController extends Controller
     public function sls(Request $request)
     {
         $auth = $this->saml->getAuth();
-        $retrieveParametersFromServer = $this->saml->getSetting('retrieveParametersFromServer', false);
-        $sloUrl = $auth->processSLO(true, null, $retrieveParametersFromServer, null, true);
+        //$retrieveParametersFromServer = $this->saml->getSetting('retrieveParametersFromServer', false);
+        //$sloUrl = $auth->processSLO(true, null, $retrieveParametersFromServer, null, true);
         $errors = $auth->getErrors();
 
         Log::info('SLO URL: ' . $sloUrl);

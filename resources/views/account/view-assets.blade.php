@@ -48,7 +48,7 @@
             </a>
           </li>
 
-          <li>
+          {{-- <li>
             <a href="#licenses" data-toggle="tab">
             <span class="hidden-lg hidden-md">
             <i class="far fa-save fa-2x"></i>
@@ -57,7 +57,7 @@
                 {!! ($user->licenses->count() > 0 ) ? '<badge class="badge badge-secondary">'.number_format($user->licenses->count()).'</badge>' : '' !!}
             </span>
             </a>
-          </li>
+          </li> --}}
 
           <li>
             <a href="#accessories" data-toggle="tab">
@@ -65,7 +65,7 @@
             <i class="far fa-keyboard fa-2x"></i>
             </span>
               <span class="hidden-xs hidden-sm">{{ trans('general.accessories') }}
-                {!! ($user->accessories->count() > 0 ) ? '<badge class="badge badge-secondary">'.number_format($user->accessories->count()).'</badge>' : '' !!}
+                {!! ($user->assets_non_it()->AssetsForShow()->count() > 0 ) ? '<badge class="badge badge-secondary">'.number_format($user->assets_non_it()->AssetsForShow()->count()).'</badge>' : '' !!}
             </span>
             </a>
           </li>
@@ -467,7 +467,7 @@
                 </div> <!-- .table-responsive-->
             </div>
           </div><!-- /asset -->
-          <div class="tab-pane" id="licenses">
+          <!-- <div class="tab-pane" id="licenses">
 
             <div class="table-responsive">
               <table
@@ -509,63 +509,142 @@
                 @endforeach
                 </tbody>
               </table>
-            </div> <!-- .table-responsive-->
-          </div>
+            </div>
+          </div> -->
 
           <div class="tab-pane" id="accessories">
-            <div class="table-responsive">
-              <table
-                      data-cookie-id-table="userAccessoryTable"
-                      data-id-table="userAccessoryTable"
-                      id="userAccessoryTable"
-                      data-search="true"
-                      data-pagination="true"
-                      data-side-pagination="client"
-                      data-show-columns="true"
-                      data-show-fullscreen="true"
-                      data-show-export="true"
-                      data-show-footer="true"
-                      data-show-refresh="true"
-                      data-sort-order="asc"
-                      data-sort-name="name"
-                      class="table table-striped snipe-table table-hover"
-                      data-export-options='{
-                    "fileName": "export-accessory-{{ str_slug($user->username) }}-{{ date('Y-m-d') }}",
-                    "ignoreColumn": ["actions","image","change","checkbox","checkincheckout","delete","download","icon"]
-                    }'>
-                <thead>
-                <tr>
-                  <th class="col-md-5">{{ trans('general.name') }}</th>
-                  @can('self.view_purchase_cost')
-                    <th class="col-md-6" data-footer-formatter="sumFormatter" data-fieldname="purchase_cost">{{ trans('general.purchase_cost') }}</th>
-                  @endcan
-                  <th class="col-md-1 hidden-print">{{ trans('general.action') }}</th>
-                </tr>
-                </thead>
-                <tbody>
-                @foreach ($user->accessories as $accessory)
-                  <tr>
-                    <td>{{ $accessory->name }}</td>
-                    @can('self.view_purchase_cost')
-                      <td>
-                        {!! Helper::formatCurrencyOutput($accessory->purchase_cost) !!}
-                      </td>
-                    @endcan
-                    <td class="hidden-print">
-                      @can('checkin', $accessory)
-                        <a href="{{ route('accessories.checkin.show', array('accessoryID'=> $accessory->pivot->id, 'backto'=>'user')) }}" class="btn btn-primary btn-sm hidden-print">{{ trans('general.checkin') }}</a>
+            <div class="table table-responsive">
+              @if ($user->id)
+                <div class="box-header with-border">
+                  <div class="box-heading">
+                    <h2 class="box-title"> {{ trans('admin/users/general.assets_user', array('name' => $user->first_name)) }}</h2>
+                  </div>
+                </div><!-- /.box-header -->
+              @endif
+
+              <div class="box-body">
+                <!-- checked out assets table -->
+                <div class="table-responsive">
+
+                  <table
+                          data-cookie="true"
+                          data-cookie-id-table="userAssets"
+                          data-pagination="true"
+                          data-id-table="userAssets"
+                          data-search="true"
+                          data-side-pagination="client"
+                          data-show-columns="true"
+                          data-show-export="true"
+                          data-show-footer="true"
+                          data-show-refresh="true"
+                          data-sort-order="asc"
+                          id="userAssets"
+                          class="table table-striped snipe-table"
+                          data-export-options='{
+                  "fileName": "my-assets-{{ date('Y-m-d') }}",
+                  "ignoreColumn": ["actions","image","change","checkbox","checkincheckout","icon"]
+                  }'>
+                    <thead>
+                    <tr>
+                      <th class="col-md-1">#</th>
+                      <th class="col-md-1">{{ trans('general.image') }}</th>
+                      <th class="col-md-2" data-switchable="true" data-visible="true">{{ trans('general.category') }}</th>
+                      <th class="col-md-2" data-switchable="true" data-visible="true">{{ trans('admin/hardware/table.asset_tag') }}</th>
+                      <th class="col-md-2" data-switchable="true" data-visible="true">{{ trans('general.name') }}</th>
+                      <th class="col-md-2" data-switchable="true" data-visible="true">{{ trans('admin/hardware/table.asset_model') }}</th>
+                      <th class="col-md-3" data-switchable="true" data-visible="true">{{ trans('admin/hardware/table.serial') }}</th>
+                      @can('self.view_purchase_cost')
+                        <th class="col-md-6" data-footer-formatter="sumFormatter" data-fieldname="purchase_cost">{{ trans('general.purchase_cost') }}</th>
                       @endcan
-                    </td>
-                  </tr>
-                @endforeach
-                </tbody>
-              </table>
+                      @foreach ($field_array as $db_column => $field_name)
+                        <th class="col-md-1" data-switchable="true" data-visible="true">{{ $field_name }}</th>
+                      @endforeach
+
+                    </tr>
+
+                    </thead>
+                    <tbody>
+                    @php
+                      $counter = 1
+                    @endphp
+                    @foreach ($user->assets_non_it as $asset)
+                      <tr>
+                        <td>{{ $counter }}</td>
+                        <td>
+                          @if (($asset->image) && ($asset->image!=''))
+                            <img src="{{ Storage::disk('public')->url(app('assets_upload_path').e($asset->image)) }}" style="max-height: 30px; width: auto" class="img-responsive">
+                          @elseif (($asset->model) && ($asset->model->image!=''))
+                            <img src="{{ Storage::disk('public')->url(app('models_upload_path').e($asset->model->image)) }}" style="max-height: 30px; width: auto" class="img-responsive">
+                          @endif
+                        </td>
+                        <td>
+                          @if (($asset->model) && ($asset->model->category))
+                          {{ $asset->model->category->name }}
+                          @endif
+                        </td>
+                        <td>{{ $asset->asset_tag }}</td>
+                        <td>{{ $asset->name }}</td>
+                        <td>
+                          @if ($asset->physical=='1')
+                            {{ $asset->model->name }}
+                          @endif
+                        </td>
+                        <td>{{ $asset->serial }}</td>
+
+                        @can('self.view_purchase_cost')
+                        <td>
+                          {!! Helper::formatCurrencyOutput($asset->purchase_cost) !!}
+                        </td>
+                        @endcan
+
+                        @foreach ($field_array as $db_column => $field_value)
+                          <td>
+                            {{ $asset->{$db_column} }}
+                          </td>
+                        @endforeach
+
+                      </tr>
+
+                      @php
+                        $counter++
+                      @endphp
+                    @endforeach
+                    </tbody>
+                  </table>
+                </div>
+                </div> <!-- .table-responsive-->
             </div>
           </div><!-- /accessories-tab -->
 
           <div class="tab-pane" id="consumables">
             <div class="table-responsive">
+              <form method="get" action="{{ route('consumablestransaction.create') }}" style="position: absolute; margin-top: 10px; display: flex;">
+                  <input type="hidden" name="transaction_type" value="pengeluaran">
+                  <button type="submit" class="btn btn-primary">Ajukan Permintaan</button>
+              </form>
               <table
+                  data-columns="{{ \App\Presenters\ConsumableTransactionPresenter::dataTableLayout() }}"
+                  data-cookie-id-table="consumablesTransactionTable"
+                  data-pagination="true"
+                  data-id-table="consumablesTransactionTable"
+                  data-search="true"
+                  data-side-pagination="server"
+                  data-show-columns="true"
+                  data-show-export="false"
+                  data-show-refresh="true"
+                  data-sort-order="asc"
+                  data-sort-name="id"
+                  data-toolbar="#toolbar"
+                  id="consumablesTransactionTable"
+                  class="table table-striped snipe-table"
+                  data-url="{{ route('api.consumablestransaction.index') }}"
+                  data-export-options='{
+                  "fileName": "export-consumablestransaction-{{ date('Y-m-d') }}",
+                  "ignoreColumn": ["actions"]
+                  }'>
+            </table>
+            {{-- probably usefull someday --}}
+              {{-- <table
                       data-cookie-id-table="userConsumableTable"
                       data-id-table="userConsumableTable"
                       id="userConsumableTable"
@@ -608,7 +687,7 @@
                   </tr>
                 @endforeach
                 </tbody>
-              </table>
+              </table> --}}
             </div>
           </div><!-- /consumables-tab -->
 

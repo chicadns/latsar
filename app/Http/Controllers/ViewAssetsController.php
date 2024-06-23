@@ -33,6 +33,9 @@ class ViewAssetsController extends Controller
             'assets',
             'assets.model',
             'assets.model.fieldset.fields',
+            'assets_non_it',
+            'assets_non_it.model',
+            'assets_non_it.model.fieldset.fields',
             'consumables',
             'accessories',
             'licenses',
@@ -55,6 +58,16 @@ class ViewAssetsController extends Controller
                 }
             }
 
+        }
+
+        foreach ($user->assets_non_it as $asset) {
+            if ($asset->model->fieldset) {
+                foreach ($asset->model->fieldset->fields as $field) {
+                    if ($field->display_in_user_view == '1') {
+                        $field_array[$field->db_column] = $field->name;
+                    }
+                }
+            }
         }
 
         // Since some models may re-use the same fieldsets/fields, let's make the array unique so we don't repeat columns

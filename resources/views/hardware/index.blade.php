@@ -28,6 +28,10 @@
     {{ trans('general.accessories') }} - {{ trans('general.allocated') }}
   @elseif (Request::get('status')=='Available')
     {{ trans('general.accessories') }} - {{ trans('general.available') }}
+  @elseif (Request::get('status')=='Unavailable')
+    {{ trans('general.accessories') }} - Tidak Teralokasikan
+  @elseif (Request::get('status')=='Repair')
+    {{ trans('general.accessories') }} - {{ trans('general.repair') }}
   @elseif (Request::get('status')=='AssetTI1')
     {{ trans('general.assets') }} - {{ trans('general.assetti1') }}
   @elseif (Request::get('status')=='AssetTI2')

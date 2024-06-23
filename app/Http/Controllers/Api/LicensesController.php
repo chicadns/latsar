@@ -96,7 +96,7 @@ class LicensesController extends Controller
 
         if ($request->input('status') == 'AssetNonTI3') {
             $licenses->where('category_id', '>', 97)->where('category_id', '<', 118);
-        } else {
+        } else if ($request->input('status') == 'AssetTI2'){
             $licenses->where('category_id', '=', 10)->orWhere('category_id', '=', 16);
         }
 

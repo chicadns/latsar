@@ -27,7 +27,7 @@
                         </a>
                     </li>
 
-                    <li>
+                    <!-- <li>
                         <a href="#licenses_tab" data-toggle="tab">
                             <span class="hidden-lg hidden-md">
                             <i class="far fa-save"></i>
@@ -36,7 +36,7 @@
                                 {!! (($company->licenses) && ($company->licenses->count() > 0 )) ? '<badge class="badge badge-secondary">'.number_format($company->licenses->count()).'</badge>' : '' !!}
                             </span>
                         </a>
-                    </li>
+                    </li> -->
 
                     <li>
                         <a href="#accessories_tab" data-toggle="tab">
@@ -125,7 +125,7 @@
                         </div>
                     </div><!-- /asset_tab -->
 
-                    <div class="tab-pane" id="licenses_tab">
+                    <!-- <div class="tab-pane" id="licenses_tab">
                         <div class="table-responsive">
 
                             <table
@@ -149,7 +149,7 @@
                             </table>
 
                         </div>
-                    </div><!-- /licenses-tab -->
+                    </div> -->
 
                     <div class="tab-pane" id="accessories_tab">
                         <div class="table-responsive">
@@ -167,7 +167,7 @@
                                     data-sort-order="asc"
                                     id="accessoriesTable"
                                     class="table table-striped snipe-table"
-                                    data-url="{{route('api.accessories.index',['company_id' => $company->id]) }}"
+                                    data-url="{{ route('api.assets.index', ['status' => 'Allstuff', 'company_id' => e(Request::get('company_id'))]) }}"
                                     data-export-options='{
                               "fileName": "export-companies-{{ str_slug($company->name) }}-accessories-{{ date('Y-m-d') }}",
                               "ignoreColumn": ["actions","image","change","checkbox","checkincheckout","icon"]
