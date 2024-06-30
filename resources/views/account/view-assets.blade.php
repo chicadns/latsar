@@ -106,11 +106,11 @@
                     </a>
                   </div>
 
-                <div class="col-md-12" style="padding-top: 5px;">
+                {{-- <div class="col-md-12" style="padding-top: 5px;">
                   <a href="{{ route('account.password.index') }}" style="width: 100%;" class="btn btn-sm btn-primary hidden-print" target="_blank" rel="noopener">
                     {{ trans('general.changepassword') }}
                   </a>
-                </div>
+                </div> --}}
 
                 @can('self.api')
                 <div class="col-md-12" style="padding-top: 5px;">
@@ -127,7 +127,7 @@
                     </a>
                   </div>
 
-
+{{-- 
                   <div class="col-md-12" style="padding-top: 5px;">
                     @if (!empty($user->email))
                       <form action="{{ route('profile.email_assets') }}" method="POST">
@@ -137,7 +137,7 @@
                     @else
                       <button style="width: 100%;" class="btn btn-sm btn-primary hidden-print" rel="noopener" disabled title="{{ trans('admin/users/message.user_has_no_email') }}">{{ trans('admin/users/general.email_assigned') }}</button>
                     @endif
-                  </div>
+                  </div> --}}
 
                 <br><br>
               </div>
@@ -369,7 +369,7 @@
               @if ($user->id)
                 <div class="box-header with-border">
                   <div class="box-heading">
-                    <h2 class="box-title"> {{ trans('admin/users/general.assets_user', array('name' => $user->first_name)) }}</h2>
+                    <h2 class="box-title"> {{ trans('general.asset') }} {{ trans('general.of') }} {{ $user->first_name }}</h2>
                   </div>
                 </div><!-- /.box-header -->
               @endif
@@ -377,7 +377,10 @@
               <div class="box-body">
                 <!-- checked out assets table -->
                 <div class="table-responsive">
-
+                  <form method="get" action="{{ route('consumablestransaction.create') }}" style="position: absolute; display: flex;">
+                    <input type="hidden" name="transaction_type" value="pengeluaran">
+                    <button type="submit" class="btn btn-primary">{{ trans('general.add_allocation') }}</button>
+                  </form>
                   <table
                           data-cookie="true"
                           data-cookie-id-table="userAssets"
@@ -517,7 +520,7 @@
               @if ($user->id)
                 <div class="box-header with-border">
                   <div class="box-heading">
-                    <h2 class="box-title"> {{ trans('admin/users/general.assets_user', array('name' => $user->first_name)) }}</h2>
+                    <h2 class="box-title"> {{ trans('general.accessories') }} {{ trans('general.of') }} {{ $user->first_name }}</h2>
                   </div>
                 </div><!-- /.box-header -->
               @endif
@@ -525,7 +528,10 @@
               <div class="box-body">
                 <!-- checked out assets table -->
                 <div class="table-responsive">
-
+                  <form style="position: absolute; display: flex;">
+                  <input type="hidden" name="transaction_type" value="pengeluaran">
+                  <button type="submit" class="btn btn-primary disabled">{{ trans('general.add_allocation') }}</button>
+              </form>
                   <table
                           data-cookie="true"
                           data-cookie-id-table="userAssets"
@@ -617,10 +623,17 @@
           </div><!-- /accessories-tab -->
 
           <div class="tab-pane" id="consumables">
+            @if ($user->id)
+                <div class="box-header with-border">
+                  <div class="box-heading">
+                    <h2 class="box-title"> {{ trans('general.consumable') }} {{ trans('general.of') }} {{ $user->first_name }}</h2>
+                  </div>
+                </div><!-- /.box-header -->
+              @endif
             <div class="table-responsive">
-              <form method="get" action="{{ route('consumablestransaction.create') }}" style="position: absolute; margin-top: 10px; display: flex;">
+              <form method="get" action="{{ route('consumablestransaction.create') }}" style="position: absolute; margin-top: 10px; margin-left:10px; display: flex;">
                   <input type="hidden" name="transaction_type" value="pengeluaran">
-                  <button type="submit" class="btn btn-primary">Ajukan Permintaan</button>
+                  <button type="submit" class="btn btn-primary">{{ trans('general.add_request') }}</button>
               </form>
               <table
                   data-columns="{{ \App\Presenters\ConsumableTransactionPresenter::dataTableLayout() }}"
