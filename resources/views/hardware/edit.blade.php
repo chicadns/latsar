@@ -46,7 +46,6 @@
 
 @stop
 
-
 {{-- Page content --}}
 @section('inputFields')
     
@@ -158,8 +157,6 @@
         
         <div id="optional_details" class="col-md-12" style="display:none">
         <br>
-            @include ('partials.forms.edit.name', ['translated_name' => trans('admin/hardware/form.name')])
-            @include ('partials.forms.edit.warranty')
 
             <!-- byod checkbox -->
             <!-- <div class="form-group">

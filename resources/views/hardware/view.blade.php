@@ -47,7 +47,7 @@
                         </a>
                     </li>
 
-                    <li>
+                    <!-- <li>
                         <a href="#software" data-toggle="tab">
                           <span class="hidden-lg hidden-md">
                             <i class="far fa-save fa-2x" aria-hidden="true"></i>
@@ -56,7 +56,7 @@
                             {!! ($asset->licenses->count() > 0 ) ? '<badge class="badge badge-secondary">'.number_format($asset->licenses->count()).'</badge>' : '' !!}
                           </span>
                         </a>
-                    </li>
+                    </li> -->
 
                     <li>
                         <a href="#components" data-toggle="tab">
@@ -69,7 +69,7 @@
                         </a>
                     </li>
 
-                    <li>
+                    <!-- <li>
                         <a href="#assets" data-toggle="tab">
                           <span class="hidden-lg hidden-md">
                             <i class="fas fa-barcode fa-2x" aria-hidden="true"></i>
@@ -79,7 +79,7 @@
                             
                           </span>
                         </a>
-                    </li>
+                    </li> -->
 
                 
                     <li>
@@ -183,7 +183,7 @@
                                                         <i class="fas fa-circle text-orange"></i>
                                                     @elseif (($asset->assetstatus) && ($asset->assetstatus->deployable=='1') && ($asset->assetstatus->non_it_stuff=='1'))
                                                         <i class="fas fa-square text-green"></i>
-                                                    @elseif (($asset->assetstatus) && ($asset->assetstatus->deployable=='0') && ($asset->assetstatus->non_it_stuff=='1'))
+                                                    @elseif (($asset->assetstatus) && ($asset->assetstatus->pending=='1') && ($asset->assetstatus->non_it_stuff=='1'))
                                                         <i class="fas fa-square text-blue"></i>
                                                     @else
                                                         <i class="fas fa-times text-red"></i>

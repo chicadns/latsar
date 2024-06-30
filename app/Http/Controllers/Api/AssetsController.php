@@ -212,10 +212,11 @@ class AssetsController extends Controller
                 $assets->where('assets.non_it_stuff', '=', 1);
                 break;
             case 'Allocated':
-                $assets->where('assets.status_id', '=', 2)->where('assets.assigned_to', '>', 0)->where('assets.non_it_stuff', '=', 1);
+                $assets->where('assets.status_id', '=', 6)->where('assets.assigned_to', '>', 0)->where('assets.non_it_stuff', '=', 1);
                 break;
             case 'Available':
-                $assets->join('status_labels AS status_alias', function ($join) {
+                $assets->whereNull('assets.assigned_to')
+                    ->join('status_labels AS status_alias', function ($join) {
                         $join->on('status_alias.id', '=', 'assets.status_id')
                             ->where('status_alias.deployable', '=', 1)
                             ->where('status_alias.pending', '=', 0)

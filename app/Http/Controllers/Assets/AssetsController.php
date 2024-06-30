@@ -287,6 +287,27 @@ class AssetsController extends Controller
 
         return redirect()->route('hardware.index', ['status' => $request->get('status')])->with('error', trans('admin/hardware/message.does_not_exist'));
     }
+    
+    /**
+     * Returns a view that presents information about an asset for integration of HaloBPS.
+     *
+     * @author [Gilang Okta Aljafarsyah] [<222011596@stis.ac.id>]
+     * @param int $assetId
+     * @since [v1.0]
+     * @return View
+     */
+    public function show_bmn($assetBMN = null)
+    {
+        $asset = Asset::withTrashed()->where('bmn', $assetBMN)->first();
+        $this->authorize('view', $asset);
+        $settings = Setting::getSettings();
+        $assetId = $asset['id'];
+
+        if (isset($asset)) {
+            return redirect()->route('hardware.show', $assetId);
+        }
+        return redirect()->route('hardware.index')->with('error', trans('admin/hardware/message.does_not_exist'));
+    }
 
     /**
      * Validate and process asset edit form.

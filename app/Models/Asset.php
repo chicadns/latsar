@@ -98,7 +98,7 @@ class Asset extends Depreciable
         'expected_checkin' => 'date|nullable',
         'location_id'     => 'exists:locations,id|nullable',
         'rtd_location_id' => 'exists:locations,id|nullable',
-        'asset_tag'       => 'required|min:1|max:255|unique_undeleted',
+        'asset_tag'       => 'required|min:1|max:255',
         'purchase_date'   => 'date|date_format:Y-m-d|nullable',
         'serial'          => 'unique_serial|nullable',
         'purchase_cost'   => 'numeric|nullable|gte:0',
@@ -1234,16 +1234,17 @@ class Asset extends Depreciable
 
     public function scopeAllocated($query)
     {
-        return $query->where('assets.status_id', '=', 2)->where('assigned_to', '>', '0')->where('assets.non_it_stuff', '=', 1);
+        return $query->where('assets.status_id', '=', 6)->where('assigned_to', '>', '0')->where('assets.non_it_stuff', '=', 1);
     }
 
     public function scopeAvailable($query)
     {
-        return $query->whereHas('assetstatus', function ($query) {
-            $query->where('deployable', '=', 1)
-                ->where('pending', '=', 0)
-                ->where('archived', '=', 0);
-        })->where('assets.non_it_stuff', '=', 1);
+        return $query->whereNull('assets.assigned_to')
+                    ->whereHas('assetstatus', function ($query) {
+                        $query->where('deployable', '=', 1)
+                            ->where('pending', '=', 0)
+                            ->where('archived', '=', 0);
+                    })->where('assets.non_it_stuff', '=', 1);
     }
     
     public function scopeUnavailable($query)
