@@ -3,11 +3,15 @@
 return [
      // Tambah Alokasi
     'add_allocation' => 'Tambah Alokasi',
+    'add_allocation_it' => 'Tambah Alokasi Perangkat IT',
     'add_allocation_tooltip' => 'Alokasikan Barang Baru',
     'choose_assets' => 'Pilih Aset',
     'allocate_to' => 'Dialokasikan Kepada',
     'add_request' => 'Ajukan Permintaan',
     'of' => 'pada',
+    'BMN_number' => 'Nomor BMN',
+    'approval_status' => 'Status Persetujuan',
+    'delete_allocations' => 'Apakah Anda Yakin Ingin Menghapus Pengajuan Alokasi?',
 
     'alokasi'               => 'Status Alokasi',
     'accessories'			=> 'Perangkat Non-IT',

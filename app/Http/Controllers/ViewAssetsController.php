@@ -13,6 +13,7 @@ use App\Notifications\RequestAssetCancelation;
 use App\Notifications\RequestAssetNotification;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+ use App\Models\Allocation;
 
 /**
  * This controller handles all actions related to the ability for users
@@ -40,6 +41,9 @@ class ViewAssetsController extends Controller
             'accessories',
             'licenses',
         )->find(Auth::user()->id);
+
+        $allocations = Allocation::where('user_id', Auth::user()->id)->get();
+        $asset_satker = Asset::where('company_id', Auth::user()->company_id)->get();
 
         $field_array = array();
 
@@ -74,10 +78,11 @@ class ViewAssetsController extends Controller
         array_unique($field_array);
 
         if (isset($user->id)) {
-            return view('account/view-assets', compact('user', 'field_array' ))
+            return view('account/view-assets', compact('user', 'field_array', 'allocations' , 'asset_satker'))
                 ->with('settings', Setting::getSettings());
         }
-
+        
+        
         // Redirect to the user management page
         return redirect()->route('users.index')
             ->with('error', trans('admin/users/message.user_not_found', $user->id));

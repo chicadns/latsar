@@ -17,6 +17,7 @@ use App\Http\Controllers\ManufacturersController;
 use App\Http\Controllers\ModalController;
 use App\Http\Controllers\MonitoringController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\AllocationController;
 use App\Http\Controllers\ProcessFileController;
 use App\Http\Controllers\ReportsController;
 use App\Http\Controllers\SettingsController;
@@ -275,6 +276,11 @@ Route::get('/import',
 |
 */
 Route::group(['prefix' => 'account', 'middleware' => ['auth']], function () {
+
+    // Tambah Alokasi
+    Route::get('allocations', [AllocationController::class, 'getIndex'])->name('allocations');
+    Route::get('allocations/{asset_id}/edit', [AllocationController::class, 'edit'])->name('allocations.edit');
+    Route::delete('allocations/{asset_id}', [AllocationController::class, 'destroy'])->name('allocations.destroy');
 
     // Profile
     Route::get('profile', [ProfileController::class, 'getIndex'])->name('profile');

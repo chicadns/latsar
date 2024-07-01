@@ -377,10 +377,101 @@
               <div class="box-body">
                 <!-- checked out assets table -->
                 <div class="table-responsive">
-                  <form method="get" action="{{ route('consumablestransaction.create') }}" style="position: absolute; display: flex;">
-                    <input type="hidden" name="transaction_type" value="pengeluaran">
-                    <button type="submit" class="btn btn-primary">{{ trans('general.add_allocation') }}</button>
+                  <form method="get" style="position: absolute; display: flex;">
+                    <input type="hidden" name="transaction_type" value="ch">
+                    <button type="submit" class="btn btn-primary" data-toggle="modal" data-target="#checkout_user">{{ trans('general.add_allocation') }}</button>
                   </form>
+
+                  <!-- Modal -->
+                  <div class="modal" id="checkout_user" tabindex="-1" role="dialog">
+                  <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+                    <div class="modal-content">
+                      <div class="modal-header">
+                        <h3 class="modal-title">{{ trans('general.add_allocation_it') }}</h3>
+                        <button type="button" class="close" style="position: absolute; right: 15px; top: 15px" data-dismiss="modal" aria-label="Close">
+                          <span aria-hidden="true">&times;</span>
+                        </button>
+                      </div>
+                      <div class="modal-body">
+                        <form id="hardwareForm" method="post" action="">
+                          @csrf
+                          <table data-cookie="true"
+                          data-cookie-id-table="userAssets"
+                          data-pagination="true"
+                          data-id-table="userAssets"
+                          data-search="true"
+                          data-side-pagination="client"
+                          data-show-footer="true"
+                          data-show-refresh="true"
+                          data-sort-order="asc"
+                          id="userAssets"
+                          class="table table-striped snipe-table"
+                          data-export-options='{
+                          "fileName": "my-assets-{{ date('Y-m-d') }}",
+                          "ignoreColumn": ["actions","image","change","checkbox","checkincheckout","icon"]
+                          }'>
+                            <thead>
+                              <tr>
+                                <th class="col-md-1">#</th>
+                                <th class="col-md-2" data-switchable="true" data-visible="true">{{ trans('general.category') }}</th>
+                                <th class="col-md-2" data-switchable="true" data-visible="true">{{ trans('general.name') }}</th>
+                                <th class="col-md-2" data-switchable="true" data-visible="true">{{ trans('general.BMN_number') }}</th>
+                                <th class="col-md-3" data-switchable="true" data-visible="true">{{ trans('admin/hardware/table.serial') }}</th>
+                                
+                                @can('self.view_purchase_cost')
+                                  <th class="col-md-6" data-footer-formatter="sumFormatter" data-fieldname="purchase_cost">{{ trans('general.purchase_cost') }}</th>
+                                @endcan
+                                @foreach ($field_array as $db_column => $field_name)
+                                  <th class="col-md-1" data-switchable="true" data-visible="true">{{ $field_name }}</th>
+                                @endforeach
+                              </tr>
+                            </thead>
+                            <tbody>
+                            @php
+                              $counter = 1
+                            @endphp
+                            @foreach ($user->assets as $asset)
+                              <tr>
+                                <td>{{ $counter }}</td>
+                                
+                                <td>
+                                  @if (($asset->model) && ($asset->model->category))
+                                  {{ $asset->model->category->name }}
+                                  @endif
+                                </td>
+                                <td>{{ $asset->name }}</td>
+                                <td>{{ $asset->bmn }}</td>
+                                
+                                <td>{{ $asset->serial }}</td>
+
+                                @can('self.view_purchase_cost')
+                                <td>
+                                  {!! Helper::formatCurrencyOutput($asset->purchase_cost) !!}
+                                </td>
+                                @endcan
+
+                                @foreach ($field_array as $db_column => $field_value)
+                                  <td>
+                                    {{ $asset->{$db_column} }}
+                                  </td>
+                                @endforeach
+
+                              </tr>
+
+                              @php
+                                $counter++
+                              @endphp
+                            @endforeach
+                            </tbody>
+                          </table>
+                          <button type="submit" class="btn btn-primary">Save</button>
+                        </form>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {{-- Tabel Perangkat IT milik sendiri --}}
                   <table
                           data-cookie="true"
                           data-cookie-id-table="userAssets"
@@ -401,13 +492,16 @@
                   }'>
                     <thead>
                     <tr>
-                      <th class="col-md-1">#</th>
-                      <th class="col-md-1">{{ trans('general.image') }}</th>
+                      <th class="col-md-1">No.</th>
+                      {{-- <th class="col-md-1">{{ trans('general.image') }}</th> --}}
                       <th class="col-md-2" data-switchable="true" data-visible="true">{{ trans('general.category') }}</th>
-                      <th class="col-md-2" data-switchable="true" data-visible="true">{{ trans('admin/hardware/table.asset_tag') }}</th>
-                      <th class="col-md-2" data-switchable="true" data-visible="true">{{ trans('general.name') }}</th>
-                      <th class="col-md-2" data-switchable="true" data-visible="true">{{ trans('admin/hardware/table.asset_model') }}</th>
-                      <th class="col-md-3" data-switchable="true" data-visible="true">{{ trans('admin/hardware/table.serial') }}</th>
+                      <th class="col-md-3" data-switchable="true" data-visible="true">{{ trans('general.name') }}</th>
+                      <th class="col-md-2" data-switchable="true" data-visible="true">{{ trans('general.BMN_number') }}</th>
+                      {{-- <th class="col-md-2" data-switchable="true" data-visible="true">{{ trans('admin/hardware/table.asset_model') }}</th> --}}
+                      <th class="col-md-2" data-switchable="true" data-visible="true">{{ trans('admin/hardware/table.serial') }}</th>
+                      <th class="col-md-2" data-switchable="true" data-visible="true">{{ trans('general.approval_status') }}</th>
+                      <th class="col-md-1" data-switchable="true" data-visible="true">{{ trans('general.action') }}</th>
+
                       @can('self.view_purchase_cost')
                         <th class="col-md-6" data-footer-formatter="sumFormatter" data-fieldname="purchase_cost">{{ trans('general.purchase_cost') }}</th>
                       @endcan
@@ -422,48 +516,163 @@
                     @php
                       $counter = 1
                     @endphp
+
                     @foreach ($user->assets as $asset)
-                      <tr>
+                    @php
+                        // Check if the asset exists in allocations
+                        $allocation = $allocations->firstWhere('assets_id', $asset->id);
+                        $deleteConfirmationMessage = trans('general.delete_allocations');
+                    @endphp
+
+                    <tr>
                         <td>{{ $counter }}</td>
-                        <td>
-                          @if (($asset->image) && ($asset->image!=''))
-                            <img src="{{ Storage::disk('public')->url(app('assets_upload_path').e($asset->image)) }}" style="max-height: 30px; width: auto" class="img-responsive">
-                          @elseif (($asset->model) && ($asset->model->image!=''))
-                            <img src="{{ Storage::disk('public')->url(app('models_upload_path').e($asset->model->image)) }}" style="max-height: 30px; width: auto" class="img-responsive">
-                          @endif
-                        </td>
-                        <td>
-                          @if (($asset->model) && ($asset->model->category))
-                          {{ $asset->model->category->name }}
-                          @endif
-                        </td>
-                        <td>{{ $asset->asset_tag }}</td>
-                        <td>{{ $asset->name }}</td>
-                        <td>
-                          @if ($asset->physical=='1')
-                            {{ $asset->model->name }}
-                          @endif
-                        </td>
-                        <td>{{ $asset->serial }}</td>
 
-                        @can('self.view_purchase_cost')
-                        <td>
-                          {!! Helper::formatCurrencyOutput($asset->purchase_cost) !!}
-                        </td>
-                        @endcan
+                        @if ($allocation)
+                            <td>
+                                @if (($asset->model) && ($asset->model->category))
+                                    {{ $asset->model->category->name }}
+                                @endif
+                            </td>
+                            <td>{{ $allocation->name }}</td>
+                            <td>{{ $allocation->bmn }}</td>
+                            <td>{{ $allocation->serial }}</td>
 
-                        @foreach ($field_array as $db_column => $field_value)
+                            {{-- Status persetujuan --}}
+                            <td>{{ $allocation->status }}</td>
+
+                            {{-- Action --}}
+                            <td>
+                              <nobr>
+                                <a href="{{ route('allocations.edit', ['asset_id' => $asset->id]) }}" class="actions btn btn-sm btn-warning">
+                                  <i class="fas fa-pencil-alt" aria-hidden="true"></i></a>
+                                <form action="{{ route('allocations.destroy', $asset->id) }}" method="POST" style="display:inline;">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('{{ $deleteConfirmationMessage }}')">
+                                      <i class="fas fa-trash" aria-hidden="true"></i>
+                                    </button>
+                                </form>
+                              </nobr>
+                            </td>
+
+                            @can('self.view_purchase_cost')
+                            <td>
+                                {!! Helper::formatCurrencyOutput($asset->purchase_cost) !!}
+                            </td>
+                            @endcan
+
+                            @foreach ($field_array as $db_column => $field_value)
+                                <td>
+                                    {{ $allocation->{$db_column} }}
+                                </td>
+                            @endforeach
+                        @else
+                            <td>
+                                @if (($asset->model) && ($asset->model->category))
+                                    {{ $asset->model->category->name }}
+                                @endif
+                            </td>
+                            <td>{{ $asset->name }}</td>
+                            <td>{{ $asset->bmn }}</td>
+                            <td>{{ $asset->serial }}</td>
+
+                            {{-- Status persetujuan --}}
+                            <td> - </td>
+
+                            {{-- Action --}}
+                            <td>
+                              <nobr>
+                                <a href="{{ route('allocations.edit', ['asset_id' => $asset->id]) }}" class="actions btn btn-sm btn-warning">
+                                  <i class="fas fa-pencil-alt" aria-hidden="true"></i></a>
+                                <form action="{{ route('allocations.destroy', $asset->id) }}" method="POST" style="display:inline;">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit" class="actions btn btn-danger btn-sm delete-asset disabled" onclick="return confirm('{{ $deleteConfirmationMessage }}')">
+                                      <i class="fas fa-trash" aria-hidden="true"></i>
+                                    </button>
+                                </form>
+                              </nobr>
+                            </td>
+
+                            @can('self.view_purchase_cost')
+                            <td>
+                                {!! Helper::formatCurrencyOutput($asset->purchase_cost) !!}
+                            </td>
+                            @endcan
+
+                            @foreach ($field_array as $db_column => $field_value)
+                                <td>
+                                    {{ $asset->{$db_column} }}
+                                </td>
+                            @endforeach
+                        @endif
+
+                        @php
+                            $counter++
+                        @endphp
+                    </tr>
+                @endforeach
+
+
+                    {{-- Display assets only found in allocations with status 'belum disetujui' --}}
+                    @foreach ($allocations as $allocation)
+                    
+                      @if (!$user->assets->contains('id', $allocation->assets_id) && $allocation->status == 'Belum Disetujui')
+                        <tr>
+                          <td>{{ $counter }}</td>
                           <td>
-                            {{ $asset->{$db_column} }}
+                            @php
+                            // Get the asset ID from the allocation
+                            $assetId = $allocation->assets_id;
+                            // Retrieve the asset from the assets table
+                            $asset = $asset_satker->find($assetId);
+                            // Check if asset and its model exist, then retrieve the category name
+                            $categoryName = $asset && $asset->model ? ($asset->model->category ? $asset->model->category->name : null) : null;
+                            @endphp
+
+                            {{ $categoryName }}
                           </td>
-                        @endforeach
+                          <td>{{ $allocation->name }}</td>
+                          <td>{{ $allocation->bmn }}</td>
+                          <td>{{ $allocation->serial }}</td>
 
-                      </tr>
+                          {{-- Status persetujuan --}}
+                          <td>{{ $allocation->status }}</td>
 
-                      @php
-                        $counter++
-                      @endphp
+                          {{-- Action --}}
+                          <td>
+                              <nobr>
+                                <a href="{{ route('allocations.edit', ['asset_id' => $asset->id]) }}" class="actions btn btn-sm btn-warning">
+                                  <i class="fas fa-pencil-alt" aria-hidden="true"></i></a>
+                                <form action="{{ route('allocations.destroy', $asset->id) }}" method="POST" style="display:inline;">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('{{ $deleteConfirmationMessage }}')">
+                                      <i class="fas fa-trash" aria-hidden="true"></i>
+                                    </button>
+                                </form>
+                              </nobr>
+                            </td>
+
+                          @can('self.view_purchase_cost')
+                          <td>
+                            {!! Helper::formatCurrencyOutput($allocation->purchase_cost) !!}
+                          </td>
+                          @endcan
+
+                          @foreach ($field_array as $db_column => $field_value)
+                            <td>
+                              {{ $allocation->{$db_column} }}
+                            </td>
+                          @endforeach
+
+                          @php
+                            $counter++
+                          @endphp
+                        </tr>
+                      @endif
                     @endforeach
+
                     </tbody>
                   </table>
                 </div>
@@ -630,8 +839,9 @@
                   </div>
                 </div><!-- /.box-header -->
               @endif
-            <div class="table-responsive">
-              <form method="get" action="{{ route('consumablestransaction.create') }}" style="position: absolute; margin-top: 10px; margin-left:10px; display: flex;">
+              
+            <div class="table-responsive" style="padding:10px; padding-bottom: 45px; ">
+              <form method="get" action="{{ route('consumablestransaction.create') }}" style="position: absolute; display: flex;">
                   <input type="hidden" name="transaction_type" value="pengeluaran">
                   <button type="submit" class="btn btn-primary">{{ trans('general.add_request') }}</button>
               </form>
