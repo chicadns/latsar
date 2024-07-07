@@ -1501,4 +1501,22 @@ Route::group(['prefix' => 'v1', 'middleware' => ['api', 'throttle:api']], functi
                 ], 404);
         }); // end fallback routes
 
+        Route::resource('satker', 
+        Api\AllocationController::class,
+        ['names' => 
+            [
+                'satker' => 'api.satker.index'
+            ]
+        ]
+        );
+
+        Route::resource('approval', 
+        Api\ApprovalController::class,
+        ['names' => 
+            [
+                'index' => 'api.approval.index'
+            ]
+        ]
+        );
+
 }); // end API routes

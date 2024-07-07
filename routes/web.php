@@ -30,6 +30,8 @@ use App\Http\Controllers\Auth\ResetPasswordController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
 
+use App\Http\Controllers\Approval\ApprovalController;
+
 Route::group(['middleware' => 'auth'], function () {
     /*
     * Companies
@@ -269,6 +271,27 @@ Route::get('/import',
 
 /*
 |--------------------------------------------------------------------------
+| Approval Routes
+|--------------------------------------------------------------------------
+|
+|
+|
+*/
+Route::group(['prefix' => 'approval', 'middleware' => ['auth']], function () {
+
+    // Approval Dashboard
+    Route::get('/', [ApprovalController::class, 'index'])->name('approval');
+    Route::get('request', [ApprovalController::class, 'getApprovalData'])->name('approval.request');
+    Route::get('history', [ApprovalController::class, 'getAllData'])->name('approval.history');
+    Route::post('/update-status', [ApprovalController::class, 'updateStatus'])->name('update-status');
+
+});
+
+Route::get('satker', [AllocationController::class, 'satker'])->name('satker.index');
+
+
+/*
+|--------------------------------------------------------------------------
 | Account Routes
 |--------------------------------------------------------------------------
 |
@@ -278,7 +301,7 @@ Route::get('/import',
 Route::group(['prefix' => 'account', 'middleware' => ['auth']], function () {
 
     // Tambah Alokasi
-    Route::get('allocations', [AllocationController::class, 'getIndex'])->name('allocations');
+    // Route::get('allocations', [AllocationController::class, 'add'])->name('allocations');
     Route::get('allocations/{asset_id}/edit', [AllocationController::class, 'edit'])->name('allocations.edit');
     Route::delete('allocations/{asset_id}', [AllocationController::class, 'destroy'])->name('allocations.destroy');
 

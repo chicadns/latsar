@@ -43,7 +43,7 @@
             <i class="fas fa-barcode fa-2x" aria-hidden="true"></i>
             </span>
               <span class="hidden-xs hidden-sm">{{ trans('general.assets') }}
-                {!! ($user->assets()->AssetsForShow()->count() > 0 ) ? '<badge class="badge badge-secondary">'.number_format($user->assets()->AssetsForShow()->count()).'</badge>' : '' !!}
+                {{-- {!! ($user->assets()->AssetsForShow()->count() > 0 ) ? '<badge class="badge badge-secondary">'.number_format($user->assets()->AssetsForShow()->count()).'</badge>' : '' !!} --}}
             </span>
             </a>
           </li>
@@ -65,7 +65,7 @@
             <i class="far fa-keyboard fa-2x"></i>
             </span>
               <span class="hidden-xs hidden-sm">{{ trans('general.accessories') }}
-                {!! ($user->assets_non_it()->AssetsForShow()->count() > 0 ) ? '<badge class="badge badge-secondary">'.number_format($user->assets_non_it()->AssetsForShow()->count()).'</badge>' : '' !!}
+                {{-- {!! ($user->assets_non_it()->AssetsForShow()->count() > 0 ) ? '<badge class="badge badge-secondary">'.number_format($user->assets_non_it()->AssetsForShow()->count()).'</badge>' : '' !!} --}}
             </span>
             </a>
           </li>
@@ -379,7 +379,7 @@
                 <div class="table-responsive">
                   <form method="get" style="position: absolute; display: flex;">
                     <input type="hidden" name="transaction_type" value="ch">
-                    <button type="submit" class="btn btn-primary" data-toggle="modal" data-target="#checkout_user">{{ trans('general.add_allocation') }}</button>
+                    <button type="submit" class="btn btn-primary" style="margin-top: 5px;" data-toggle="modal" data-target="#checkout_user">{{ trans('general.add_allocation') }}</button>
                   </form>
 
                   <!-- Modal -->
@@ -395,76 +395,40 @@
                       <div class="modal-body">
                         <form id="hardwareForm" method="post" action="">
                           @csrf
-                          <table data-cookie="true"
-                          data-cookie-id-table="userAssets"
-                          data-pagination="true"
-                          data-id-table="userAssets"
+                          <table 
+                          {{-- data-columns="{{ \App\Presenters\AddAllocationPresenter::dataTableLayout() }}" --}}
+                          data-cookie="true"
+                          data-cookie-id-table="addAllocation"
+                          data-id-table="addAllocation"
                           data-search="true"
-                          data-side-pagination="client"
+                          data-query-params="queryParams"
+                          data-pagination="true"
+                          data-side-pagination="server"
+                          data-page-list="[10, 25, 50, 100]"
                           data-show-footer="true"
                           data-show-refresh="true"
                           data-sort-order="asc"
-                          id="userAssets"
+                          data-response-handler="responseHandler"
+                          id="addAllocation"
                           class="table table-striped snipe-table"
-                          data-export-options='{
-                          "fileName": "my-assets-{{ date('Y-m-d') }}",
-                          "ignoreColumn": ["actions","image","change","checkbox","checkincheckout","icon"]
-                          }'>
+                          data-url="{{ route('satker.index') }}"
+                          data-checkbox-header="false"
+                          >
                             <thead>
                               <tr>
-                                <th class="col-md-1">#</th>
-                                <th class="col-md-2" data-switchable="true" data-visible="true">{{ trans('general.category') }}</th>
-                                <th class="col-md-2" data-switchable="true" data-visible="true">{{ trans('general.name') }}</th>
-                                <th class="col-md-2" data-switchable="true" data-visible="true">{{ trans('general.BMN_number') }}</th>
-                                <th class="col-md-3" data-switchable="true" data-visible="true">{{ trans('admin/hardware/table.serial') }}</th>
-                                
-                                @can('self.view_purchase_cost')
-                                  <th class="col-md-6" data-footer-formatter="sumFormatter" data-fieldname="purchase_cost">{{ trans('general.purchase_cost') }}</th>
-                                @endcan
-                                @foreach ($field_array as $db_column => $field_name)
-                                  <th class="col-md-1" data-switchable="true" data-visible="true">{{ $field_name }}</th>
-                                @endforeach
+                                  <th data-field="state" data-checkbox="true"></th> <!-- Checkbox for selection -->
+                                  <th data-field="category_name" data-sortable="true">Kategori</th>
+                                  <th data-field="name" data-sortable="true">Nama Perangkat</th>
+                                  <th data-field="bmn" data-sortable="true">Nomor BMN</th>
+                                  <th data-field="serial" data-sortable="true">Serial Number</th>
+                                  <!-- Add other columns as needed -->
                               </tr>
                             </thead>
-                            <tbody>
-                            @php
-                              $counter = 1
-                            @endphp
-                            @foreach ($user->assets as $asset)
-                              <tr>
-                                <td>{{ $counter }}</td>
-                                
-                                <td>
-                                  @if (($asset->model) && ($asset->model->category))
-                                  {{ $asset->model->category->name }}
-                                  @endif
-                                </td>
-                                <td>{{ $asset->name }}</td>
-                                <td>{{ $asset->bmn }}</td>
-                                
-                                <td>{{ $asset->serial }}</td>
-
-                                @can('self.view_purchase_cost')
-                                <td>
-                                  {!! Helper::formatCurrencyOutput($asset->purchase_cost) !!}
-                                </td>
-                                @endcan
-
-                                @foreach ($field_array as $db_column => $field_value)
-                                  <td>
-                                    {{ $asset->{$db_column} }}
-                                  </td>
-                                @endforeach
-
-                              </tr>
-
-                              @php
-                                $counter++
-                              @endphp
-                            @endforeach
-                            </tbody>
                           </table>
-                          <button type="submit" class="btn btn-primary">Save</button>
+                          <div class="box-footer">
+                            <a class="btn btn-link" class="close" data-dismiss="modal"> {{ trans('button.cancel') }}</a>
+                            <button type="submit" onclick="sendSelectedIds()" class="btn btn-primary pull-right" ><i class="fas fa-check icon-white" aria-hidden="true"></i>  {{ trans('general.checkout') }}</button>
+                          </div>
                         </form>
                       </div>
                     </div>
@@ -492,7 +456,7 @@
                   }'>
                     <thead>
                     <tr>
-                      <th class="col-md-1">No.</th>
+                      <th class="col-md-1">No</th>
                       {{-- <th class="col-md-1">{{ trans('general.image') }}</th> --}}
                       <th class="col-md-2" data-switchable="true" data-visible="true">{{ trans('general.category') }}</th>
                       <th class="col-md-3" data-switchable="true" data-visible="true">{{ trans('general.name') }}</th>
@@ -543,15 +507,32 @@
                             {{-- Action --}}
                             <td>
                               <nobr>
-                                <a href="{{ route('allocations.edit', ['asset_id' => $asset->id]) }}" class="actions btn btn-sm btn-warning">
+                                <a href="{{ route('allocations.edit', ['asset_id' => $allocation->assets_id]) }}" title="Edit" class="actions btn btn-sm btn-warning">
+                                  <i class="fas fa-pencil-alt" aria-hidden="true"></i></a>
+                                <form action="" method="POST" style="display:inline;">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit" title="Hapus" class="btn btn-danger btn-sm" onclick="Hapus Data?">
+                                      <i class="fas fa-trash" aria-hidden="true"></i>
+                                    </button>
+                                </form>
+                                <form action="" method="POST" style="display:inline;">
+                                  @csrf
+                                  @method('POST') <!-- Assuming a POST method for status update -->
+                                  <input type="hidden" name="id" value=""> <!-- Pass the id of the row -->
+                                  <button type="submit" title="Kirim" class="btn btn-success btn-sm" onclick="return confirm('Kirim Pengajuan?')">
+                                    <i class="fas fa-paper-plane" aria-hidden="true"></i>
+                                  </button>
+                                </form>
+                                {{-- <a href="{{ route('allocations.edit', ['asset_id' => $asset->id]) }}" class="actions btn btn-sm btn-warning">
                                   <i class="fas fa-pencil-alt" aria-hidden="true"></i></a>
                                 <form action="{{ route('allocations.destroy', $asset->id) }}" method="POST" style="display:inline;">
                                     @csrf
                                     @method('DELETE')
-                                    <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('{{ $deleteConfirmationMessage }}')">
+                                    <button type="submit" class="btn btn-danger btn-sm" onclick="Hapus Data?">
                                       <i class="fas fa-trash" aria-hidden="true"></i>
                                     </button>
-                                </form>
+                                </form> --}}
                               </nobr>
                             </td>
 
@@ -577,19 +558,27 @@
                             <td>{{ $asset->serial }}</td>
 
                             {{-- Status persetujuan --}}
-                            <td> - </td>
+                            <td>Sudah Disetujui</td>
 
                             {{-- Action --}}
                             <td>
                               <nobr>
-                                <a href="{{ route('allocations.edit', ['asset_id' => $asset->id]) }}" class="actions btn btn-sm btn-warning">
+                                <a href="{{ route('allocations.edit', ['asset_id' => $asset->id]) }}" title="Edit" class="actions btn btn-sm btn-warning">
                                   <i class="fas fa-pencil-alt" aria-hidden="true"></i></a>
-                                <form action="{{ route('allocations.destroy', $asset->id) }}" method="POST" style="display:inline;">
+                                <form action="" method="POST" style="display:inline;">
                                     @csrf
                                     @method('DELETE')
-                                    <button type="submit" class="actions btn btn-danger btn-sm delete-asset disabled" onclick="return confirm('{{ $deleteConfirmationMessage }}')">
+                                    <button type="submit" title="Hapus" class="actions btn btn-danger btn-sm delete-asset disabled" onclick="Hapus Data?">
                                       <i class="fas fa-trash" aria-hidden="true"></i>
                                     </button>
+                                </form>
+                                <form action="" method="POST" style="display:inline;">
+                                  @csrf
+                                  @method('POST') <!-- Assuming a POST method for status update -->
+                                  <input type="hidden" name="id" value=""> <!-- Pass the id of the row -->
+                                  <button type="submit" title="Kirim" class="btn btn-success btn-sm disabled" onclick="return confirm('Kirim Pengajuan?')">
+                                    <i class="fas fa-paper-plane" aria-hidden="true"></i>
+                                  </button>
                                 </form>
                               </nobr>
                             </td>
@@ -625,12 +614,12 @@
                             // Get the asset ID from the allocation
                             $assetId = $allocation->assets_id;
                             // Retrieve the asset from the assets table
-                            $asset = $asset_satker->find($assetId);
+                            // $asset = $asset_satker->find($assetId);
                             // Check if asset and its model exist, then retrieve the category name
-                            $categoryName = $asset && $asset->model ? ($asset->model->category ? $asset->model->category->name : null) : null;
+                            // $categoryName = $asset && $asset->model ? ($asset->model->category ? $asset->model->category->name : null) : null;
                             @endphp
 
-                            {{ $categoryName }}
+                            {{-- {{ $categoryName }} --}}
                           </td>
                           <td>{{ $allocation->name }}</td>
                           <td>{{ $allocation->bmn }}</td>
@@ -642,14 +631,22 @@
                           {{-- Action --}}
                           <td>
                               <nobr>
-                                <a href="{{ route('allocations.edit', ['asset_id' => $asset->id]) }}" class="actions btn btn-sm btn-warning">
+                                <a href="{{ route('allocations.edit', ['asset_id' => $assetId]) }}" title="Edit" class="actions btn btn-sm btn-warning">
                                   <i class="fas fa-pencil-alt" aria-hidden="true"></i></a>
-                                <form action="{{ route('allocations.destroy', $asset->id) }}" method="POST" style="display:inline;">
+                                <form action="" method="POST" style="display:inline;">
                                     @csrf
                                     @method('DELETE')
-                                    <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('{{ $deleteConfirmationMessage }}')">
+                                    <button type="submit" title="Hapus" class="btn btn-danger btn-sm" onclick="Hapus Data?">
                                       <i class="fas fa-trash" aria-hidden="true"></i>
                                     </button>
+                                </form>
+                                <form action="" method="POST" style="display:inline;">
+                                  @csrf
+                                  @method('POST') <!-- Assuming a POST method for status update -->
+                                  <input type="hidden" name="id" value=""> <!-- Pass the id of the row -->
+                                  <button type="submit" title="Kirim" class="btn btn-success btn-sm" onclick="return confirm('Kirim Pengajuan?')">
+                                    <i class="fas fa-paper-plane" aria-hidden="true"></i>
+                                  </button>
                                 </form>
                               </nobr>
                             </td>
@@ -739,7 +736,7 @@
                 <div class="table-responsive">
                   <form style="position: absolute; display: flex;">
                   <input type="hidden" name="transaction_type" value="pengeluaran">
-                  <button type="submit" class="btn btn-primary disabled">{{ trans('general.add_allocation') }}</button>
+                  <button type="submit" class="btn btn-primary disabled" style="margin-top: 5px;">{{ trans('general.add_allocation') }}</button>
               </form>
                   <table
                           data-cookie="true"
@@ -843,7 +840,7 @@
             <div class="table-responsive" style="padding:10px; padding-bottom: 45px; ">
               <form method="get" action="{{ route('consumablestransaction.create') }}" style="position: absolute; display: flex;">
                   <input type="hidden" name="transaction_type" value="pengeluaran">
-                  <button type="submit" class="btn btn-primary">{{ trans('general.add_request') }}</button>
+                  <button type="submit" class="btn btn-primary" style="margin-top: 5px;">{{ trans('general.add_request') }}</button>
               </form>
               <table
                   data-columns="{{ \App\Presenters\ConsumableTransactionPresenter::dataTableLayout() }}"
@@ -929,4 +926,41 @@
 
 @section('moar_scripts')
   @include ('partials.bootstrap-table')
+  <script>
+    // function queryParams(params) {
+    //     params.search = params.searchText;
+    //     return params;
+    // }
+
+    function responseHandler(res) {
+        return {
+            "total": res.total,
+            "rows": res.data
+        };
+    }
+
+    // Handle selection and store IDs
+    let selectedIds = [];
+
+    $(document).ready(function() {
+        $('#addAllocation').on('check.bs.table uncheck.bs.table check-all.bs.table uncheck-all.bs.table', function () {
+            let selections = $('#addAllocation').bootstrapTable('getSelections');
+            selectedIds = $.map(selections, function (row) {
+                return row.id;
+            });
+        });
+    });
+
+    // Example function to send selected IDs to the backend
+    function sendSelectedIds() {
+        // Here, you can use selectedIds array to send to your backend API
+        console.log('Selected IDs:', selectedIds);
+        // Perform AJAX request to send selectedIds to your backend
+        // Example using fetch API:
+        
+        
+        
+    }
+
+</script>
 @stop

@@ -436,6 +436,14 @@
                                     <i class="fas fa-home fa-fw" aria-hidden="true"></i> <span>{{ trans('general.dashboard') }}</span>
                                 </a>
                             </li>
+
+                            @can('view', \App\Models\Consumable::class)
+                                    <li{!! (Request::is('consumables*') && !Request::is('consumablestransaction*') ? ' class="active"' : '') !!}>
+                                        <a href="{{ url('approval') }}">
+                                            <i class="fas fa-user-plus" aria-hidden="true"></i> <span>{{ trans('general.enduser') }}</span>
+                                        </a>
+                                    </li>
+                            @endcan
                         
                         @can('index', \App\Models\Asset::class)
                             <li class="treeview menu-open" style="height: auto;">

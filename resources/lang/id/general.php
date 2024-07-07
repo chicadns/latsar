@@ -10,8 +10,10 @@ return [
     'add_request' => 'Ajukan Permintaan',
     'of' => 'pada',
     'BMN_number' => 'Nomor BMN',
+    'serial' => 'Serial Number/Service Tag',
     'approval_status' => 'Status Persetujuan',
     'delete_allocations' => 'Apakah Anda Yakin Ingin Menghapus Pengajuan Alokasi?',
+    'enduser' => 'Pengajuan Updating BMN End-User',
 
     'alokasi'               => 'Status Alokasi',
     'accessories'			=> 'Perangkat Non-IT',

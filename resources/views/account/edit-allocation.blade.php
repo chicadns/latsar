@@ -1,166 +1,166 @@
 @extends('layouts/default')
 
-@php
-  $asset = $asset_satker->find($asset_id);
-@endphp
+<?php
+use Illuminate\Support\Facades\URL;
+?>
 
 {{-- Page title --}}
 @section('title')
-    {{ trans('admin/hardware/general.checkout') }}
+    Edit Aset
     @parent
 @stop
 
 {{-- Page content --}}
 @section('content')
-
-    <style>
-
-        .input-group {
-            padding-left: 0px !important;
-        }
-    </style>
-
     <div class="d-flex justify-content-center">
     <div style="max-width: 800px; width: 100%; margin: 0 auto;">
         <div class="box box-default">
-                <form class="form-horizontal" method="post" action="" autocomplete="off">
+            <form class="form-horizontal" method="post" action="" autocomplete="off">
 
-                    <div class="box-header with-border">
-                        <h2 class="box-title"> {{ trans('admin/hardware/form.tag') }} {{ $asset->asset_tag }}</h2>
-                    </div>
+                <div class="box-header with-border">
+                    <h2 class="box-title" style="margin: 7px;"> {{ $asset->name }} ({{ $asset_tag }})</h2>
+                </div>
 
-                    <div class="box-body">
-                        <input type="text" style="display: none" name="asset_status" id="asset_status" value="{{ Request::get('status') }}">
-                    {{csrf_field()}}
-                        @if ($asset->company && $asset->company->name)
-                            <div class="form-group">
-                                {{ Form::label('model', trans('general.company'), array('class' => 'col-md-3 control-label')) }}
-                                <div class="col-md-8">
-                                    <p class="form-control-static">
-                                        {{ $asset->company->name }}
-                                    </p>
-                                </div>
-                            </div>
-                        @endif
-                        
-                    <!-- AssetModel name -->
+                <div class="box-body">
+                    {{-- <input type="text" style="display: none" name="asset_status" id="asset_status" value="{{ Request::get('status') }}">
+                    {{csrf_field()}} --}}
+
+                    <!-- Satker -->
+                    @if ($asset->company && $asset->company->name)
                         <div class="form-group">
-                            {{ Form::label('model', trans('admin/hardware/form.model'), array('class' => 'col-md-3 control-label')) }}
+                            {{ Form::label('model', trans('general.company').' *', array('class' => 'col-md-3 control-label')) }}
                             <div class="col-md-8">
                                 <p class="form-control-static">
-                                    @if (($asset->model) && ($asset->model->name))
-                                        {{ $asset->model->name }}
-                                    @else
-                                        <span class="text-danger text-bold">
-                  <i class="fas fa-exclamation-triangle"></i>{{ trans('admin/hardware/general.model_invalid')}}
-                  <a href="{{ route('hardware.edit', $asset->id) }}"></a> {{ trans('admin/hardware/general.model_invalid_fix')}}</span>
-                                    @endif
+                                    {{ $asset->company->name }}
                                 </p>
                             </div>
                         </div>
+                    @endif
 
-                        <!-- Asset Name -->
-                        <div class="form-group {{ $errors->has('name') ? 'error' : '' }}">
-                            {{ Form::label('name', trans('admin/hardware/form.name'), array('class' => 'col-md-3 control-label')) }}
-                            <div class="col-md-8">
-                                <input class="form-control" type="text" name="name" id="name" value="{{ old('name', $asset->name) }}" tabindex="1">
-                                {!! $errors->first('name', '<span class="alert-msg" aria-hidden="true"><i class="fas fa-times" aria-hidden="true"></i> :message</span>') !!}
-                            </div>
+                    <!-- Nama Perangkat -->
+                    @if ($asset->name == NULL)
+                        <div class="form-group>
+                        {{ Form::label('name', trans('admin/hardware/form.name').' *', array('class' => 'col-md-3 control-label')) }}
+                        <div class="col-md-8">
+                            <input required class="form-control" type="text" placeholder="Masukkan Nama Perangkat" name="name" id="name" tabindex="1">
+                            {!! $errors->first('name', '<span class="alert-msg" aria-hidden="true"><i class="fas fa-times" aria-hidden="true"></i> :message</span>') !!}
                         </div>
-
-                    @include ('partials.forms.checkout-selector', ['user_select' => 'true','asset_select' => 'true', 'location_select' => 'true'])
-
-                    @include ('partials.forms.edit.user-select', ['translated_name' => trans('general.user'), 'fieldname' => 'assigned_user', 'required'=>'true'])
-
-                    <!-- We have to pass unselect here so that we don't default to the asset that's being checked out. We want that asset to be pre-selected everywhere else. -->
-                    @include ('partials.forms.edit.asset-select', ['translated_name' => trans('general.asset'), 'fieldname' => 'assigned_asset', 'unselect' => 'true', 'style' => 'display:none;', 'required'=>'true'])
-
-                    @include ('partials.forms.edit.location-select', ['translated_name' => trans('general.location'), 'fieldname' => 'assigned_location', 'style' => 'display:none;', 'required'=>'true'])
-
-
-
-                    <!-- Checkout/Checkin Date -->
-                        <div class="form-group {{ $errors->has('checkout_at') ? 'error' : '' }}">
-                            {{ Form::label('checkout_at', trans('admin/hardware/form.checkout_date'), array('class' => 'col-md-3 control-label')) }}
-                            <div class="col-md-8">
-                                <div class="input-group date col-md-7" data-provide="datepicker" data-date-format="yyyy-mm-dd" data-date-end-date="0d" data-date-clear-btn="true">
-                                    <input type="text" class="form-control" placeholder="{{ trans('general.select_date') }}" name="checkout_at" id="checkout_at" value="{{ old('checkout_at', date('Y-m-d')) }}">
-                                    <span class="input-group-addon"><i class="fas fa-calendar" aria-hidden="true"></i></span>
-                                </div>
-                                {!! $errors->first('checkout_at', '<span class="alert-msg" aria-hidden="true"><i class="fas fa-times" aria-hidden="true"></i> :message</span>') !!}
-                            </div>
-                        </div>
-
-                        <!-- Expected Checkin Date -->
-                        <div class="form-group {{ $errors->has('expected_checkin') ? 'error' : '' }}">
-                            {{ Form::label('expected_checkin', trans('admin/hardware/form.expected_checkin'), array('class' => 'col-md-3 control-label')) }}
-                            <div class="col-md-8">
-                                <div class="input-group date col-md-7" data-provide="datepicker" data-date-format="yyyy-mm-dd" data-date-start-date="0d" data-date-clear-btn="true">
-                                    <input type="text" class="form-control" placeholder="{{ trans('general.select_date') }}" name="expected_checkin" id="expected_checkin" value="{{ old('expected_checkin') }}">
-                                    <span class="input-group-addon"><i class="fas fa-calendar" aria-hidden="true"></i></span>
-                                </div>
-                                {!! $errors->first('expected_checkin', '<span class="alert-msg" aria-hidden="true"><i class="fas fa-times" aria-hidden="true"></i> :message</span>') !!}
-                            </div>
-                        </div>
-
-                        <!-- Note -->
-                        <div class="form-group {{ $errors->has('note') ? 'error' : '' }}">
-                            {{ Form::label('note', trans('admin/hardware/form.notes'), array('class' => 'col-md-3 control-label')) }}
-                            <div class="col-md-8">
-                                <textarea class="col-md-6 form-control" id="note" name="note">{{ old('note', $asset->note) }}</textarea>
-                                {!! $errors->first('note', '<span class="alert-msg" aria-hidden="true"><i class="fas fa-times" aria-hidden="true"></i> :message</span>') !!}
-                            </div>
-                        </div>
-
-                        @if ($asset->requireAcceptance() || $asset->getEula() || ($snipeSettings->webhook_endpoint!=''))
-                            <div class="form-group notification-callout">
-                                <div class="col-md-8 col-md-offset-3">
-                                    <div class="callout callout-info">
-
-                                        @if ($asset->requireAcceptance())
-                                            <i class="far fa-envelope" aria-hidden="true"></i>
-                                            {{ trans('admin/categories/general.required_acceptance') }}
-                                            <br>
-                                        @endif
-
-                                        @if ($asset->getEula())
-                                            <i class="far fa-envelope" aria-hidden="true"></i>
-                                            {{ trans('admin/categories/general.required_eula') }}
-                                            <br>
-                                        @endif
-
-                                        @if ($snipeSettings->webhook_endpoint!='')
-                                            <i class="fab fa-slack" aria-hidden="true"></i>
-                                            {{ trans('general.webhook_msg_note') }}
-                                        @endif
-                                    </div>
-                                </div>
-                            </div>
-                        @endif
-
-                    </div> <!--/.box-body-->
-                    <div class="box-footer">
-                        <a class="btn btn-link" href="{{ URL::previous() }}"> {{ trans('button.cancel') }}</a>
-                        <button type="submit" class="btn btn-primary pull-right"><i class="fas fa-check icon-white" aria-hidden="true"></i> {{ trans('general.checkout') }}</button>
                     </div>
-                </form>
-            </div>
-        </div> <!--/.col-md-7-->
+                    @else
+                    <div class="form-group">
+                        {{ Form::label('name', trans('admin/hardware/form.name').' *', array('class' => 'col-md-3 control-label')) }}
+                        <div class="col-md-8">
+                            <p class="form-control-static">
+                                {{ $asset->name }}
+                            </p>
+                        </div>
+                    </div>
+                    @endif
+
+                    {{-- Nomor BMN --}}
+                    <div class="form-group {{ $errors->has('bmn') ? 'error' : '' }}">
+                        {{ Form::label('bmn', trans('general.BMN_number').' *', array('class' => 'col-md-3 control-label')) }}
+                        <div class="col-md-8">
+                            <input required class="form-control" type="text" placeholder="Masukkan Nomor BMN" name="bmn" id="bmn" value="{{ old('bmn', $asset->bmn) }}" tabindex="1">
+                            {!! $errors->first('bmn', '<span class="alert-msg" aria-hidden="true"><i class="fas fa-times" aria-hidden="true"></i> :message</span>') !!}
+                        </div>
+                    </div>
+
+                    {{-- Serial number --}}
+                    <div class="form-group {{ $errors->has('serial') ? 'error' : '' }}">
+                        {{ Form::label('serial', trans('general.serial').' *', array('class' => 'col-md-3 control-label')) }}
+                        <div class="col-md-8">
+                            <input required class="form-control" type="text" placeholder="Masukkan Serial Number" name="serial" id="serial" value="{{ old('serial', $asset->serial) }}" tabindex="1">
+                            {!! $errors->first('serial', '<span class="alert-msg" aria-hidden="true"><i class="fas fa-times" aria-hidden="true"></i> :message</span>') !!}
+                        </div>
+                    </div>
+
+                    {{-- Kondisi Barang --}}
+                    <div class="form-group">
+                        {{ Form::label('kondisi', 'Kondisi Barang'.' *', array('class' => 'col-md-3 control-label')) }}
+                        <div class="col-md-8">
+                            <select required class="form-control" id="kondisi" name="kondisi" onchange="toggleSupportingLinkInput()">
+                                <option value="Baik"> Baik</option>
+                                <option value="Rusak Ringan">Rusak Ringan</option>
+                                <option value="Rusak Berat">Rusak Berat</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Supporting Link Input -->
+                    <div class="form-group" id="supporting-link-group" style="display: none;">
+                        {{ Form::label('supporting_link', 'Sertakan bukti dukung', array('class' => 'col-md-3 control-label')) }}
+                        <div class="col-md-8">
+                            <input class="form-control" type="url" name="supporting_link" id="supporting_link" placeholder="https://example.com">
+                            {!! $errors->first('supporting_link', '<span class="alert-msg" aria-hidden="true"><i class="fas fa-times" aria-hidden="true"></i> :message</span>') !!}
+                        </div>
+                    </div>
+                {{-- </div> --}}
+
+                <hr style="border: 0; height: 2px; background-color: #e9e9e9;"/>
+
+                {{-- <div class="box-body"> --}}
+                    <h4 style="margin-left: 10px; margin-bottom: 15px;">Informasi Software</h4>
+
+                    {{-- Software --}}
+                    <div class="form-group">
+                        {{ Form::label('os', 'Operating System (OS)', array('class' => 'col-md-3 control-label')) }}
+                        <div class="col-md-8">
+                            <select class="form-control" id="os" name="os">
+                                <option value="Baik">Windows</option>
+                                <option value="Baik">Windows</option>
+                                <option value="Baik">Windows</option>
+                            </select>
+                        </div>
+                    </div>
+                
+                    {{-- Office --}}
+                    <div class="form-group">
+                        {{ Form::label('office', 'Microsoft Office'.' *', array('class' => 'col-md-3 control-label')) }}
+                        <div class="col-md-8">
+                            <select required class="form-control" id="office" name="office">
+                                <option value="Baik">Microsoft</option>
+                                <option value="Baik">Microsoft</option>
+                                <option value="Baik">Microsoft</option>
+                            </select>
+                        </div>
+                    </div>
+                
+                    {{-- Antivirus --}}
+                    <div class="form-group">
+                        {{ Form::label('antivirus', 'Antivirus', array('class' => 'col-md-3 control-label')) }}
+                        <div class="col-md-8">
+                            <select class="form-control" id="antivirus" name="antivirus">
+                                <option value="Baik">McAfee</option>
+                                <option value="Baik">McAfee</option>
+                                <option value="Baik">McAfee</option>
+                            </select>
+                        </div>
+                    </div>
+
+                </div> <!--/.box-body-->
+                <div class="box-footer">
+                    <a class="btn btn-link" href="{{ URL::previous() }}"> {{ trans('button.cancel') }}</a>
+                    <button type="submit" class="btn btn-primary pull-right"><i class="fas fa-check icon-white" aria-hidden="true"></i> {{ trans('general.save') }}</button>
+                </div>
+            </form>
+        </div>
+    </div> <!--/.col-md-7-->
     </div>
 @stop
 
 @section('moar_scripts')
-    @include('partials/assets-assigned')
-
     <script>
-        //        $('#checkout_at').datepicker({
-        //            clearBtn: true,
-        //            todayHighlight: true,
-        //            endDate: '0d',
-        //            format: 'yyyy-mm-dd'
-        //        });
-
-
+        function toggleSupportingLinkInput() {
+            var kondisi = document.getElementById("kondisi").value;
+            var supportingLinkGroup = document.getElementById("supporting-link-group");
+            
+            if (kondisi === "Rusak Berat") {
+                supportingLinkGroup.style.display = "block";
+            } else {
+                supportingLinkGroup.style.display = "none";
+            }
+        }
     </script>
 @stop
 

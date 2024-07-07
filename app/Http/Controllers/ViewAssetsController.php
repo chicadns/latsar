@@ -13,7 +13,7 @@ use App\Notifications\RequestAssetCancelation;
 use App\Notifications\RequestAssetNotification;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
- use App\Models\Allocation;
+use App\Models\Allocation;
 
 /**
  * This controller handles all actions related to the ability for users
@@ -43,7 +43,7 @@ class ViewAssetsController extends Controller
         )->find(Auth::user()->id);
 
         $allocations = Allocation::where('user_id', Auth::user()->id)->get();
-        $asset_satker = Asset::where('company_id', Auth::user()->company_id)->get();
+        $asset_satker = NULL;
 
         $field_array = array();
 
@@ -78,7 +78,7 @@ class ViewAssetsController extends Controller
         array_unique($field_array);
 
         if (isset($user->id)) {
-            return view('account/view-assets', compact('user', 'field_array', 'allocations' , 'asset_satker'))
+            return view('account/view-assets', compact('user', 'field_array', 'allocations', 'asset_satker' ))
                 ->with('settings', Setting::getSettings());
         }
         
@@ -100,63 +100,63 @@ class ViewAssetsController extends Controller
         return view('account/requestable-assets', compact('assets', 'models'));
     }
 
-    public function getRequestItem(Request $request, $itemType, $itemId = null, $cancel_by_admin = false, $requestingUser = null)
-    {
-        $item = null;
-        $fullItemType = 'App\\Models\\'.studly_case($itemType);
+    // public function getRequestItem(Request $request, $itemType, $itemId = null, $cancel_by_admin = false, $requestingUser = null)
+    // {
+    //     $item = null;
+    //     $fullItemType = 'App\\Models\\'.studly_case($itemType);
 
-        if ($itemType == 'asset_model') {
-            $itemType = 'model';
-        }
-        $item = call_user_func([$fullItemType, 'find'], $itemId);
+    //     if ($itemType == 'asset_model') {
+    //         $itemType = 'model';
+    //     }
+    //     $item = call_user_func([$fullItemType, 'find'], $itemId);
 
-        $user = Auth::user();
+    //     $user = Auth::user();
 
-        $logaction = new Actionlog();
-        $logaction->item_id = $data['asset_id'] = $item->id;
-        $logaction->item_type = $fullItemType;
-        $logaction->created_at = $data['requested_date'] = date('Y-m-d H:i:s');
+    //     $logaction = new Actionlog();
+    //     $logaction->item_id = $data['asset_id'] = $item->id;
+    //     $logaction->item_type = $fullItemType;
+    //     $logaction->created_at = $data['requested_date'] = date('Y-m-d H:i:s');
 
-        if ($user->location_id) {
-            $logaction->location_id = $user->location_id;
-        }
-        $logaction->target_id = $data['user_id'] = Auth::user()->id;
-        $logaction->target_type = User::class;
+    //     if ($user->location_id) {
+    //         $logaction->location_id = $user->location_id;
+    //     }
+    //     $logaction->target_id = $data['user_id'] = Auth::user()->id;
+    //     $logaction->target_type = User::class;
 
-        $data['item_quantity'] = $request->has('request-quantity') ? e($request->input('request-quantity')) : 1;
-        $data['requested_by'] = $user->present()->fullName();
-        $data['item'] = $item;
-        $data['item_type'] = $itemType;
-        $data['target'] = Auth::user();
+    //     $data['item_quantity'] = $request->has('request-quantity') ? e($request->input('request-quantity')) : 1;
+    //     $data['requested_by'] = $user->present()->fullName();
+    //     $data['item'] = $item;
+    //     $data['item_type'] = $itemType;
+    //     $data['target'] = Auth::user();
 
-        if ($fullItemType == Asset::class) {
-            $data['item_url'] = route('hardware.show', $item->id);
-        } else {
-            $data['item_url'] = route("view/${itemType}", $item->id);
-        }
+    //     if ($fullItemType == Asset::class) {
+    //         $data['item_url'] = route('hardware.show', $item->id);
+    //     } else {
+    //         $data['item_url'] = route("view/${itemType}", $item->id);
+    //     }
 
-        $settings = Setting::getSettings();
+    //     $settings = Setting::getSettings();
 
-        if (($item_request = $item->isRequestedBy($user)) || $cancel_by_admin) {
-            $item->cancelRequest($requestingUser);
-            $data['item_quantity'] = ($item_request) ? $item_request->qty : 1;
-            $logaction->logaction('request_canceled');
+    //     if (($item_request = $item->isRequestedBy($user)) || $cancel_by_admin) {
+    //         $item->cancelRequest($requestingUser);
+    //         $data['item_quantity'] = ($item_request) ? $item_request->qty : 1;
+    //         $logaction->logaction('request_canceled');
 
-            if (($settings->alert_email != '') && ($settings->alerts_enabled == '1') && (! config('app.lock_passwords'))) {
-                $settings->notify(new RequestAssetCancelation($data));
-            }
+    //         if (($settings->alert_email != '') && ($settings->alerts_enabled == '1') && (! config('app.lock_passwords'))) {
+    //             $settings->notify(new RequestAssetCancelation($data));
+    //         }
 
-            return redirect()->back()->with('success')->with('success', trans('admin/hardware/message.requests.canceled'));
-        } else {
-            $item->request();
-            if (($settings->alert_email != '') && ($settings->alerts_enabled == '1') && (! config('app.lock_passwords'))) {
-                $logaction->logaction('requested');
-                $settings->notify(new RequestAssetNotification($data));
-            }
+    //         return redirect()->back()->with('success')->with('success', trans('admin/hardware/message.requests.canceled'));
+    //     } else {
+    //         $item->request();
+    //         if (($settings->alert_email != '') && ($settings->alerts_enabled == '1') && (! config('app.lock_passwords'))) {
+    //             $logaction->logaction('requested');
+    //             $settings->notify(new RequestAssetNotification($data));
+    //         }
 
-            return redirect()->route('requestable-assets')->with('success')->with('success', trans('admin/hardware/message.requests.success'));
-        }
-    }
+    //         return redirect()->route('requestable-assets')->with('success')->with('success', trans('admin/hardware/message.requests.success'));
+    //     }
+    // }
 
     /**
      * Process a specific requested asset

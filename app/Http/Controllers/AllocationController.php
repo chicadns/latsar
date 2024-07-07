@@ -39,6 +39,45 @@ class AllocationController extends Controller
         return view('account/profile', compact('user'));
     }
 
+    public function satker(Request $request)
+    {
+        $user = Auth::user();
+        $query = Asset::select('assets.*', 'categories.name AS category_name')
+            ->where('company_id', $user->company_id)
+            // ->where('model_id', 1391)
+            ->join('models AS category_models', function ($join) {
+                    $join->on('category_models.id', '=', 'assets.model_id')
+                        ->join('categories', function ($subjoin) {
+                            $subjoin->on('categories.id', '=', 'category_models.category_id')
+                                ->where('category_models.category_id', '=', 19);
+                        });
+                });
+
+        // Apply search filter
+        if ($request->has('search') && $request->input('search')) {
+            $search = $request->input('search');
+            $query->where(function ($q) use ($search) {
+                $q  ->where('name', 'like', "%{$search}%");
+                    // ->where('category_name', 'like', "%{$search}%");
+                //     ->orWhereHas('model.category', function ($q) use ($search) {
+                //         $q->where('name', 'like', "%{$search}%");
+                // });
+            });
+        }
+
+        // Apply sorting if provided
+        if ($request->has('sort') && $request->has('order')) {
+            $sort = $request->input('sort');
+            $order = $request->input('order');
+            $query->orderBy($sort, $order);
+        }
+
+        // Paginate results
+        $asset_satker = $query->paginate($request->input('limit', 10));
+
+        return response()->json($asset_satker);
+    }
+
     public function edit($asset_id) {
     // Your logic for editing the allocation
         // $user = Auth::user();
@@ -47,10 +86,23 @@ class AllocationController extends Controller
 
         // Your logic for editing the allocation
         $allocation = Allocation::where('assets_id', $asset_id)->first();
+        $assets = Asset::where('company_id', Auth::user()->company_id)
+                ->where('id', $asset_id)
+                ->first();
+
+        $asset = $assets;
         
-        $asset_satker = Asset::where('company_id', Auth::user()->company_id)->get();
+        if ($allocation->allocation_code == "2"){
+            $asset = Allocation::where('assets_id', $asset_id)->first();
+        } 
+        else if ($allocation->allocation_code == "1"){
+            $asset = $assets;
+        }
+
+        $asset_tag = $assets->asset_tag;
+
         // Pass the allocation data to the view
-        return view('account/edit-allocation', compact('allocation', 'asset_satker', 'asset_id'));
+        return view('account/edit-allocation', compact('asset', 'asset_tag'));
     }
 
     public function destroy($asset_id) {
