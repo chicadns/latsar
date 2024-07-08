@@ -69,7 +69,7 @@ class ApprovalController extends Controller
         $user = Auth::user();
         $allocations = Allocation::select('allocations.*', 'categories.name AS category_name', 'users.first_name AS user_first_name')
                     ->where('allocations.company_id', $user->company_id)
-                    ->where('allocations.status', "Belum Disetujui")
+                    ->where('allocations.status', "Menunggu Persetujuan")
                     ->join('categories', 'categories.id', '=', 'allocations.category_id')
                     ->join('users', 'users.id', '=', 'allocations.user_id')
                     ->get();
@@ -97,13 +97,34 @@ class ApprovalController extends Controller
 
     public function updateStatus(Request $request)
     {
-        $allocation = Allocation::find($request->id);
-        if ($allocation) {
-            $allocation->status = $request->status;
-            $allocation->save();
-            return response()->json(['success' => true]);
+        // Authorization check
+        // $this->authorize('update', Allocation::class);
+        
+        // Check if 'setuju' is present in the request
+        if ($request->has('setuju')) {
+            $id = $request->input('setuju');
+            $status = 'Sudah Disetujui'; // or whatever status represents approval
+        } elseif ($request->has('tidak_setuju')) {
+            $id = $request->input('tidak_setuju');
+            $status = 'Tidak Disetujui'; // or whatever status represents rejection
         } else {
-            return response()->json(['success' => false, 'message' => 'Allocation not found.']);
+            return redirect()->back()->with('error', 'Invalid request');
+        }
+
+        // Find the allocation by id and update its status
+        $allocation = Allocation::find($id);
+        if ($allocation) {
+            $allocation->status = $status;
+            $allocation->save();
+
+            if($status='Sudah Disetujui'){
+                return redirect()->back()->with('success', 'Setujui Pengajuan Berhasil!');
+            } elseif ($status='Tidak Disetujui') {
+                return redirect()->back()->with('success', 'Tidaksetujui Pengajuan Berhasil!');
+            }
+            
+        } else {
+            return redirect()->back()->with('error', 'Alokasi Tidak Ditemukan!');
         }
     }
     

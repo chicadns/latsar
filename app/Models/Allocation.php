@@ -11,6 +11,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\Storage;
 use Watson\Validating\ValidatingTrait;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Allocation extends SnipeModel
 {
@@ -34,9 +35,9 @@ class Allocation extends SnipeModel
      */
     public $rules = [
         'name'        => 'required|min:3|max:255',
-        'category_id' => 'required|integer',
+        // 'category_id' => 'required|integer',
         'company_id'  => 'integer|nullable',
-        'purchase_cost'   => 'numeric|required|gte:0',
+        // 'purchase_cost'   => 'numeric|required|gte:0',
         'purchase_date'   => 'date_format:Y-m-d|nullable',
     ];
 
@@ -65,13 +66,14 @@ class Allocation extends SnipeModel
         'bmn',
         'serial',
         'kondisi',
-        'notes',
+        'supporting_link',
         'os',
         'office',
         'antivirus',
         'status',
         'request_date',
         'handling_date',
+        'updated_at',
         'deleted_at',
         'allocation_code',
     ];
@@ -116,60 +118,7 @@ class Allocation extends SnipeModel
      * @since [v6.1.13]
      * @return \Illuminate\Database\Eloquent\Relations\Relation
      */
-    public function uploads()
-    {
-        return $this->hasMany(\App\Models\Actionlog::class, 'item_id')
-            ->where('item_type', '=', self::class)
-            ->where('action_type', '=', 'uploaded')
-            ->whereNotNull('filename')
-            ->orderBy('created_at', 'desc');
-    }
-
-
-    /**
-     * Sets the attribute of whether or not the consumable is requestable
-     *
-     * This isn't really implemented yet, as you can't currently request a consumable
-     * however it will be implemented in the future, and we needed to include
-     * this method here so all of our polymorphic methods don't break.
-     *
-     * @todo Update this comment once it's been implemented
-     *
-     * @author [A. Gianotto] [<snipe@snipe.net>]
-     * @since [v3.0]
-     * @return \Illuminate\Database\Eloquent\Relations\Relation
-     */
-    public function setRequestableAttribute($value)
-    {
-        if ($value == '') {
-            $value = null;
-        }
-        $this->attributes['requestable'] = filter_var($value, FILTER_VALIDATE_BOOLEAN);
-    }
-
-    /**
-     * Establishes the consumable -> admin user relationship
-     *
-     * @author [A. Gianotto] [<snipe@snipe.net>]
-     * @since [v3.0]
-     * @return \Illuminate\Database\Eloquent\Relations\Relation
-     */
-    public function admin()
-    {
-        return $this->belongsTo(\App\Models\User::class, 'user_id');
-    }
-
-    /**
-     * Establishes the component -> assignments relationship
-     *
-     * @author [A. Gianotto] [<snipe@snipe.net>]
-     * @since [v3.0]
-     * @return \Illuminate\Database\Eloquent\Relations\Relation
-     */
-    public function consumableAssignments()
-    {
-        return $this->hasMany(\App\Models\ConsumableAssignment::class);
-    }
+    
 
     /**
      * Establishes the component -> company relationship
@@ -317,99 +266,4 @@ class Allocation extends SnipeModel
         }
     }
 
-    /**
-     * Check how many items within a consumable are checked out
-     *
-     * @author [A. Gianotto] [<snipe@snipe.net>]
-     * @since [v5.0]
-     * @return int
-     */
-    public function numCheckedOut()
-    {
-        $checkedout = 0;
-        $checkedout = $this->users->count();
-
-        return $checkedout;
-    }
-
-    /**
-     * Checks the number of available consumables
-     *
-     * @author [A. Gianotto] [<snipe@snipe.net>]
-     * @since [v4.0]
-     * @return int
-     */
-    public function numRemaining()
-    {
-        $checkedout = $this->users->count();
-        $total = $this->qty;
-        $remaining = $total - $checkedout;
-
-        return $remaining;
-    }
-
-    /**
-     * Query builder scope to order on company
-     *
-     * @param  \Illuminate\Database\Query\Builder  $query  Query builder instance
-     * @param  string                              $order       Order
-     *
-     * @return \Illuminate\Database\Query\Builder          Modified query builder
-     */
-    public function scopeOrderCategory($query, $order)
-    {
-        return $query->join('categories', 'consumables.category_id', '=', 'categories.id')->orderBy('categories.name', $order);
-    }
-
-    /**
-     * Query builder scope to order on location
-     *
-     * @param  \Illuminate\Database\Query\Builder  $query  Query builder instance
-     * @param  text                              $order       Order
-     *
-     * @return \Illuminate\Database\Query\Builder          Modified query builder
-     */
-    public function scopeOrderLocation($query, $order)
-    {
-        return $query->leftJoin('locations', 'consumables.location_id', '=', 'locations.id')->orderBy('locations.name', $order);
-    }
-
-    /**
-     * Query builder scope to order on manufacturer
-     *
-     * @param  \Illuminate\Database\Query\Builder  $query  Query builder instance
-     * @param  string   $order       Order
-     *
-     * @return \Illuminate\Database\Query\Builder          Modified query builder
-     */
-    public function scopeOrderManufacturer($query, $order)
-    {
-        return $query->leftJoin('manufacturers', 'consumables.manufacturer_id', '=', 'manufacturers.id')->orderBy('manufacturers.name', $order);
-    }
-
-    /**
-     * Query builder scope to order on company
-     *
-     * @param  \Illuminate\Database\Query\Builder  $query  Query builder instance
-     * @param  string                              $order       Order
-     *
-     * @return \Illuminate\Database\Query\Builder          Modified query builder
-     */
-    public function scopeOrderCompany($query, $order)
-    {
-        return $query->leftJoin('companies', 'consumables.company_id', '=', 'companies.id')->orderBy('companies.name', $order);
-    }
-
-    /**
-     * Query builder scope to order on supplier
-     *
-     * @param  \Illuminate\Database\Query\Builder  $query  Query builder instance
-     * @param  text                              $order       Order
-     *
-     * @return \Illuminate\Database\Query\Builder          Modified query builder
-     */
-    public function scopeOrderSupplier($query, $order)
-    {
-        return $query->leftJoin('suppliers', 'consumables.supplier_id', '=', 'suppliers.id')->orderBy('suppliers.name', $order);
-    }
 }

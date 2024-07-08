@@ -139,35 +139,96 @@
 
     function actionFormatter(value, row, index) {
         return `
-            <button class="btn btn-success btn-sm" onclick="updateStatus(${row.id}, 'Sudah Disetujui')"><i class="fas fa-check" aria-hidden="true"></i></button>
-            <button class="btn btn-danger btn-sm" onclick="updateStatus(${row.id}, 'Tidak Disetujui')"><i class="fas fa-times" aria-hidden="true"></i></button>
+          <form  style="display:inline;">
+            <input type="hidden" name="setuju_button">
+            <button title="Setuju" class="btn btn-success btn-sm" data-toggle="modal" data-target="#setuju_popup">
+              <i class="fas fa-check" aria-hidden="true"></i></button>
+          </form>
+
+          <!-- Modal -->
+            <div class="modal" id="setuju_popup" tabindex="-1" role="dialog">
+            <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h3 class="modal-title">${row.name}</h3>
+                  <button type="button" class="close" style="position: absolute; right: 15px; top: 15px" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                  </button>
+                </div>
+                <div class="modal-body">
+                  <form id="setujuForm" method="post" action="">
+                    @csrf
+                    <div>
+                      <p> hello </p>  
+                    </div>
+                    <div class="box-footer">
+                      <a class="btn btn-link" class="close" data-dismiss="modal"> {{ trans('button.cancel') }}</a>
+                      <form action="{{ route('approval.update-status') }}" method="POST" style="display:inline;">
+                        @csrf
+                        @method('POST') <!-- Assuming a POST method for status update -->
+                        <input type="hidden" name="setuju" value="${row.id}"> <!-- Pass the id of the row -->
+                        <button type="submit" title="Setuju" class="btn btn-success pull-right" onclick="return confirm('Setujui Pengajuan?')">
+                          <i class="fas fa-check" aria-hidden="true"></i> Setuju
+                        </button>
+                      </form>
+                    </div>
+                  </form>
+                </div>
+              </div>
+            </div>
+            </div>
+
+          <form action="{{ route('approval.update-status') }}" method="POST" style="display:inline;">
+            @csrf
+            @method('POST') <!-- Assuming a POST method for status update -->
+            <input type="hidden" name="tidak_setuju" value="${row.id}"> <!-- Pass the id of the row -->
+            <button type="submit" title="Tidak Setuju" class="btn btn-danger btn-sm" onclick="return confirm('Tidaksetujui Pengajuan?')">
+              <i class="fas fa-times" aria-hidden="true"></i>
+            </button>
+          </form>
         `;
     }
 
-    function updateStatus(id, status) {
-        // Display an alert
-        alert(`Status will be updated to: ${status}`);
+    function actionHistoryFormatter(value, row, index) {
+        return `
+          <form method="get" style="display:inline;">
+            <input type="hidden" name="view_button" value="ch">
+            <button type="submit" title="Lihat" class="btn btn-warning btn-sm" data-toggle="modal" data-target="#view_popup">
+              <i class="fas fa-eye" aria-hidden="true"></i></button>
+          </form>
 
-        // Example AJAX request to update the status
-        fetch('/update-status', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRF-TOKEN': '{{ csrf_token() }}' // Include CSRF token for Laravel
-            },
-            body: JSON.stringify({ id: id, status: status })
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                alert('Status updated successfully.');
-                // Optionally refresh the table data
-                $('#historyTable').bootstrapTable('refresh');
-            } else {
-                alert('Failed to update status.');
-            }
-        })
-        .catch(error => console.error('Error:', error));
+          <!-- Modal -->
+            <div class="modal" id="view_popup" tabindex="-1" role="dialog">
+            <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h3 class="modal-title">${row.name} (${row.bmn})</h3>
+                  <button type="button" class="close" style="position: absolute; right: 15px; top: 15px" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                  </button>
+                </div>
+                <div class="modal-body">
+                  <form id="setujuForm" method="post" action="">
+                    @csrf
+                    <div>
+                      <div class="form-group">
+                          {{ Form::label('user', 'Nama Pegawai', array('class' => 'col-md-3 control-label')) }}
+                          <div class="col-md-8">
+                              <p class="form-control-static">
+                                  ${row.user_first_name}
+                              </p>
+                          </div>
+                      </div>  
+                    </div>
+                    <div class="box-footer">
+                      
+                    </div>
+                  </form>
+                </div>
+              </div>
+            </div>
+            </div>
+        `;
     }
   </script>
 

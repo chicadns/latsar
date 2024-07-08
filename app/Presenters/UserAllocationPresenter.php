@@ -5,7 +5,7 @@ namespace App\Presenters;
 /**
  * Class ComponentPresenter
  */
-class ApprovalHistoryPresenter extends Presenter
+class UserAllocationPresenter extends Presenter
 {
     /**
      * Json Column Layout for bootstrap table
@@ -15,22 +15,17 @@ class ApprovalHistoryPresenter extends Presenter
     {
         $layout = [
              [
+                'field' => 'icon',
+                'title' => '',
+                'align' => 'center',
+                'formatter' => 'warningFormatter'
+            ],
+             [
                 'field' => 'no',
                 'title' => 'No.',
                 'sortable' => true,
                 'align' => 'center',
                 'formatter' => 'counterFormatter'
-            ],
-            [
-                'field' => 'request_date',
-                'title' => 'Tanggal Permintaan',
-                'sortable' => true,
-                // 'formatter' => 'dateFormatter' // Optional: custom formatter for date
-            ],
-            [
-                'field' => 'user_first_name',
-                'title' => 'Nama Pegawai',
-                'sortable' => true
             ],
             [
                 'field' => 'category',
@@ -62,7 +57,7 @@ class ApprovalHistoryPresenter extends Presenter
                 'title' => 'Tindakan',
                 'sortable' => false,
                 'align' => 'center',
-                'formatter' => 'actionHistoryFormatter'
+                'formatter' => 'actionFormatter'
             ]
         ];
 

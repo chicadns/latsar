@@ -283,11 +283,13 @@ Route::group(['prefix' => 'approval', 'middleware' => ['auth']], function () {
     Route::get('/', [ApprovalController::class, 'index'])->name('approval');
     Route::get('request', [ApprovalController::class, 'getApprovalData'])->name('approval.request');
     Route::get('history', [ApprovalController::class, 'getAllData'])->name('approval.history');
-    Route::post('/update-status', [ApprovalController::class, 'updateStatus'])->name('update-status');
+    Route::post('update-status', [ApprovalController::class, 'updateStatus'])->name('approval.update-status');
 
 });
 
 Route::get('satker', [AllocationController::class, 'satker'])->name('satker.index');
+Route::post('/allocations/store', [AllocationController::class, 'storeAllocations'])->name('allocations.store'); 
+Route::get('/allocations/user', [AllocationController::class, 'viewAllocations'])->name('allocations.user'); 
 
 
 /*
@@ -301,9 +303,13 @@ Route::get('satker', [AllocationController::class, 'satker'])->name('satker.inde
 Route::group(['prefix' => 'account', 'middleware' => ['auth']], function () {
 
     // Tambah Alokasi
-    // Route::get('allocations', [AllocationController::class, 'add'])->name('allocations');
+    Route::get('/view-assets#asset', [AllocationController::class, 'getIndex'])->name('allocations.index');
     Route::get('allocations/{asset_id}/edit', [AllocationController::class, 'edit'])->name('allocations.edit');
-    Route::delete('allocations/{asset_id}', [AllocationController::class, 'destroy'])->name('allocations.destroy');
+    Route::delete('allocations/{allocation_id}', [AllocationController::class, 'destroy'])->name('allocations.destroy');
+    Route::post('allocations/{allocation_id}', [AllocationController::class, 'submit'])->name('allocations.submit');
+    Route::put('allocations/{allocation_id}', [AllocationController::class, 'update'])->name('allocations.update');
+
+
 
     // Profile
     Route::get('profile', [ProfileController::class, 'getIndex'])->name('profile');
