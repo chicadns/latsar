@@ -712,124 +712,74 @@
 @section('moar_scripts')
   @include ('partials.bootstrap-table')
   <script>
+
     function actionFormatter(value, row, index) {
-      let editButton = '';
-      let deleteButton = '';
-      let submitButton = '';
+      const editUrl = '{{ route("allocations.edit", [":asset_id"]) }}'.replace(':asset_id', row.asset_id);
+      const deleteUrl = '{{ route("allocations.destroy", [":asset_id"]) }}'.replace(':asset_id', row.id);
+      const submitUrl = '{{ route("allocations.submit", [":asset_id"]) }}'.replace(':asset_id', row.id);
 
-      let editUrl = '{{ route("allocations.edit", [":asset_id"]) }}';
-            editUrl = editUrl.replace(':asset_id', row.asset_id);
+      const csrfToken = '@csrf';
+      const methodDelete = '@method("DELETE")';
+      const methodPost = '@method("POST")';
 
-      let deleteUrl = '{{ route("allocations.destroy", [":asset_id"]) }}';
-            deleteUrl = deleteUrl.replace(':asset_id', row.id);
-
-      let submitUrl = '{{ route("allocations.submit", [":asset_id"]) }}';
-            submitUrl = submitUrl.replace(':asset_id', row.id);
-
-      // Logic based on status
-      if (row.status === "Menunggu Persetujuan") {
-          // Disabled: edit, delete, submit (all)
-          editButton = `<a href="#" title="Edit" class="actions btn btn-sm btn-warning disabled"> 
-                          <i class="fas fa-pencil-alt" aria-hidden="true"></i>
-                      </a>`;
-          deleteButton = `<form action="" method="POST" style="display:inline;">
-                              <button type="submit" title="Hapus" class="btn btn-danger btn-sm disabled" onclick="return confirm('Hapus Data Pengajuan?')">
-                                  <i class="fas fa-trash" aria-hidden="true"></i>
-                              </button>
-                          </form>`;
-          submitButton = `<form action="" method="POST" style="display:inline;">
-                              <input type="hidden" name="id" value="${row.id}">
-                              <button type="submit" title="Kirim" class="btn btn-success btn-sm disabled" onclick="return confirm('Kirim Pengajuan?')">
-                                  <i class="fas fa-paper-plane" aria-hidden="true"></i>
-                              </button>
-                          </form>`;
-      } else if (row.status === "Belum Dikirim") {
-        if(row.complete_status == 1) {
-          // Disabled: - (all available)
-          editButton = `<a href="${editUrl}"" title="Edit" class="actions btn btn-sm btn-warning">
-                          <i class="fas fa-pencil-alt" aria-hidden="true"></i>
-                      </a>`;
-          deleteButton = `<form action="${deleteUrl}" method="POST" style="display:inline;">
-                              @csrf
-                              @method('DELETE')
-                              <button type="submit" title="Hapus" class="btn btn-danger btn-sm" onclick="return confirm('Hapus Data Pengajuan?')">
-                                  <i class="fas fa-trash" aria-hidden="true"></i>
-                              </button>
-                          </form>`;
-          submitButton = `<form action="${submitUrl}" method="POST" style="display:inline;">
-                              @csrf
-                              @method('POST') <!-- Assuming a POST method for status update -->
-                              <input type="hidden" name="id" value="${row.id}">
-                              <button type="submit" title="Kirim" class="btn btn-success btn-sm" onclick="return confirm('Kirim Pengajuan?')">
-                                  <i class="fas fa-paper-plane" aria-hidden="true"></i>
-                              </button>
-                          </form>`;
-        } else {
-          // Disabled: kirim
-          editButton = `<a href="${editUrl}"" title="Edit" class="actions btn btn-sm btn-warning">
-                          <i class="fas fa-pencil-alt" aria-hidden="true"></i>
-                      </a>`;
-          deleteButton = `<form action="${deleteUrl}" method="POST" style="display:inline;">
-                              @csrf
-                              @method('DELETE')
-                              <button type="submit" title="Hapus" class="btn btn-danger btn-sm" onclick="return confirm('Hapus Data Pengajuan?')">
-                                  <i class="fas fa-trash" aria-hidden="true"></i>
-                              </button>
-                          </form>`;
-          submitButton = `<form action="${submitUrl}" method="POST" style="display:inline;">
-                              @csrf
-                              @method('POST') <!-- Assuming a POST method for status update -->
-                              <input type="hidden" name="id" value="${row.id}">
-                              <button type="submit" title="Kirim" class="disabbled btn btn-success btn-sm" onclick="return confirm('Kirim Pengajuan?')">
-                                  <i class="fas fa-paper-plane" aria-hidden="true"></i>
-                              </button>
-                          </form>`;
-        }                     
-      } else if (row.status === "Sudah Disetujui") {
-          // Disabled: delete, submit
-          editButton = `<a href="${editUrl}" title="Edit" class="actions btn btn-sm btn-warning">
-                          <i class="fas fa-pencil-alt" aria-hidden="true"></i>
-                      </a>`;
-          deleteButton = `<form action="" method="POST" style="display:inline;">
-                              <button type="submit" title="Hapus" class="btn btn-danger btn-sm disabled" onclick="return confirm('Hapus Data Pengajuan?')">
-                                  <i class="fas fa-trash" aria-hidden="true"></i>
-                              </button>
-                          </form>`;
-          submitButton = `<form action="" method="POST" style="display:inline;">
-                              <input type="hidden" name="id" value="${row.id}">
-                              <button type="submit" title="Kirim" class="btn btn-success btn-sm disabled" onclick="return confirm('Kirim Pengajuan?')">
-                                  <i class="fas fa-paper-plane" aria-hidden="true"></i>
-                              </button>
-                          </form>`;
-      } else if (row.status === "Tidak Disetujui") {
-          // Disabled: edit, submit
-          editButton = `<a href="#" title="Edit" class="actions btn btn-sm btn-warning disabled">
-                          <i class="fas fa-pencil-alt" aria-hidden="true"></i>
-                      </a>`;
-          deleteButton = `<form action="${deleteUrl}" method="" style="display:inline;">
-                              @csrf
-                              @method('DELETE')
-                              <input type="hidden" name="deleted_at" value="{{ now() }}">
-                              <button type="submit" title="Hapus" class="btn btn-danger btn-sm" onclick="return confirm('Hapus Data Pengajuan?')">
-                                  <i class="fas fa-trash" aria-hidden="true"></i>
-                              </button>
-                          </form>`;
-          submitButton = `<form action="" method="POST" style="display:inline;">
-                              <input type="hidden" name="id" value="${row.id}">
-                              <button type="submit" title="Kirim" class="btn btn-success btn-sm disabled" onclick="return confirm('Kirim Pengajuan?')">
-                                  <i class="fas fa-paper-plane" aria-hidden="true"></i>
-                              </button>
-                          </form>`;
+      function createButton(url, title, classes, icon, confirmMessage, extraAttributes = '') {
+          return `<a href="${url}" title="${title}" class="${classes}" ${extraAttributes}>
+                      <i class="${icon}" aria-hidden="true"></i>
+                  </a>`;
       }
 
-      return `
-          <nobr>
-              ${editButton}
-              ${deleteButton}
-              ${submitButton}
-          </nobr>
-      `;
-    }
+      function createForm(url, title, classes, icon, confirmMessage, hiddenFields = '') {
+          return `<form action="${url}" method="POST" style="display:inline;">
+                      ${csrfToken}
+                      ${hiddenFields}
+                      <button type="submit" title="${title}" class="${classes}" onclick="return confirm('${confirmMessage}')">
+                          <i class="${icon}" aria-hidden="true"></i>
+                      </button>
+                  </form>`;
+      }
+
+      let editButton = '', deleteButton = '', submitButton = '';
+
+      switch (row.status) {
+          case "Menunggu Persetujuan":
+              editButton = createButton('#', 'Edit', 'actions btn btn-sm btn-warning disabled', 'fas fa-pencil-alt', '');
+              deleteButton = createForm('', 'Hapus', 'btn btn-danger btn-sm disabled', 'fas fa-trash', 'Hapus Data Pengajuan?');
+              submitButton = createForm('', 'Kirim', 'btn btn-success btn-sm disabled', 'fas fa-paper-plane', 'Kirim Pengajuan?');
+              break;
+
+          case "Belum Dikirim":
+              if (row.complete_status == 1) {
+                  editButton = createButton(editUrl, 'Edit', 'actions btn btn-sm btn-warning', 'fas fa-pencil-alt', '');
+                  deleteButton = createForm(deleteUrl, 'Hapus', 'btn btn-danger btn-sm', 'fas fa-trash', 'Hapus Data Pengajuan?', methodDelete);
+                  submitButton = createForm(submitUrl, 'Kirim', 'btn btn-success btn-sm', 'fas fa-paper-plane', 'Kirim Pengajuan?', `<input type="hidden" name="id" value="${row.id}">${methodPost}`);
+              } else {
+                  editButton = createButton(editUrl, 'Edit', 'actions btn btn-sm btn-warning', 'fas fa-pencil-alt', '');
+                  deleteButton = createForm(deleteUrl, 'Hapus', 'btn btn-danger btn-sm', 'fas fa-trash', 'Hapus Data Pengajuan?', methodDelete);
+                  submitButton = createForm(submitUrl, 'Kirim', 'btn btn-success btn-sm disabled', 'fas fa-paper-plane', 'Kirim Pengajuan?', `<input type="hidden" name="id" value="${row.id}">${methodPost}`);
+              }
+              break;
+
+          case "Sudah Disetujui":
+              editButton = createButton(editUrl, 'Edit', 'actions btn btn-sm btn-warning', 'fas fa-pencil-alt', '');
+              deleteButton = createForm('', 'Hapus', 'btn btn-danger btn-sm disabled', 'fas fa-trash', 'Hapus Data Pengajuan?');
+              submitButton = createForm('', 'Kirim', 'btn btn-success btn-sm disabled', 'fas fa-paper-plane', 'Kirim Pengajuan?');
+              break;
+
+          case "Tidak Disetujui":
+              editButton = createButton('#', 'Edit', 'actions btn btn-sm btn-warning disabled', 'fas fa-pencil-alt', '');
+              deleteButton = createForm(deleteUrl, 'Hapus', 'btn btn-danger btn-sm', 'fas fa-trash', 'Hapus Data Pengajuan?', `${methodDelete}<input type="hidden" name="deleted_at" value="{{ now() }}">`);
+              submitButton = createForm('', 'Kirim', 'btn btn-success btn-sm disabled', 'fas fa-paper-plane', 'Kirim Pengajuan?');
+              break;
+      }
+
+    return `
+        <nobr>
+            ${editButton}
+            ${deleteButton}
+            ${submitButton}
+        </nobr>
+    `;
+}
 
     function warningFormatter(value, row, index) {
         return `<nobr>${value}</nobr>`;

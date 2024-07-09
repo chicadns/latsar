@@ -97,16 +97,13 @@ class ApprovalController extends Controller
 
     public function updateStatus(Request $request)
     {
-        // Authorization check
-        // $this->authorize('update', Allocation::class);
-        
-        // Check if 'setuju' is present in the request
+        // Check if 'setuju' or 'tidak_setuju' is present in the request
         if ($request->has('setuju')) {
             $id = $request->input('setuju');
-            $status = 'Sudah Disetujui'; // or whatever status represents approval
+            $status = 'Sudah Disetujui';
         } elseif ($request->has('tidak_setuju')) {
             $id = $request->input('tidak_setuju');
-            $status = 'Tidak Disetujui'; // or whatever status represents rejection
+            $status = 'Tidak Disetujui';
         } else {
             return redirect()->back()->with('error', 'Invalid request');
         }
@@ -115,18 +112,15 @@ class ApprovalController extends Controller
         $allocation = Allocation::find($id);
         if ($allocation) {
             $allocation->status = $status;
+            $allocation->handling_date = now();
             $allocation->save();
 
-            if($status='Sudah Disetujui'){
-                return redirect()->back()->with('success', 'Setujui Pengajuan Berhasil!');
-            } elseif ($status='Tidak Disetujui') {
-                return redirect()->back()->with('success', 'Tidaksetujui Pengajuan Berhasil!');
-            }
-            
+            return redirect()->back()->with('success', $status == 'Sudah Disetujui' ? 'Setujui Pengajuan Berhasil!' : 'Tidaksetujui Pengajuan Berhasil!');
         } else {
             return redirect()->back()->with('error', 'Alokasi Tidak Ditemukan!');
         }
     }
+
     
     public function getAllData()
     {

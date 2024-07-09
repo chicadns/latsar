@@ -69,14 +69,6 @@
                   "fileName": "export-approval-{{ date('Y-m-d') }}",
                   "ignoreColumn": ["actions"]
                   }'>
-                    {{-- <thead>
-                      <tr>
-                          <th data-field="name" data-sortable="true">Nama Perangkat</th>
-                          <th data-field="bmn" data-sortable="true">Nomor BMN</th>
-                          <th data-field="serial" data-sortable="true">Serial Number</th>
-                          <!-- Add other columns as needed -->
-                      </tr>
-                    </thead> --}}
                 </table>
 
               </div>
@@ -105,8 +97,8 @@
                   data-show-export="true"
                   data-show-footer="true"
                   data-show-refresh="true"
-                  data-sort-order="asc"
-                  data-sort-name="id"
+                  data-sort-order="desc"
+                  data-sort-name="request_date"
                   data-toolbar="#toolbar"
                   id="historyTable"
                   class="table table-striped snipe-table"
@@ -138,98 +130,260 @@
     }
 
     function actionFormatter(value, row, index) {
-        return `
-          <form  style="display:inline;">
-            <input type="hidden" name="setuju_button">
-            <button title="Setuju" class="btn btn-success btn-sm" data-toggle="modal" data-target="#setuju_popup">
-              <i class="fas fa-check" aria-hidden="true"></i></button>
-          </form>
+    const modalId = `setuju_popup_${index}`;
+    return `
+      <div style="display:inline;">
+        <input type="hidden" name="setuju_button">
+        <button title="Setuju" class="btn btn-success btn-sm" data-toggle="modal" data-target="#${modalId}">
+          <i class="fas fa-check" aria-hidden="true"></i></button>
+      </div>
 
-          <!-- Modal -->
-            <div class="modal" id="setuju_popup" tabindex="-1" role="dialog">
-            <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
-              <div class="modal-content">
-                <div class="modal-header">
-                  <h3 class="modal-title">${row.name}</h3>
-                  <button type="button" class="close" style="position: absolute; right: 15px; top: 15px" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                  </button>
+      <!-- Modal -->
+      <div class="modal" id="${modalId}" tabindex="-1" role="dialog">
+        <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h4 class="modal-title"><b>Detail Pengajuan</b></h4>
+              <button type="button" class="close" style="position: absolute; right: 15px; top: 15px" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body">
+              <div id="setujuForm" action="">
+                @csrf
+                <div class="box-body">
+                  <!-- Tanggal Pengajuan -->
+                  <div class="form-group row">
+                    <label for="request_date" class="col-md-4 col-form-label control-label text-right">Tanggal Pengajuan</label>
+                    <div class="col-md-8 text-left" name="request_date" style="margin-top: -7px;">
+                      <p class="form-control-static">${row.request_date}</p>
+                    </div>
+                  </div>
+
+                  <!-- Nama Pegawai -->
+                  <div class="form-group row">
+                    <label for="user_first_name" class="col-md-4 col-form-label control-label text-right">Nama Pegawai</label>
+                    <div class="col-md-8 text-left" name="user_first_name" style="margin-top: -7px;">
+                      <p class="form-control-static">${row.user_first_name}</p>
+                    </div>
+                  </div>
+
+                  <!-- Nama Perangkat -->
+                  <div class="form-group row">
+                    <label for="name" class="col-md-4 col-form-label control-label text-right">Nama Perangkat</label>
+                    <div class="col-md-8 text-left" name="name" style="margin-top: -7px;">
+                      <p class="form-control-static">${row.name}</p>
+                    </div>
+                  </div>
+
+                  <!-- Kategori -->
+                  <div class="form-group row">
+                    <label for="category" class="col-md-4 col-form-label control-label text-right">Kategori</label>
+                    <div class="col-md-8 text-left" name="category" style="margin-top: -7px;">
+                      <p class="form-control-static">${row.category}</p>
+                    </div>
+                  </div>
+
+                  <!-- Nomor BMN -->
+                  <div class="form-group row">
+                    <label for="bmn" class="col-md-4 col-form-label control-label text-right">Nomor BMN</label>
+                    <div class="col-md-8 text-left" name="bmn" style="margin-top: -7px;">
+                      <p class="form-control-static">${row.bmn}</p>
+                    </div>
+                  </div>
+
+                  <!-- Serial Number -->
+                  <div class="form-group row">
+                    <label for="serial" class="col-md-4 col-form-label control-label text-right">Nomor serial</label>
+                    <div class="col-md-8 text-left" name="serial" style="margin-top: -7px;">
+                      <p class="form-control-static">${row.serial}</p>
+                    </div>
+                  </div>
+
+                  <!-- Bukti Dukung -->
+                  <div class="form-group row">
+                    <label for="link" class="col-md-4 col-form-label control-label text-right">Bukti Dukung</label>
+                    <div class="col-md-8 text-left" name="link" style="margin-top: -7px;">
+                      <p class="form-control-static"></p>
+                    </div>
+                  </div>
+
+                  <h6>Informasi Software</h6>
+
+                  <!-- Operating System (OS) -->
+                  <div class="form-group row">
+                    <label for="link" class="col-md-4 col-form-label control-label text-right">Operating System (OS)</label>
+                    <div class="col-md-8 text-left" name="link" style="margin-top: -7px;">
+                      <p class="form-control-static"></p>
+                    </div>
+                  </div>
+
+                  <!-- Microsoft Office -->
+                  <div class="form-group row">
+                    <label for="link" class="col-md-4 col-form-label control-label text-right">Microsoft Office</label>
+                    <div class="col-md-8 text-left" name="link" style="margin-top: -7px;">
+                      <p class="form-control-static"></p>
+                    </div>
+                  </div>
+
+                  <!-- Antivirus -->
+                  <div class="form-group row">
+                    <label for="link" class="col-md-4 col-form-label control-label text-right">Antivirus</label>
+                    <div class="col-md-8 text-left" name="link" style="margin-top: -7px;">
+                      <p class="form-control-static"></p>
+                    </div>
+                  </div>
                 </div>
-                <div class="modal-body">
-                  <form id="setujuForm" method="post" action="">
+
+                <div class="box-footer">
+                  <a class="btn btn-link pull-left" class="close" data-dismiss="modal"> {{ trans('button.cancel') }}</a>
+                  <form action="{{ route('approval.update-status') }}" method="POST" style="display:inline;">
                     @csrf
-                    <div>
-                      <p> hello </p>  
-                    </div>
-                    <div class="box-footer">
-                      <a class="btn btn-link" class="close" data-dismiss="modal"> {{ trans('button.cancel') }}</a>
-                      <form action="{{ route('approval.update-status') }}" method="POST" style="display:inline;">
-                        @csrf
-                        @method('POST') <!-- Assuming a POST method for status update -->
-                        <input type="hidden" name="setuju" value="${row.id}"> <!-- Pass the id of the row -->
-                        <button type="submit" title="Setuju" class="btn btn-success pull-right" onclick="return confirm('Setujui Pengajuan?')">
-                          <i class="fas fa-check" aria-hidden="true"></i> Setuju
-                        </button>
-                      </form>
-                    </div>
+                    <input type="hidden" name="setuju" value="${row.id}"> <!-- Pass the id of the row -->
+                    <button type="submit" title="Setuju" class="btn btn-success pull-right">
+                      <i class="fas fa-check" aria-hidden="true"></i> Setuju
+                    </button>
                   </form>
                 </div>
               </div>
             </div>
-            </div>
+          </div>
+        </div>
+      </div>
 
-          <form action="{{ route('approval.update-status') }}" method="POST" style="display:inline;">
-            @csrf
-            @method('POST') <!-- Assuming a POST method for status update -->
-            <input type="hidden" name="tidak_setuju" value="${row.id}"> <!-- Pass the id of the row -->
-            <button type="submit" title="Tidak Setuju" class="btn btn-danger btn-sm" onclick="return confirm('Tidaksetujui Pengajuan?')">
-              <i class="fas fa-times" aria-hidden="true"></i>
-            </button>
-          </form>
-        `;
-    }
+      <form action="{{ route('approval.update-status') }}" method="POST" style="display:inline;">
+        <input type="hidden" name="tidak_setuju" value="${row.id}"> <!-- Pass the id of the row -->
+        <button type="submit" title="Tidak Setuju" class="btn btn-danger btn-sm" onclick="return confirm('Tidaksetujui Pengajuan?')">
+          <i class="fas fa-times" aria-hidden="true"></i>
+        </button>
+      </form>
+    `;
+}
 
     function actionHistoryFormatter(value, row, index) {
-        return `
-          <form method="get" style="display:inline;">
-            <input type="hidden" name="view_button" value="ch">
-            <button type="submit" title="Lihat" class="btn btn-warning btn-sm" data-toggle="modal" data-target="#view_popup">
-              <i class="fas fa-eye" aria-hidden="true"></i></button>
-          </form>
+    const modalId = `view_popup_${index}`;
+    return `
+      <div style="display:inline;">
+        <input type="hidden" name="view_button">
+        <button title="Lihat" class="btn btn-warning btn-sm" data-toggle="modal" data-target="#${modalId}">
+          <i class="fas fa-eye" aria-hidden="true"></i></button>
+      </div>
 
-          <!-- Modal -->
-            <div class="modal" id="view_popup" tabindex="-1" role="dialog">
-            <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
-              <div class="modal-content">
-                <div class="modal-header">
-                  <h3 class="modal-title">${row.name} (${row.bmn})</h3>
-                  <button type="button" class="close" style="position: absolute; right: 15px; top: 15px" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                  </button>
-                </div>
-                <div class="modal-body">
-                  <form id="setujuForm" method="post" action="">
-                    @csrf
-                    <div>
-                      <div class="form-group">
-                          {{ Form::label('user', 'Nama Pegawai', array('class' => 'col-md-3 control-label')) }}
-                          <div class="col-md-8">
-                              <p class="form-control-static">
-                                  ${row.user_first_name}
-                              </p>
-                          </div>
-                      </div>  
-                    </div>
-                    <div class="box-footer">
-                      
-                    </div>
-                  </form>
-                </div>
-              </div>
+      <!-- Modal -->
+      <div class="modal" id="${modalId}" tabindex="-1" role="dialog">
+        <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h4 class="modal-title"><b>Detail Pengajuan</b></h4>
+              <button type="button" class="close" style="position: absolute; right: 15px; top: 15px" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
             </div>
+            <div class="modal-body">
+              <form id="setujuForm" action="">
+                <div class="box-body">
+                  <!-- Tanggal Pengajuan -->
+                  <div class="form-group row">
+                    <label for="request_date" class="col-md-4 col-form-label control-label text-right">Tanggal Pengajuan</label>
+                    <div class="col-md-8 text-left" name="request_date" style="margin-top: -7px;">
+                      <p class="form-control-static">${row.request_date}</p>
+                    </div>
+                  </div>
+
+                  <!-- Nama Pegawai -->
+                  <div class="form-group row">
+                    <label for="user_first_name" class="col-md-4 col-form-label control-label text-right">Nama Pegawai</label>
+                    <div class="col-md-8 text-left" name="user_first_name" style="margin-top: -7px;">
+                      <p class="form-control-static">${row.user_first_name}</p>
+                    </div>
+                  </div>
+
+                  <!-- Nama Perangkat -->
+                  <div class="form-group row">
+                    <label for="name" class="col-md-4 col-form-label control-label text-right">Nama Perangkat</label>
+                    <div class="col-md-8 text-left" name="name" style="margin-top: -7px;">
+                      <p class="form-control-static">${row.name}</p>
+                    </div>
+                  </div>
+
+                  <!-- Kategori -->
+                  <div class="form-group row">
+                    <label for="category" class="col-md-4 col-form-label control-label text-right">Kategori</label>
+                    <div class="col-md-8 text-left" name="category" style="margin-top: -7px;">
+                      <p class="form-control-static">${row.category}</p>
+                    </div>
+                  </div>
+
+                  <!-- Nomor BMN -->
+                  <div class="form-group row">
+                    <label for="bmn" class="col-md-4 col-form-label control-label text-right">Nomor BMN</label>
+                    <div class="col-md-8 text-left" name="bmn" style="margin-top: -7px;">
+                      <p class="form-control-static">${row.bmn}</p>
+                    </div>
+                  </div>
+
+                  <!-- Serial Number -->
+                  <div class="form-group row">
+                    <label for="serial" class="col-md-4 col-form-label control-label text-right">Nomor serial</label>
+                    <div class="col-md-8 text-left" name="serial" style="margin-top: -7px;">
+                      <p class="form-control-static">${row.serial}</p>
+                    </div>
+                  </div>
+
+                  <!-- Serial Number -->
+                  <div class="form-group row">
+                    <label for="status" class="col-md-4 col-form-label control-label text-right">Status Persetjuan</label>
+                    <div class="col-md-8 text-left" name="status" style="margin-top: -7px;">
+                      <p class="form-control-static">${row.status}</p>
+                    </div>
+                  </div>
+
+                  <!-- Bukti Dukung -->
+                  <div class="form-group row">
+                    <label for="link" class="col-md-4 col-form-label control-label text-right">Bukti Dukung</label>
+                    <div class="col-md-8 text-left" name="link" style="margin-top: -7px;">
+                      <p class="form-control-static"></p>
+                    </div>
+                  </div>
+
+                  <h6>Informasi Software</h6>
+
+                  <!-- Operating System (OS) -->
+                  <div class="form-group row">
+                    <label for="link" class="col-md-4 col-form-label control-label text-right">Operating System (OS)</label>
+                    <div class="col-md-8 text-left" name="link" style="margin-top: -7px;">
+                      <p class="form-control-static"></p>
+                    </div>
+                  </div>
+
+                  <!-- Microsoft Office -->
+                  <div class="form-group row">
+                    <label for="link" class="col-md-4 col-form-label control-label text-right">Microsoft Office</label>
+                    <div class="col-md-8 text-left" name="link" style="margin-top: -7px;">
+                      <p class="form-control-static"></p>
+                    </div>
+                  </div>
+
+                  <!-- Antivirus -->
+                  <div class="form-group row">
+                    <label for="link" class="col-md-4 col-form-label control-label text-right">Antivirus</label>
+                    <div class="col-md-8 text-left" name="link" style="margin-top: -7px;">
+                      <p class="form-control-static"></p>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="box-footer">
+                  <a class="btn btn-link pull-right" class="close" data-dismiss="modal"> Tutup</a>
+                </div>
+              </form>
             </div>
-        `;
-    }
+          </div>
+        </div>
+      </div>
+    `;
+  }
+
   </script>
 
 

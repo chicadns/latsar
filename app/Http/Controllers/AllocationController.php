@@ -184,7 +184,7 @@ class AllocationController extends Controller
                     'icon' => $isUncomplete ?
                         '<i class="fa fa-check-circle" style="color: green;" title="Data Sudah Lengkap."></i>' :
                         '<i class="fa fa-warning" style="color: orange;" title="Data Belum Lengkap!"></i>',
-                    'complete_status' => $isUncomplete ? 1:0
+                    'complete_status' => $isUncomplete ? 1:0,
                     // Add other fields as needed
                 ];
             })

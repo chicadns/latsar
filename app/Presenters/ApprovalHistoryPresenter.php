@@ -23,7 +23,7 @@ class ApprovalHistoryPresenter extends Presenter
             ],
             [
                 'field' => 'request_date',
-                'title' => 'Tanggal Permintaan',
+                'title' => 'Tanggal Pengajuan',
                 'sortable' => true,
                 // 'formatter' => 'dateFormatter' // Optional: custom formatter for date
             ],

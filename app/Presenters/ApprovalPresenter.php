@@ -14,7 +14,12 @@ class ApprovalPresenter extends Presenter
     public static function dataTableLayout()
     {
         $layout = [
-             [
+            [
+                'field' => 'checkbox',
+                'checkbox' => true,
+                'align' => 'center'
+            ], 
+            [
                 'field' => 'no',
                 'title' => 'No.',
                 'sortable' => true,
@@ -23,7 +28,7 @@ class ApprovalPresenter extends Presenter
             ],
             [
                 'field' => 'request_date',
-                'title' => 'Tanggal Permintaan',
+                'title' => 'Tanggal Pengajuan',
                 'sortable' => true,
                 // 'formatter' => 'dateFormatter' // Optional: custom formatter for date
             ],
