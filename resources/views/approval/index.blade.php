@@ -131,6 +131,21 @@
 
     function actionFormatter(value, row, index) {
     const modalId = `setuju_popup_${index}`;
+
+    // Conditionally create the supporting link section
+    let supportingLinkHtml = '';
+    if (row.kondisi === 'Rusak Berat') {
+        supportingLinkHtml = `
+            <!-- Bukti Dukung -->
+            <div class="form-group row">
+                <label for="link" class="col-md-4 col-form-label control-label text-right">Bukti Dukung</label>
+                <div class="col-md-8 text-left" name="link" style="margin-top: 1px;">
+                    <a href="${row.supporting_link}" target="_blank" class="form-control-static">${row.supporting_link}</a>
+                </div>
+            </div>
+        `;
+    }
+
     return `
       <div style="display:inline;">
         <input type="hidden" name="setuju_button">
@@ -199,22 +214,24 @@
                       <p class="form-control-static">${row.serial}</p>
                     </div>
                   </div>
-
-                  <!-- Bukti Dukung -->
+                  
+                  <!-- Kondisi -->
                   <div class="form-group row">
-                    <label for="link" class="col-md-4 col-form-label control-label text-right">Bukti Dukung</label>
-                    <div class="col-md-8 text-left" name="link" style="margin-top: -7px;">
-                      <p class="form-control-static"></p>
+                    <label for="kondisi" class="col-md-4 col-form-label control-label text-right">Kondisi</label>
+                    <div class="col-md-8 text-left" name="kondisi" style="margin-top: -7px;">
+                      <p class="form-control-static">${row.kondisi}</p>
                     </div>
                   </div>
 
-                  <h6>Informasi Software</h6>
+                  ${supportingLinkHtml}
+
+                  <h6 style="margin-bottom: 15px; margin-top: 20px;">Informasi Software</h6>
 
                   <!-- Operating System (OS) -->
                   <div class="form-group row">
                     <label for="link" class="col-md-4 col-form-label control-label text-right">Operating System (OS)</label>
                     <div class="col-md-8 text-left" name="link" style="margin-top: -7px;">
-                      <p class="form-control-static"></p>
+                      <p class="form-control-static">${row.os}</p>
                     </div>
                   </div>
 
@@ -222,7 +239,7 @@
                   <div class="form-group row">
                     <label for="link" class="col-md-4 col-form-label control-label text-right">Microsoft Office</label>
                     <div class="col-md-8 text-left" name="link" style="margin-top: -7px;">
-                      <p class="form-control-static"></p>
+                      <p class="form-control-static">${row.office}</p>
                     </div>
                   </div>
 
@@ -230,7 +247,7 @@
                   <div class="form-group row">
                     <label for="link" class="col-md-4 col-form-label control-label text-right">Antivirus</label>
                     <div class="col-md-8 text-left" name="link" style="margin-top: -7px;">
-                      <p class="form-control-static"></p>
+                      <p class="form-control-static">${row.antivirus}</p>
                     </div>
                   </div>
                 </div>
@@ -258,7 +275,7 @@
         </button>
       </form>
     `;
-}
+  }
 
     function actionHistoryFormatter(value, row, index) {
     const modalId = `view_popup_${index}`;

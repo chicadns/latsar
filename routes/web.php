@@ -304,7 +304,7 @@ Route::group(['prefix' => 'account', 'middleware' => ['auth']], function () {
 
     // Tambah Alokasi
     Route::get('/view-assets#asset', [AllocationController::class, 'getIndex'])->name('allocations.index');
-    Route::get('allocations/{asset_id}/edit', [AllocationController::class, 'edit'])->name('allocations.edit');
+    Route::get('/allocations/{id}/{asset_id}/edit', [AllocationController::class, 'edit'])->name('allocations.edit');
     Route::delete('allocations/{allocation_id}', [AllocationController::class, 'destroy'])->name('allocations.destroy');
     Route::post('allocations/{allocation_id}', [AllocationController::class, 'submit'])->name('allocations.submit');
     Route::put('allocations/{allocation_id}', [AllocationController::class, 'update'])->name('allocations.update');

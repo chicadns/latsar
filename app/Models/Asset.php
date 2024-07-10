@@ -1950,5 +1950,12 @@ class Asset extends Depreciable
         return $this->belongsTo(\App\Models\Category::class, 'category_id');
     }
 
+    public function getKondisiAttribute()
+    {
+        // Get the value from the 'notes' column
+        $notes = $this->attributes['notes'];
 
+        // Extract the value before " -"
+        return explode(' -', $notes)[0];
+    }
 }

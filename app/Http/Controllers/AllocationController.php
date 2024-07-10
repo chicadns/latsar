@@ -193,28 +193,65 @@ class AllocationController extends Controller
         return response()->json($data);
     }
 
-    public function edit($asset_id)
+    public function edit($id, $assets_id)
     {
-        // Your logic for editing the allocation
+        // Retrieve the authenticated user
+        $user = Auth::user();
 
-        $allocation = Allocation::where('assets_id', $asset_id)->first();
-        $assets = Asset::where('company_id', Auth::user()->company_id)
-            ->where('id', $asset_id)
+        // Find the allocation that matches the given id and belongs to the authenticated user
+        $allocation = Allocation::where('assets_id', $assets_id)
+            ->where('user_id', $user->id)
+            ->where('status', "Belum Dikirim")
             ->first();
 
-        $asset = $assets;
+        // Find the asset that matches the given assets_id and belongs to the same company as the authenticated user
+        $assets = Asset::where('company_id', $user->company_id)
+            ->where('id', $assets_id)
+            ->first();
 
-        if ($allocation->allocation_code == "2") {
-            $asset = Allocation::where('assets_id', $asset_id)->first();
+        // Debugging output to check the value of $assets_id
+        // var_dump($assets_id); die();
+
+        $allocation_id = [];
+
+        if ($allocation) {
+            if ($allocation->allocation_code == "2") {
+                $data = $allocation;
+            } else {
+                $data = $assets;
+            }
+            $allocation_id = $allocation->id;
         } else {
-            $asset = $assets;
+            // If no allocation is found, create a new one
+            $allocation = Allocation::create([
+                'company_id' => $assets->company_id,
+                'user_id' => $user->id,
+                'assigned_type' => 'App\Models\User',
+                'assets_id' => $assets->id,
+                'category_id' => $assets->model->category_id,
+                'name' => $assets->name,
+                'bmn' => $assets->bmn,
+                'serial' => $assets->serial,
+                'kondisi' => $assets->kondisi,
+                'os' => $assets->_snipeit_sistem_operasi_2,
+                'office' => $assets->_snipeit_software_office_1,
+                'antivirus' => $assets->_snipeit_antivirus_3,
+                'status' => 'Belum Dikirim',
+                'request_date' => now(),
+                'allocation_code' => '1'
+            ]);
+            $allocation_id = $allocation->id;
+            $data = $allocation;
         }
 
+        // Retrieve the asset tag from the assets
+        $asset = $data;
         $asset_tag = $assets->asset_tag;
 
         // Pass the allocation data to the view
-        return view('account/edit-allocation', compact('asset', 'asset_tag'));
+        return view('account/edit-allocation', compact('asset', 'asset_tag', 'allocation_id'));
     }
+
 
     public function destroy($allocation_id)
     {
@@ -240,7 +277,7 @@ class AllocationController extends Controller
         }
     }
 
-    public function update(Request $request, Allocation $allocation)
+    public function update(Request $request, $allocation_id)
     {
         // Validate incoming requests
         $validatedData = $request->validate([
@@ -253,21 +290,29 @@ class AllocationController extends Controller
             'antivirus' => 'nullable|string|max:255',
         ]);
 
-        // Update allocation with validated data
-        $allocation->bmn = $validatedData['bmn'];
-        $allocation->serial = $validatedData['serial'];
-        $allocation->kondisi = $validatedData['kondisi'];
-        $allocation->supporting_link = $validatedData['supporting_link'];
-        $allocation->os = $validatedData['os'];
-        $allocation->office = $validatedData['office'];
-        $allocation->antivirus = $validatedData['antivirus'];
-        $allocation->allocation_code = 2;
-        $allocation->status = "Belum Dikirim";
-        // Save changes
-        $allocation->save();
+        try {
+            $allocation = Allocation::findOrFail($allocation_id);
+            // Update allocation with validated data
+            $allocation->bmn = $validatedData['bmn'];
+            $allocation->serial = $validatedData['serial'];
+            $allocation->kondisi = $validatedData['kondisi'];
+            $allocation->supporting_link = $validatedData['supporting_link'];
+            $allocation->os = $validatedData['os'];
+            $allocation->office = $validatedData['office'];
+            $allocation->antivirus = $validatedData['antivirus'];
+            $allocation->allocation_code = 2;
+            $allocation->status = "Belum Dikirim";
+            // Save changes
+            $allocation->save();
 
-        // Redirect back with success message
-        return redirect()->route('allocations.index')->with('success', 'Perangkat IT Berhasil di-update!');
+            // Redirect back with success message
+            return redirect()->route('allocations.index')->with('success', 'Perangkat IT Berhasil di-update!');
+        } catch (\Exception $e) {
+            Log::error('Error updating allocation: ' . $e->getMessage());
+            return redirect()->route('allocations.index')->with('error', 'Gagal update informasi perangkat. Silakan coba lagi.');
+        }
+
+        
     }
 
     /**

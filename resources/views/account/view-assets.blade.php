@@ -714,63 +714,63 @@
   <script>
 
     function actionFormatter(value, row, index) {
-      const editUrl = '{{ route("allocations.edit", [":asset_id"]) }}'.replace(':asset_id', row.asset_id);
-      const deleteUrl = '{{ route("allocations.destroy", [":asset_id"]) }}'.replace(':asset_id', row.id);
-      const submitUrl = '{{ route("allocations.submit", [":asset_id"]) }}'.replace(':asset_id', row.id);
+    const editUrl = '{{ route("allocations.edit", [":id", ":asset_id"]) }}'.replace(':id', row.id).replace(':asset_id', row.asset_id);
+    const deleteUrl = '{{ route("allocations.destroy", [":asset_id"]) }}'.replace(':asset_id', row.id);
+    const submitUrl = '{{ route("allocations.submit", [":asset_id"]) }}'.replace(':asset_id', row.id);
 
-      const csrfToken = '@csrf';
-      const methodDelete = '@method("DELETE")';
-      const methodPost = '@method("POST")';
+    const csrfToken = '@csrf';
+    const methodDelete = '@method("DELETE")';
+    const methodPost = '@method("POST")';
 
-      function createButton(url, title, classes, icon, confirmMessage, extraAttributes = '') {
-          return `<a href="${url}" title="${title}" class="${classes}" ${extraAttributes}>
-                      <i class="${icon}" aria-hidden="true"></i>
-                  </a>`;
-      }
+    function createButton(url, title, classes, icon, confirmMessage, extraAttributes = '') {
+        return `<a href="${url}" title="${title}" class="${classes}" ${extraAttributes}>
+                    <i class="${icon}" aria-hidden="true"></i>
+                </a>`;
+    }
 
-      function createForm(url, title, classes, icon, confirmMessage, hiddenFields = '') {
-          return `<form action="${url}" method="POST" style="display:inline;">
-                      ${csrfToken}
-                      ${hiddenFields}
-                      <button type="submit" title="${title}" class="${classes}" onclick="return confirm('${confirmMessage}')">
-                          <i class="${icon}" aria-hidden="true"></i>
-                      </button>
-                  </form>`;
-      }
+    function createForm(url, title, classes, icon, confirmMessage, hiddenFields = '') {
+        return `<form action="${url}" method="POST" style="display:inline;">
+                    ${csrfToken}
+                    ${hiddenFields}
+                    <button type="submit" title="${title}" class="${classes}" onclick="return confirm('${confirmMessage}')">
+                        <i class="${icon}" aria-hidden="true"></i>
+                    </button>
+                </form>`;
+    }
 
-      let editButton = '', deleteButton = '', submitButton = '';
+    let editButton = '', deleteButton = '', submitButton = '';
 
-      switch (row.status) {
-          case "Menunggu Persetujuan":
-              editButton = createButton('#', 'Edit', 'actions btn btn-sm btn-warning disabled', 'fas fa-pencil-alt', '');
-              deleteButton = createForm('', 'Hapus', 'btn btn-danger btn-sm disabled', 'fas fa-trash', 'Hapus Data Pengajuan?');
-              submitButton = createForm('', 'Kirim', 'btn btn-success btn-sm disabled', 'fas fa-paper-plane', 'Kirim Pengajuan?');
-              break;
+    switch (row.status) {
+        case "Menunggu Persetujuan":
+            editButton = createButton('#', 'Edit', 'actions btn btn-sm btn-warning disabled', 'fas fa-pencil-alt', '');
+            deleteButton = createForm('#', 'Hapus', 'btn btn-danger btn-sm disabled', 'fas fa-trash', '');
+            submitButton = createForm('#', 'Kirim', 'btn btn-success btn-sm disabled', 'fas fa-paper-plane', '');
+            break;
 
-          case "Belum Dikirim":
-              if (row.complete_status == 1) {
-                  editButton = createButton(editUrl, 'Edit', 'actions btn btn-sm btn-warning', 'fas fa-pencil-alt', '');
-                  deleteButton = createForm(deleteUrl, 'Hapus', 'btn btn-danger btn-sm', 'fas fa-trash', 'Hapus Data Pengajuan?', methodDelete);
-                  submitButton = createForm(submitUrl, 'Kirim', 'btn btn-success btn-sm', 'fas fa-paper-plane', 'Kirim Pengajuan?', `<input type="hidden" name="id" value="${row.id}">${methodPost}`);
-              } else {
-                  editButton = createButton(editUrl, 'Edit', 'actions btn btn-sm btn-warning', 'fas fa-pencil-alt', '');
-                  deleteButton = createForm(deleteUrl, 'Hapus', 'btn btn-danger btn-sm', 'fas fa-trash', 'Hapus Data Pengajuan?', methodDelete);
-                  submitButton = createForm(submitUrl, 'Kirim', 'btn btn-success btn-sm disabled', 'fas fa-paper-plane', 'Kirim Pengajuan?', `<input type="hidden" name="id" value="${row.id}">${methodPost}`);
-              }
-              break;
+        case "Belum Dikirim":
+            if (row.complete_status == 1) {
+                editButton = createButton(editUrl, 'Edit', 'actions btn btn-sm btn-warning', 'fas fa-pencil-alt', '');
+                deleteButton = createForm(deleteUrl, 'Hapus', 'btn btn-danger btn-sm', 'fas fa-trash', 'Hapus Data Pengajuan?', methodDelete);
+                submitButton = createForm(submitUrl, 'Kirim', 'btn btn-success btn-sm', 'fas fa-paper-plane', 'Kirim Pengajuan?', `<input type="hidden" name="id" value="${row.id}">${methodPost}`);
+            } else {
+                editButton = createButton(editUrl, 'Edit', 'actions btn btn-sm btn-warning', 'fas fa-pencil-alt', '');
+                deleteButton = createForm(deleteUrl, 'Hapus', 'btn btn-danger btn-sm', 'fas fa-trash', 'Hapus Data Pengajuan?', methodDelete);
+                submitButton = createForm('#', 'Kirim', 'btn btn-success btn-sm disabled', 'fas fa-paper-plane', '', `<input type="hidden" name="id" value="${row.id}">${methodPost}`);
+            }
+            break;
 
-          case "Sudah Disetujui":
-              editButton = createButton(editUrl, 'Edit', 'actions btn btn-sm btn-warning', 'fas fa-pencil-alt', '');
-              deleteButton = createForm('', 'Hapus', 'btn btn-danger btn-sm disabled', 'fas fa-trash', 'Hapus Data Pengajuan?');
-              submitButton = createForm('', 'Kirim', 'btn btn-success btn-sm disabled', 'fas fa-paper-plane', 'Kirim Pengajuan?');
-              break;
+        case "Sudah Disetujui":
+            editButton = createButton(editUrl, 'Edit', 'actions btn btn-sm btn-warning', 'fas fa-pencil-alt', '');
+            deleteButton = createForm('#', 'Hapus', 'btn btn-danger btn-sm disabled', 'fas fa-trash', '');
+            submitButton = createForm('#', 'Kirim', 'btn btn-success btn-sm disabled', 'fas fa-paper-plane', '');
+            break;
 
-          case "Tidak Disetujui":
-              editButton = createButton('#', 'Edit', 'actions btn btn-sm btn-warning disabled', 'fas fa-pencil-alt', '');
-              deleteButton = createForm(deleteUrl, 'Hapus', 'btn btn-danger btn-sm', 'fas fa-trash', 'Hapus Data Pengajuan?', `${methodDelete}<input type="hidden" name="deleted_at" value="{{ now() }}">`);
-              submitButton = createForm('', 'Kirim', 'btn btn-success btn-sm disabled', 'fas fa-paper-plane', 'Kirim Pengajuan?');
-              break;
-      }
+        case "Tidak Disetujui":
+            editButton = createButton('#', 'Edit', 'actions btn btn-sm btn-warning disabled', 'fas fa-pencil-alt', '');
+            deleteButton = createForm(deleteUrl, 'Hapus', 'btn btn-danger btn-sm', 'fas fa-trash', 'Hapus Data Pengajuan?', `${methodDelete}<input type="hidden" name="deleted_at" value="{{ now() }}">`);
+            submitButton = createForm('#', 'Kirim', 'btn btn-success btn-sm disabled', 'fas fa-paper-plane', '');
+            break;
+    }
 
     return `
         <nobr>
@@ -779,7 +779,16 @@
             ${submitButton}
         </nobr>
     `;
-}
+    }
+
+    // Ensure the confirmation message is shown before preventing default action for disabled buttons
+    document.addEventListener('click', function(event) {
+        const target = event.target.closest('a.disabled, button.disabled');
+        if (target) {
+            event.preventDefault();
+        }
+    });
+
 
     function warningFormatter(value, row, index) {
         return `<nobr>${value}</nobr>`;

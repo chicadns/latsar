@@ -10,12 +10,23 @@ use Illuminate\Support\Facades\URL;
     @parent
 @stop
 
+@php
+function generateSelectOptions($name, $options, $selectedValue) {
+    $html = '';
+    foreach ($options as $value => $label) {
+        $selected = (old($name, $selectedValue) == $value) ? 'selected' : '';
+        $html .= "<option value=\"$value\" $selected>$label</option>";
+    }
+    return $html;
+}
+@endphp
+
 {{-- Page content --}}
 @section('content')
     <div class="d-flex justify-content-center">
     <div style="max-width: 800px; width: 100%; margin: 0 auto;">
         <div class="box box-default">
-            <form class="form-horizontal" method="POST" action="{{ route('allocations.update', $asset->id) }}" autocomplete="off">
+            <form class="form-horizontal" method="POST" action="{{ route('allocations.update', $allocation_id) }}" autocomplete="off">
             @csrf
             @method('PUT')
 
@@ -55,9 +66,7 @@ use Illuminate\Support\Facades\URL;
                     <label for="kondisi" class="col-md-3 control-label">Kondisi Barang *</label>
                     <div class="col-md-8">
                         <select required class="form-control" id="kondisi" name="kondisi" onchange="toggleSupportingLink()">
-                            <option value="Baik">Baik</option>
-                            <option value="Rusak Ringan">Rusak Ringan</option>
-                            <option value="Rusak Berat">Rusak Berat</option>
+                            {!! generateSelectOptions('kondisi', ['Baik' => 'Baik', 'Rusak Ringan' => 'Rusak Ringan', 'Rusak Berat' => 'Rusak Berat'], $asset->kondisi) !!}
                         </select>
                     </div>
                 </div>
@@ -79,12 +88,20 @@ use Illuminate\Support\Facades\URL;
 
                 {{-- Operating System (OS) --}}
                 <div class="form-group">
-                    <label for="os" class="col-md-3 control-label">Operating System (OS)</label>
+                    <label for="os" class="col-md-3 control-label">Operating System (OS) *</label>
                     <div class="col-md-8">
                         <select class="form-control" id="os" name="os">
-                            <option value="Windows">Windows</option>
-                            <option value="Linux">Linux</option>
-                            <option value="Mac">Mac</option>
+                            {!! generateSelectOptions('os', [
+                                '' => '',
+                                'Operating System Windows 7' => 'Operating System Windows 7',
+                                'Windows 7 32 Bit Home' => 'Windows 7 32 Bit Home',
+                                'Software Windows 7 Premium' => 'Software Windows 7 Premium',
+                                'WINDOWS 8.1 SL 64 BIT' => 'WINDOWS 8.1 SL 64 BIT',
+                                'Microsoft Windows 8 Pro 64' => 'Microsoft Windows 8 Pro 64',
+                                'Windows 10 Enterprise' => 'Windows 10 Enterprise',
+                                'Linux' => 'Linux',
+                                'Mac' => 'Mac',
+                            ], $asset->os) !!}
                         </select>
                     </div>
                 </div>
@@ -94,9 +111,18 @@ use Illuminate\Support\Facades\URL;
                     <label for="office" class="col-md-3 control-label">Microsoft Office *</label>
                     <div class="col-md-8">
                         <select required class="form-control" id="office" name="office">
-                            <option value="Microsoft">Microsoft</option>
-                            <option value="LibreOffice">LibreOffice</option>
-                            <option value="Google Docs">Google Docs</option>
+                            {!! generateSelectOptions('office', [
+                                '' => '',
+                                'Ms Office 2003 Professional' => 'Ms Office 2003 Professional',
+                                'Microsoft Office 2013 Pro' => 'Microsoft Office 2013 Pro',
+                                'Office Pro Plus 2013' => 'Office Pro Plus 2013',
+                                'Microsoft Office Pro Plus 2013 OLP NL GOV' => 'Microsoft Office Pro Plus 2013 OLP NL GOV',
+                                'Microsoft Office Pro Plus 2019 OLP NL GOV' => 'Microsoft Office Pro Plus 2019 OLP NL GOV',
+                                'Microsoft OfficeMACSTD 2019 OLP NL' => 'Microsoft OfficeMACSTD 2019 OLP NL',
+                                'MICROSOFT Office 365' => 'MICROSOFT Office 365',
+                                'Microsoft Office 365 E1 Gov' => 'Microsoft Office 365 E1 Gov',
+                                'OnlyOffice Doc Enterprise Edition GOV' => 'OnlyOffice Doc Enterprise Edition GOV',
+                            ], $asset->office) !!}
                         </select>
                     </div>
                 </div>
@@ -106,9 +132,14 @@ use Illuminate\Support\Facades\URL;
                     <label for="antivirus" class="col-md-3 control-label">Antivirus</label>
                     <div class="col-md-8">
                         <select class="form-control" id="antivirus" name="antivirus">
-                            <option value="McAfee">McAfee</option>
-                            <option value="Norton">Norton</option>
-                            <option value="Avast">Avast</option>
+                            {!! generateSelectOptions('antivirus', [
+                                '' => '',
+                                'Mcafee - MVISON EDR&EPP 1-1 Biz' => 'Mcafee - MVISON EDR&EPP 1-1 Biz',
+                                'TRENDMICRO Smart Protection' => 'TRENDMICRO Smart Protection',
+                                'Symantec EndPoint Protection' => 'Symantec EndPoint Protection',
+                                'SC Endpoint Prtcn SubsVL' => 'SC Endpoint Prtcn SubsVL',
+                                'SC Endpoint Prtcn SubsVL OLV D' => 'SC Endpoint Prtcn SubsVL OLV D',
+                            ], $asset->antivirus) !!}
                         </select>
                     </div>
                 </div>
