@@ -143,11 +143,11 @@ class AllocationController extends Controller
         $userAssets = $user->assets;
 
         $allocations = Allocation::select('allocations.*', 'categories.name AS category_name', 'users.first_name AS user_first_name')
-        ->where('allocations.user_id', $user->id)
-        ->whereNull('allocations.deleted_at') // Ensure allocations are not soft deleted
-        ->join('categories', 'categories.id', '=', 'allocations.category_id')
-        ->join('users', 'users.id', '=', 'allocations.user_id')
-        ->get();
+            ->where('allocations.user_id', $user->id)
+            ->whereNull('allocations.deleted_at') // Ensure allocations are not soft deleted
+            ->join('categories', 'categories.id', '=', 'allocations.category_id')
+            ->join('users', 'users.id', '=', 'allocations.user_id')
+            ->get();
 
         // Create a collection to hold the final data
         $finalData = collect();
@@ -204,7 +204,8 @@ class AllocationController extends Controller
             } else {
                 // If no existing asset found, add allocation data as a new entry in $finalData
                 $finalData->push([
-                    'id' => $allocation->id,
+                    'allocation_id' => $allocation->id,
+                    'id' => $allocation->assets_id,
                     'name' => $allocation->name,
                     'category_name' => $allocation->category_name,
                     'status' => $allocation->status,
@@ -219,7 +220,6 @@ class AllocationController extends Controller
                     'office' => $allocation->office,
                     'office2' => $allocation->office2,
                     'antivirus' => $allocation->antivirus,
-                    'assets_id' => $allocation->assets_id
                 ]);
             }
         }
@@ -242,9 +242,10 @@ class AllocationController extends Controller
                 elseif ($item['source'] === 'user') {
                     $isComplete = $item['bmn'] && $item['serial'] && $item['kondisi'] && $item['_snipeit_sistem_operasi_2'] && $item['_snipeit_software_office_1'];
                 }
-                
+
                 return [
                     'id' => $item['id'],
+                    'allocation_id' => $item['allocation_id'],
                     'request_date' => $item['request_date'],
                     'user_first_name' => $item['user_first_name'],
                     'category' => $item['category_name'],
@@ -252,7 +253,6 @@ class AllocationController extends Controller
                     'bmn' => $item['bmn'],
                     'serial' => $item['serial'],
                     'status' => $item['status'],
-                    'asset_id' => $item['assets_id'],
                     'kondisi' => $item['kondisi'],
                     'source' => $item['source'],
                     'os' => $item['os'],

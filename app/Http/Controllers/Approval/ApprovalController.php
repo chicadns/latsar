@@ -119,7 +119,7 @@ class ApprovalController extends Controller
                 $asset = Asset::find($allocation->assets_id);
                 if ($asset) {
                     // Check if the current user is assigned to the asset or if it's unassigned
-                    if ($asset->assigned_to == $user->id || $asset->assigned_to == null) {
+                    if ($asset->assigned_to == $allocation->user_id || $asset->assigned_to == null) {
                         // Proceed with the update
                         $allocation->status = $status;
                         $allocation->handling_date = now();
@@ -180,8 +180,9 @@ class ApprovalController extends Controller
             return response()->json(['message' => 'Invalid input'], 400);
         }
 
-        // Initialize counter
+        // Initialize counters
         $updatedCount = 0;
+        $skippedCount = 0;
 
         // Find and update allocations
         $allocations = Allocation::whereIn('id', $ids)->get();
@@ -221,11 +222,13 @@ class ApprovalController extends Controller
                         // Increment updated count
                         $updatedCount++;
                     } else {
-                        // Skip updating and increment count of skipped updates
+                        // Increment skipped count
+                        $skippedCount++;
                         continue;
                     }
                 } else {
-                    // Skip updating and increment count of skipped updates
+                    // Increment skipped count
+                    $skippedCount++;
                     continue;
                 }
             } else {
@@ -239,12 +242,13 @@ class ApprovalController extends Controller
             }
         }
 
-        // Prepare success message with updated count
-        $successMessage = $status == 'Sudah Disetujui' ? 'Setujui Pengajuan Berhasil!' : 'Tolak Pengajuan Berhasil!';
-        $successMessage .= " Total Diperbarui: $updatedCount";
+        // Prepare success message with updated and skipped counts
+        $successMessage = $status == 'Sudah Disetujui' ? 'Status Setujui Pengajuan -> ' : 'Status Tolak Pengajuan -> ';
+        $successMessage .= "Diperbarui: $updatedCount, Tidak Diperbarui: $skippedCount";
 
         return response()->json(['message' => $successMessage]);
     }
+
 
 
 

@@ -715,14 +715,14 @@
 
     function actionFormatter(value, row, index) {
       let editUrl = '';
-      const id_on_asset = row.asset_id;
+      const id_on_asset = row.id;
 
-      if (row.source === 'user') {
+      if (row.allocation_id === null) {
           // Route for creating a new allocation
-          editUrl = '{{ route("allocations.edit.new", [":asset_id"]) }}'.replace(':asset_id', row.id);
+          editUrl = '{{ route("allocations.edit.new", [":asset_id"]) }}'.replace(':asset_id', id_on_asset);
       } else {
           // Route for editing an existing allocation
-          editUrl = '{{ route("allocations.edit", [":id", ":asset_id"]) }}'.replace(':id', row.id).replace(':asset_id', id_on_asset);
+          editUrl = '{{ route("allocations.edit", [":id", ":asset_id"]) }}'.replace(':id', row.allocation_id).replace(':asset_id', id_on_asset);
       }
 
       const deleteUrl = '{{ route("allocations.destroy", [":asset_id"]) }}'.replace(':asset_id', row.id);
