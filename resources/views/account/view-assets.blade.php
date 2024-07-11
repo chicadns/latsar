@@ -717,7 +717,7 @@
       let editUrl = '';
       const id_on_asset = row.id;
 
-      if (row.allocation_id === null) {
+      if (row.source === 'user' || row.allocation_id === null) {
           // Route for creating a new allocation
           editUrl = '{{ route("allocations.edit.new", [":asset_id"]) }}'.replace(':asset_id', id_on_asset);
       } else {
@@ -725,8 +725,8 @@
           editUrl = '{{ route("allocations.edit", [":id", ":asset_id"]) }}'.replace(':id', row.allocation_id).replace(':asset_id', id_on_asset);
       }
 
-      const deleteUrl = '{{ route("allocations.destroy", [":asset_id"]) }}'.replace(':asset_id', row.id);
-      const submitUrl = '{{ route("allocations.submit", [":asset_id"]) }}'.replace(':asset_id', row.id);
+      const deleteUrl = '{{ route("allocations.destroy", [":asset_id"]) }}'.replace(':asset_id', row.allocation_id);
+      const submitUrl = '{{ route("allocations.submit", [":asset_id"]) }}'.replace(':asset_id', row.allocation_id);
 
       const csrfToken = '@csrf';
       const methodDelete = '@method("DELETE")';

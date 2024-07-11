@@ -192,7 +192,7 @@ class ApprovalController extends Controller
                 $asset = Asset::find($allocation->assets_id);
                 if ($asset) {
                     // Check if the current user is assigned to the asset or if it's unassigned
-                    if ($asset->assigned_to == Auth::id() || $asset->assigned_to == null) {
+                    if ($asset->assigned_to == $allocation->user_id || $asset->assigned_to == null) {
                         // Proceed with the update
                         $allocation->status = $status;
                         $allocation->handling_date = now();

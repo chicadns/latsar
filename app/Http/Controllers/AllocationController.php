@@ -132,7 +132,7 @@ class AllocationController extends Controller
             ]);
         }
 
-        $ballon = $allocated->wasRecentlyCreated ? ['success', 'Perangkat IT Berhasil Ditambahkan!'] : ['error', 'Perangkat IT Sudah Anda Tambahkan...'];
+        $ballon = $allocated->wasRecentlyCreated ? ['success', 'Perangkat IT Berhasil Ditambahkan!'] : ['error', 'Perangkat IT Sudah Anda Tambahkan.'];
 
         return redirect()->route('allocations.index')->with($ballon[0], $ballon[1]);
     }
@@ -161,6 +161,7 @@ class AllocationController extends Controller
                 // Add additional fields to $assetData
                 $assetData->status = 'Sudah Disetujui'; // Add 'status' field
                 $assetData->source = 'user'; // Add 'source' field
+                $assetData->allocation_id = null; // Add 'allocation_id' field
 
                 // Assuming relationships exist properly, add 'category_name' field
                 if ($assetData->model && $assetData->model->category) {
@@ -179,28 +180,32 @@ class AllocationController extends Controller
             $existingAsset = $finalData->firstWhere('id', $allocation->assets_id);
 
             if ($existingAsset) {
-                // If existing asset found and its source is allocation, skip it
-                if ($existingAsset->source === 'allocation') {
-                    continue;
-                }
+                // If existing asset found
+                // if (($allocation->status == "Sudah Disetujui") || $allocation->deleted_at != null) {
+                //     continue;
+                // } else {
+                // if ($allocation->status = "Sudah Disetujui") {
+                //     $existingAsset->allocation_id = null;
+                // } 
+                // else {
+                    $existingAsset->allocation_id = $allocation->id;
+                // }
 
-                // Update the existing asset data with allocation data if it's the latest
-                if ($allocation->created_at > $existingAsset->created_at) {
-                    $existingAsset->name = $allocation->name;
-                    $existingAsset->category_name = $allocation->category_name;
-                    $existingAsset->status = $allocation->status;
-                    $existingAsset->source = 'allocation';
-                    $existingAsset->request_date = $allocation->request_date;
-                    $existingAsset->user_first_name = $allocation->user_first_name;
-                    $existingAsset->bmn = $allocation->bmn;
-                    $existingAsset->serial = $allocation->serial;
-                    $existingAsset->kondisi = $allocation->kondisi;
-                    $existingAsset->os = $allocation->os;
-                    $existingAsset->os2 = $allocation->os2;
-                    $existingAsset->office = $allocation->office;
-                    $existingAsset->office2 = $allocation->office2;
-                    $existingAsset->antivirus = $allocation->antivirus;
-                }
+                $existingAsset->name = $allocation->name;
+                $existingAsset->category_name = $allocation->category_name;
+                $existingAsset->status = $allocation->status;
+                $existingAsset->source = 'allocation';
+                $existingAsset->request_date = $allocation->request_date;
+                $existingAsset->user_first_name = $allocation->user_first_name;
+                $existingAsset->bmn = $allocation->bmn;
+                $existingAsset->serial = $allocation->serial;
+                $existingAsset->kondisi = $allocation->kondisi;
+                $existingAsset->os = $allocation->os;
+                $existingAsset->os2 = $allocation->os2;
+                $existingAsset->office = $allocation->office;
+                $existingAsset->office2 = $allocation->office2;
+                $existingAsset->antivirus = $allocation->antivirus;
+                // }       
             } else {
                 // If no existing asset found, add allocation data as a new entry in $finalData
                 $finalData->push([
@@ -227,7 +232,7 @@ class AllocationController extends Controller
         // Now $finalData contains the merged and prioritized list of assets and allocations
 
         // Remove duplicates and ensure correct data
-        $finalData = $finalData->unique('id');
+        // $finalData = $finalData->unique('id');
 
         // Format data for the data-table
         $data = [
@@ -280,7 +285,7 @@ class AllocationController extends Controller
         // Find the allocation that matches the given id and belongs to the authenticated user
         $allocation = Allocation::where('assets_id', $assets_id)
             ->where('user_id', $user->id)
-            ->where('status', "Belum Dikirim")
+            // ->where('status', "Belum Dikirim")
             ->first();
 
         // Find the asset that matches the given assets_id and belongs to the same company as the authenticated user
@@ -295,6 +300,8 @@ class AllocationController extends Controller
                 $data = $allocation;
             } else {
                 $data = $assets;
+                $data->os = $assets->_snipeit_sistem_operasi_2;
+                $data->office = $assets->_snipeit_software_office_1;
             }
             $allocation_id = $allocation->id;
         }
