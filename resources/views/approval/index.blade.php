@@ -237,9 +237,7 @@
               <div id="setujuForm" action="">
                 @csrf
                 <div class="box-body">
-                  <div style="padding: 2px; background: #6699cc; margin-bottom: 15px; margin-top: 0px;">
-                    <h4 style="color: white;"><b>Informasi Hardware</b></h4>
-                  </div>
+                  
                   <!-- Tanggal Pengajuan -->
                   <div class="form-group row">
                     <label for="request_date" class="col-md-4 col-form-label control-label text-right">Tanggal Pengajuan</label>
@@ -298,9 +296,10 @@
 
                   ${supportingLinkHtml}
 
-                  <div style="padding: 2px; background: #6699cc; margin-bottom: 15px; margin-top: 0px;">
-                    <h4 style="color: white;"><b>Informasi Software</b></h4>
+                  <div style="padding: 2px; margin-bottom: 15px; margin-top: 0px;">
+                    <h4 style="color: white;"><b></b></h4>
                   </div>
+
                   <!-- Operating System (OS) -->
                   <div class="form-group row">
                     <label for="link" class="col-md-4 col-form-label control-label text-right">Operating System (OS)</label>
@@ -343,6 +342,7 @@
       </div>
 
       <form action="{{ route('approval.update-status') }}" method="POST" style="display:inline;">
+        @csrf
         <input type="hidden" name="tidak_setuju" value="${row.id}"> <!-- Pass the id of the row -->
         <button type="submit" title="Tolak" class="btn btn-danger btn-sm" onclick="return confirm('Apakah Anda Yakin Ingin Menolak Pengajuan?')">
           <i class="fas fa-times" aria-hidden="true"></i>
@@ -395,6 +395,26 @@
                     </div>
                   </div>
 
+                  <!-- Tanggal Penanganan -->
+                  <div class="form-group row">
+                    <label for="request_date" class="col-md-4 col-form-label control-label text-right">Tanggal Penanganan</label>
+                    <div class="col-md-8 text-left" name="request_date" style="margin-top: -7px;">
+                      <p class="form-control-static">${row.handling_date}</p>
+                    </div>
+                  </div>
+                  
+                  <!-- Status Persetujuan -->
+                  <div class="form-group row">
+                    <label for="request_date" class="col-md-4 col-form-label control-label text-right">Status Persetujuan</label>
+                    <div class="col-md-8 text-left" name="request_date" style="margin-top: -7px;">
+                      <p class="form-control-static">${row.status}</p>
+                    </div>
+                  </div>
+
+                  <div style="padding: 2px; margin-bottom: 15px; margin-top: 0px;">
+                    <h4 style="color: white;"><b></b></h4>
+                  </div>
+
                   <!-- Nama Pegawai -->
                   <div class="form-group row">
                     <label for="user_first_name" class="col-md-4 col-form-label control-label text-right">Nama Pegawai</label>
@@ -445,7 +465,9 @@
 
                   ${supportingLinkHtml}
 
-                  <h6 style="margin-bottom: 15px; margin-top: 20px;">Informasi Software</h6>
+                  <div style="padding: 2px; margin-bottom: 15px; margin-top: 0px;">
+                    <h4 style="color: white;"><b></b></h4>
+                  </div>
 
                   <!-- Operating System (OS) -->
                   <div class="form-group row">

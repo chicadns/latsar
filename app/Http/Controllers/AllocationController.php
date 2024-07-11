@@ -127,7 +127,7 @@ class AllocationController extends Controller
                 'name' => $asset->name,
                 'bmn' => $asset->bmn,
                 'serial' => $asset->serial,
-                'kondisi' => 'some_default_value',
+                'kondisi' => $asset->kondisi,
                 'os' => $asset->_snipeit_sistem_operasi_2,
                 'office' => $asset->_snipeit_software_office_1,
                 'antivirus' => $asset->_snipeit_antivirus_3,

@@ -143,7 +143,7 @@ class ApprovalController extends Controller
                 $asset->save();
             }
 
-            return redirect()->back()->with('success', $status == 'Sudah Disetujui' ? 'Setujui Pengajuan Berhasil!' : 'Tidaksetujui Pengajuan Berhasil!');
+            return redirect()->back()->with('success', $status == 'Sudah Disetujui' ? 'Setujui Pengajuan Berhasil!' : 'Tolak Pengajuan Berhasil!');
         } else {
             return redirect()->back()->with('error', 'Alokasi Tidak Ditemukan!');
         }
@@ -192,7 +192,7 @@ class ApprovalController extends Controller
             }
         }
 
-        return response()->json(['message' => $status == 'Sudah Disetujui' ? 'Bulk Approve Successful!' : 'Bulk Decline Successful!']);
+        return response()->json(['message' => $status == 'Sudah Disetujui' ? 'Setujui Pengajuan Berhasil!' : 'Tolak Pengajuan Berhasil!']);
     }
     
     public function getAllData()
@@ -227,6 +227,7 @@ class ApprovalController extends Controller
                 return [
                     'id' => $allocation->id,
                     'request_date' => $allocation->request_date,
+                    'handling_date' => $allocation->handling_date,
                     'user_first_name' => $allocation->user_first_name,
                     'category' => $allocation->category_name,
                     'name' => $allocation->name,
