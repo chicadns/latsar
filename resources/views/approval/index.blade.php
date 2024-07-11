@@ -234,6 +234,9 @@
               <div id="setujuForm" action="">
                 @csrf
                 <div class="box-body">
+                  <div style="padding: 2px; background: #6699cc; margin-bottom: 15px; margin-top: 0px;">
+                    <h4 style="color: white;"><b>Informasi Hardware</b></h4>
+                  </div>
                   <!-- Tanggal Pengajuan -->
                   <div class="form-group row">
                     <label for="request_date" class="col-md-4 col-form-label control-label text-right">Tanggal Pengajuan</label>
@@ -292,8 +295,9 @@
 
                   ${supportingLinkHtml}
 
-                  <h6 style="margin-bottom: 15px; margin-top: 20px;">Informasi Software</h6>
-
+                  <div style="padding: 2px; background: #6699cc; margin-bottom: 15px; margin-top: 0px;">
+                    <h4 style="color: white;"><b>Informasi Software</b></h4>
+                  </div>
                   <!-- Operating System (OS) -->
                   <div class="form-group row">
                     <label for="link" class="col-md-4 col-form-label control-label text-right">Operating System (OS)</label>

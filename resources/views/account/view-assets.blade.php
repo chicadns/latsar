@@ -97,14 +97,14 @@
 
                 </div>
                 <div class="col-md-12 text-center">
-                  <img src="{{ $user->present()->gravatar() }}"  class=" img-thumbnail hidden-print" style="margin-bottom: 20px;" alt="{{ $user->present()->fullName() }}">
+                  <img src="{{ $user->present()->gravatar() }}"  class="img-thumbnail hidden-print" style="margin-bottom: 20px;" alt="{{ $user->present()->fullName() }}">
                 </div>
 
-                  <div class="col-md-12">
+                  {{-- <div class="col-md-12">
                     <a href="{{ route('profile') }}" style="width: 100%;" class="btn btn-sm btn-primary hidden-print">
                       {{ trans('general.editprofile') }}
                     </a>
-                  </div>
+                  </div> --}}
 
                 {{-- <div class="col-md-12" style="padding-top: 5px;">
                   <a href="{{ route('account.password.index') }}" style="width: 100%;" class="btn btn-sm btn-primary hidden-print" target="_blank" rel="noopener">
