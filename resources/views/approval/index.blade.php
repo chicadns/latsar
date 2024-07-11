@@ -46,29 +46,33 @@
               </div>
 
               <div class="box-body">
+                <!-- Bulk Action Buttons -->
+                <button id="bulkApprove" class="btn btn-success">Bulk Approve</button>
+                <button id="bulkDecline" class="btn btn-danger">Bulk Decline</button>
 
+                <!-- Approval Table -->
                 <table
-                  data-columns="{{ \App\Presenters\ApprovalPresenter::dataTableLayout() }}"
-                  data-cookie="true"
-                  data-cookie-id-table="approvalTable"
-                  data-id-table="approvalTable"
-                  data-pagination="true"
-                  data-search="true"
-                  data-side-pagination="client"
-                  data-show-columns="true"
-                  data-show-export="true"
-                  data-show-footer="true"
-                  data-show-refresh="true"
-                  data-sort-order="asc"
-                  data-sort-name="id"
-                  data-toolbar="#toolbar"
-                  id="approvalTable"
-                  class="table table-striped snipe-table"
-                  data-url="{{ route('approval.request') }}"
-                  data-export-options='{
-                  "fileName": "export-approval-{{ date('Y-m-d') }}",
-                  "ignoreColumn": ["actions"]
-                  }'>
+                    data-columns="{{ \App\Presenters\ApprovalPresenter::dataTableLayout() }}"
+                    data-cookie="true"
+                    data-cookie-id-table="approvalTable"
+                    data-id-table="approvalTable"
+                    data-pagination="true"
+                    data-search="true"
+                    data-side-pagination="client"
+                    data-show-columns="true"
+                    data-show-export="true"
+                    data-show-footer="true"
+                    data-show-refresh="true"
+                    data-sort-order="asc"
+                    data-sort-name="id"
+                    data-click-to-select="true"
+                    id="approvalTable"
+                    class="table table-striped snipe-table"
+                    data-url="{{ route('approval.request') }}"
+                    data-export-options='{
+                    "fileName": "export-approval-{{ date('Y-m-d') }}",
+                    "ignoreColumn": ["actions"]
+                    }'>
                 </table>
 
               </div>
@@ -124,6 +128,69 @@
   @include ('partials.bootstrap-table', ['exportFile' => 'consumables-export', 'search' => true,'showFooter' => true, 'columns' => \App\Presenters\ConsumablePresenter::dataTableLayout()])
   
   <script>
+    // Function to get selected rows
+    function getSelectedRows() {
+        return $('#approvalTable').bootstrapTable('getSelections');
+    }
+
+    // Bulk Approve Action
+    $('#bulkApprove').on('click', function () {
+        var selectedRows = getSelectedRows();
+        if (selectedRows.length === 0) {
+            alert('Silahkan pilih minimal satu baris.');
+            return;
+        }
+        if (confirm('Setujui Semua Data Terpilih?')) {
+            var ids = selectedRows.map(row => row.id);
+
+            $.ajax({
+                url: '{{ route("approval.bulkUpdateStatus") }}',
+                method: 'POST',
+                data: {
+                    ids: ids,
+                    status: 'Sudah Disetujui',
+                    _token: '{{ csrf_token() }}'
+                },
+                success: function (response) {
+                    alert(response.message);
+                    $('#approvalTable').bootstrapTable('refresh');
+                },
+                error: function (response) {
+                    alert('Error occurred while processing the request.');
+                }
+            });
+        }
+    });
+
+    // Bulk Decline Action
+    $('#bulkDecline').on('click', function () {
+        var selectedRows = getSelectedRows();
+        if (selectedRows.length === 0) {
+            alert('Silahkan pilih minimal satu baris.');
+            return;
+        }
+        if (confirm('Tidaksetujui Semua Data Terpilih?')) {
+            var ids = selectedRows.map(row => row.id);
+
+            $.ajax({
+                url: '{{ route("approval.bulkUpdateStatus") }}',
+                method: 'POST',
+                data: {
+                    ids: ids,
+                    status: 'Tidak Disetujui',
+                    _token: '{{ csrf_token() }}'
+                },
+                success: function (response) {
+                    alert(response.message);
+                    $('#approvalTable').bootstrapTable('refresh');
+                },
+                error: function (response) {
+                    alert('Error occurred while processing the request.');
+                }
+            });
+        }
+    });
+
 
     function counterFormatter(value, row, index) {
         return index + 1; // index is zero-based, so add 1
@@ -279,6 +346,20 @@
 
     function actionHistoryFormatter(value, row, index) {
     const modalId = `view_popup_${index}`;
+
+    // Conditionally create the supporting link section
+    let supportingLinkHtml = '';
+    if (row.kondisi === 'Rusak Berat') {
+        supportingLinkHtml = `
+            <!-- Bukti Dukung -->
+            <div class="form-group row">
+                <label for="link" class="col-md-4 col-form-label control-label text-right">Bukti Dukung</label>
+                <div class="col-md-8 text-left" name="link" style="margin-top: 1px;">
+                    <a href="${row.supporting_link}" target="_blank" class="form-control-static">${row.supporting_link}</a>
+                </div>
+            </div>
+        `;
+    }
     return `
       <div style="display:inline;">
         <input type="hidden" name="view_button">
@@ -346,30 +427,24 @@
                       <p class="form-control-static">${row.serial}</p>
                     </div>
                   </div>
-
-                  <!-- Serial Number -->
+                  
+                  <!-- Kondisi -->
                   <div class="form-group row">
-                    <label for="status" class="col-md-4 col-form-label control-label text-right">Status Persetjuan</label>
-                    <div class="col-md-8 text-left" name="status" style="margin-top: -7px;">
-                      <p class="form-control-static">${row.status}</p>
+                    <label for="kondisi" class="col-md-4 col-form-label control-label text-right">Kondisi</label>
+                    <div class="col-md-8 text-left" name="kondisi" style="margin-top: -7px;">
+                      <p class="form-control-static">${row.kondisi}</p>
                     </div>
                   </div>
 
-                  <!-- Bukti Dukung -->
-                  <div class="form-group row">
-                    <label for="link" class="col-md-4 col-form-label control-label text-right">Bukti Dukung</label>
-                    <div class="col-md-8 text-left" name="link" style="margin-top: -7px;">
-                      <p class="form-control-static"></p>
-                    </div>
-                  </div>
+                  ${supportingLinkHtml}
 
-                  <h6>Informasi Software</h6>
+                  <h6 style="margin-bottom: 15px; margin-top: 20px;">Informasi Software</h6>
 
                   <!-- Operating System (OS) -->
                   <div class="form-group row">
                     <label for="link" class="col-md-4 col-form-label control-label text-right">Operating System (OS)</label>
                     <div class="col-md-8 text-left" name="link" style="margin-top: -7px;">
-                      <p class="form-control-static"></p>
+                      <p class="form-control-static">${row.os}</p>
                     </div>
                   </div>
 
@@ -377,7 +452,7 @@
                   <div class="form-group row">
                     <label for="link" class="col-md-4 col-form-label control-label text-right">Microsoft Office</label>
                     <div class="col-md-8 text-left" name="link" style="margin-top: -7px;">
-                      <p class="form-control-static"></p>
+                      <p class="form-control-static">${row.office}</p>
                     </div>
                   </div>
 
@@ -385,7 +460,7 @@
                   <div class="form-group row">
                     <label for="link" class="col-md-4 col-form-label control-label text-right">Antivirus</label>
                     <div class="col-md-8 text-left" name="link" style="margin-top: -7px;">
-                      <p class="form-control-static"></p>
+                      <p class="form-control-static">${row.antivirus}</p>
                     </div>
                   </div>
                 </div>

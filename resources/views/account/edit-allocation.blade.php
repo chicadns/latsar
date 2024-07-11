@@ -46,7 +46,7 @@ function generateSelectOptions($name, $options, $selectedValue) {
                 {{-- Nomor BMN --}}
                 <div class="form-group">
                     <label for="bmn" class="col-md-3 control-label">{{ trans('general.BMN_number') }} *</label>
-                    <div class="col-md-8">
+                    <div class="required col-md-8">
                         <input required class="form-control" type="text" placeholder="Masukkan Nomor BMN" name="bmn" id="bmn" value="{{ old('bmn', $asset->bmn) }}" tabindex="1">
                         {!! $errors->first('bmn', '<span class="alert-msg" aria-hidden="true"><i class="fas fa-times" aria-hidden="true"></i> :message</span>') !!}
                     </div>
@@ -54,8 +54,8 @@ function generateSelectOptions($name, $options, $selectedValue) {
 
                 {{-- Serial number --}}
                 <div class="form-group">
-                    <label for="serial" class="col-md-3 control-label">{{ trans('general.serial') }} *</label>
-                    <div class="col-md-8">
+                    <label for="serial" class=" col-md-3 control-label">Serial Number *</label>
+                    <div class="required col-md-8">
                         <input required class="form-control" type="text" placeholder="Masukkan Serial Number" name="serial" id="serial" value="{{ old('serial', $asset->serial) }}" tabindex="1">
                         {!! $errors->first('serial', '<span class="alert-msg" aria-hidden="true"><i class="fas fa-times" aria-hidden="true"></i> :message</span>') !!}
                     </div>
@@ -63,8 +63,8 @@ function generateSelectOptions($name, $options, $selectedValue) {
 
                 {{-- Kondisi Barang --}}
                 <div class="form-group">
-                    <label for="kondisi" class="col-md-3 control-label">Kondisi Barang *</label>
-                    <div class="col-md-8">
+                    <label for="kondisi" class=" col-md-3 control-label">Kondisi Barang *</label>
+                    <div class="required col-md-8">
                         <select required class="form-control" id="kondisi" name="kondisi" onchange="toggleSupportingLink()">
                             {!! generateSelectOptions('kondisi', ['Baik' => 'Baik', 'Rusak Ringan' => 'Rusak Ringan', 'Rusak Berat' => 'Rusak Berat'], $asset->kondisi) !!}
                         </select>
@@ -75,7 +75,7 @@ function generateSelectOptions($name, $options, $selectedValue) {
                 <div class="form-group" id="supporting-link-group" style="display: none;">
                     <label for="supporting_link" class="col-md-3 control-label">Sertakan bukti dukung *</label>
                     <div class="col-md-8">
-                        <input class="form-control" type="url" name="supporting_link" id="supporting_link" placeholder="https://example.com">
+                        <input class="form-control" type="url" name="supporting_link" id="supporting_link" placeholder="https://example.com" value="{{ old('supporting_link', $asset->supporting_link) }}">
                         {!! $errors->first('supporting_link', '<span class="alert-msg" aria-hidden="true"><i class="fas fa-times" aria-hidden="true"></i> :message</span>') !!}
                     </div>
                 </div>
@@ -88,42 +88,59 @@ function generateSelectOptions($name, $options, $selectedValue) {
 
                 {{-- Operating System (OS) --}}
                 <div class="form-group">
-                    <label for="os" class="col-md-3 control-label">Operating System (OS) *</label>
-                    <div class="col-md-8">
-                        <select class="form-control" id="os" name="os">
+                    <label for="os" class=" col-md-3 control-label">Operating System (OS) *</label>
+                    <div class="required col-md-8">
+                        <select required class="form-control" id="os" name="os" onchange="toggleOtherOSField()">
                             {!! generateSelectOptions('os', [
-                                '' => '',
-                                'Operating System Windows 7' => 'Operating System Windows 7',
+                                '' => 'Pilih Operating System',
+                                'Windows 7' => 'Windows 7',
                                 'Windows 7 32 Bit Home' => 'Windows 7 32 Bit Home',
-                                'Software Windows 7 Premium' => 'Software Windows 7 Premium',
-                                'WINDOWS 8.1 SL 64 BIT' => 'WINDOWS 8.1 SL 64 BIT',
-                                'Microsoft Windows 8 Pro 64' => 'Microsoft Windows 8 Pro 64',
+                                'Windows 7 Premium' => 'Windows 7 Premium',
+                                'Windows 8.1 SL 64 BIT' => 'Windows 8.1 SL 64 BIT',
+                                'Windows 8 Pro 64' => 'Windows 8 Pro 64',
                                 'Windows 10 Enterprise' => 'Windows 10 Enterprise',
-                                'Linux' => 'Linux',
-                                'Mac' => 'Mac',
+                                '99' => 'Lainnya',
                             ], $asset->os) !!}
                         </select>
                     </div>
                 </div>
 
+                <!-- OS Lainnya Input -->
+                <div class="form-group" id="other-os-group" style="display: none;">
+                    <label for="other_os" class="col-md-3 control-label">OS Lainnya *</label>
+                    <div class="col-md-8">
+                        <input class="form-control" type="text" name="os2" id="other_os" placeholder="Masukkan OS Lainnya" value="{{ old('other_os', $asset->os2) }}">
+                        {!! $errors->first('other_os', '<span class="alert-msg" aria-hidden="true"><i class="fas fa-times" aria-hidden="true"></i> :message</span>') !!}
+                    </div>
+                </div>
+
                 {{-- Microsoft Office --}}
                 <div class="form-group">
-                    <label for="office" class="col-md-3 control-label">Microsoft Office *</label>
-                    <div class="col-md-8">
-                        <select required class="form-control" id="office" name="office">
+                    <label for="office" class=" col-md-3 control-label">Microsoft Office *</label>
+                    <div class="required col-md-8">
+                        <select required class="form-control" id="office" name="office" onchange="toggleOtherOfficeField()">
                             {!! generateSelectOptions('office', [
-                                '' => '',
-                                'Ms Office 2003 Professional' => 'Ms Office 2003 Professional',
+                                '' => 'Pilih Microsoft Office',
+                                'Microsoft Office 2003 Pro' => 'Microsoft Office 2003 Pro',
                                 'Microsoft Office 2013 Pro' => 'Microsoft Office 2013 Pro',
                                 'Office Pro Plus 2013' => 'Office Pro Plus 2013',
                                 'Microsoft Office Pro Plus 2013 OLP NL GOV' => 'Microsoft Office Pro Plus 2013 OLP NL GOV',
                                 'Microsoft Office Pro Plus 2019 OLP NL GOV' => 'Microsoft Office Pro Plus 2019 OLP NL GOV',
-                                'Microsoft OfficeMACSTD 2019 OLP NL' => 'Microsoft OfficeMACSTD 2019 OLP NL',
+                                'Microsoft Office MACSTD 2019 OLP NL' => 'Microsoft Office MACSTD 2019 OLP NL',
                                 'MICROSOFT Office 365' => 'MICROSOFT Office 365',
                                 'Microsoft Office 365 E1 Gov' => 'Microsoft Office 365 E1 Gov',
-                                'OnlyOffice Doc Enterprise Edition GOV' => 'OnlyOffice Doc Enterprise Edition GOV',
+                                '99' => 'Lainnya',
                             ], $asset->office) !!}
                         </select>
+                    </div>
+                </div>
+
+                <!-- Office Lainnya Input -->
+                <div class="form-group" id="other-office-group" style="display: none;">
+                    <label for="other_office" class="col-md-3 control-label">Office Lainnya *</label>
+                    <div class="col-md-8">
+                        <input class="form-control" type="text" name="office2" id="other_office" placeholder="Masukkan Office Lainnya" value="{{ old('other_office', $asset->office2) }}">
+                        {!! $errors->first('other_office', '<span class="alert-msg" aria-hidden="true"><i class="fas fa-times" aria-hidden="true"></i> :message</span>') !!}
                     </div>
                 </div>
 
@@ -133,7 +150,7 @@ function generateSelectOptions($name, $options, $selectedValue) {
                     <div class="col-md-8">
                         <select class="form-control" id="antivirus" name="antivirus">
                             {!! generateSelectOptions('antivirus', [
-                                '' => '',
+                                '' => 'Pilih Antivirus',
                                 'Mcafee - MVISON EDR&EPP 1-1 Biz' => 'Mcafee - MVISON EDR&EPP 1-1 Biz',
                                 'TRENDMICRO Smart Protection' => 'TRENDMICRO Smart Protection',
                                 'Symantec EndPoint Protection' => 'Symantec EndPoint Protection',
@@ -161,13 +178,60 @@ function generateSelectOptions($name, $options, $selectedValue) {
         function toggleSupportingLink() {
             var kondisi = document.getElementById('kondisi').value;
             var supportingLinkGroup = document.getElementById('supporting-link-group');
+            var supportingLinkInput = document.getElementById('supporting_link');
             
             if (kondisi === 'Rusak Berat') {
                 supportingLinkGroup.style.display = 'block';
+                supportingLinkInput.setAttribute('required', 'required');
             } else {
                 supportingLinkGroup.style.display = 'none';
+                supportingLinkInput.removeAttribute('required');
             }
         }
+
+        // Call the function on page load to ensure the correct state is set based on the initial value
+        document.addEventListener('DOMContentLoaded', function() {
+            toggleSupportingLink();
+        });
+
+        function toggleOtherOSField() {
+            var os = document.getElementById('os').value;
+            var otherOSGroup = document.getElementById('other-os-group');
+            var otherOSInput = document.getElementById('other_os');
+            
+            if (os === '99') { // Assuming '99' corresponds to 'Lainnya'
+                otherOSGroup.style.display = 'block';
+                otherOSInput.setAttribute('required', 'required');
+            } else {
+                otherOSGroup.style.display = 'none';
+                otherOSInput.removeAttribute('required');
+            }
+        }
+
+        // Call the function on page load to ensure the correct state is set based on the initial value
+        document.addEventListener('DOMContentLoaded', function() {
+            toggleOtherOSField();
+        });
+
+        function toggleOtherOfficeField() {
+            var office = document.getElementById('office').value;
+            var otherOfficeGroup = document.getElementById('other-office-group');
+            var otherOfficeInput = document.getElementById('other_office');
+            
+            if (office === '99') { // Assuming '99' corresponds to 'Lainnya'
+                otherOfficeGroup.style.display = 'block';
+                otherOfficeInput.setAttribute('required', 'required');
+            } else {
+                otherOfficeGroup.style.display = 'none';
+                otherOfficeInput.removeAttribute('required');
+            }
+        }
+
+        // Call the function on page load to ensure the correct state is set based on the initial value
+        document.addEventListener('DOMContentLoaded', function() {
+            toggleOtherOfficeField();
+        });
+
     </script>
 @stop
 

@@ -70,6 +70,12 @@ class AllocationController extends Controller
                     ->where('status_alias.archived', '=', 0);
             })
             ->where('assets.non_it_stuff', '=', 0);
+        // ->whereNotIn('assets.id', function ($subquery) use ($user) {
+        //     $subquery->select('allocations.assets_id')
+        //     ->from('allocations')
+        //     ->where('allocations.user_id', '=', $user->id)
+        //     ->whereIn('allocations.status', ['Belum Dikirim', 'Menunggu Persetujuan']);
+        // });
 
         if (!empty($search)) {
             $query->where(function ($q) use ($search) {
@@ -149,6 +155,7 @@ class AllocationController extends Controller
     public function viewAllocations()
     {
         $user = Auth::user();
+        $userAssets = $user->assets;
 
         $allocations = Allocation::select('allocations.*', 'categories.name AS category_name', 'users.first_name AS user_first_name')
             ->where('allocations.user_id', $user->id)
@@ -157,34 +164,88 @@ class AllocationController extends Controller
             ->join('users', 'users.id', '=', 'allocations.user_id')
             ->get();
 
+        // Create a collection to hold the final data
+        $finalData = collect();
+
+        // Add user assets to the final data with the status "Sudah Disetujui"
+        foreach ($userAssets as $asset) {
+            // Fetch asset from the database based on $asset->id
+            $assetData = Asset::find($asset->id); // Replace 'Asset' with your actual Eloquent model name for assets
+
+            if ($assetData) {
+                // Add additional fields to $assetData
+                $assetData->status = 'Sudah Disetujui'; // Add 'status' field
+
+                // Assuming relationships exist properly, add 'category_name' field
+                if ($assetData->model && $assetData->model->category) {
+                    $assetData->category_name = $assetData->model->category->name;
+                } else {
+                    $assetData->category_name = null; // Handle if category name is not available
+                }
+
+                $finalData->push($assetData); // Push the enhanced asset data into $finalData collection
+            }
+        }
+
+        // Add allocations to the final data
+        foreach ($allocations as $allocation) {
+            $existingAsset = $finalData->firstWhere('asset_id', $allocation->assets_id);
+
+            if ($existingAsset) {
+                if ($existingAsset['status'] === 'Sudah Disetujui') {
+                    continue;
+                }
+            }
+
+            $finalData->push([
+                'id' => $allocation->id,
+                'name' => $allocation->name,
+                'category_name' => $allocation->category_name,
+                'status' => $allocation->status,
+                'source' => 'allocation',
+                'request_date' => $allocation->request_date,
+                'user_first_name' => $allocation->user_first_name,
+                'bmn' => $allocation->bmn,
+                'serial' => $allocation->serial,
+                'kondisi' => $allocation->kondisi,
+                'os' => $allocation->os,
+                'os2' => $allocation->os2,
+                'office' => $allocation->office,
+                'office2' => $allocation->office2,
+                'antivirus' => $allocation->antivirus,
+                'assets_id' => $allocation->assets_id
+            ]);
+        }
+
+        // Remove duplicates and ensure correct data
+        $finalData = $finalData->unique('id');
+
         // Format data for the data-table
         $data = [
-            'total' => $allocations->count(),
-            'rows' => $allocations->map(function ($allocation) {
-                $isUncomplete = $allocation->bmn && $allocation->serial && $allocation->kondisi && $allocation->os && $allocation->office && $allocation->antivirus;
-                // Allocation::where(function ($query) {
-                //     $query->whereNull('bmn')
-                //         ->orWhereNull('serial')
-                //         ->orWhereNull('kondisi')
-                //         ->orWhereNull('os')
-                //         ->orWhereNull('office')
-                //         ->orWhereNull('antivirus');
-                // })->get();
+            'total' => $finalData->count(),
+            'rows' => $finalData->map(function ($item) {
+                $isComplete = $item['bmn'] && $item['serial'] && $item['kondisi'] && $item['os'] && $item['office'];
 
                 return [
-                    'id' => $allocation->id,
-                    'request_date' => $allocation->request_date,
-                    'user_first_name' => $allocation->user_first_name,
-                    'category' => $allocation->category_name,
-                    'name' => $allocation->name,
-                    'bmn' => $allocation->bmn,
-                    'serial' => $allocation->serial,
-                    'status' => $allocation->status,
-                    'asset_id' => $allocation->assets_id,
-                    'icon' => $isUncomplete ?
+                    'id' => $item['id'],
+                    'request_date' => $item['request_date'],
+                    'user_first_name' => $item['user_first_name'],
+                    'category' => $item['category_name'],
+                    'name' => $item['name'],
+                    'bmn' => $item['bmn'],
+                    'serial' => $item['serial'],
+                    'status' => $item['status'],
+                    'asset_id' => $item['assets_id'],
+                    'kondisi' => $item['kondisi'],
+                    'os' => $item['os'],
+                    'os2' => $item['os2'],
+                    'office' => $item['office'],
+                    'office2' => $item['office2'],
+                    'antivirus' => $item['antivirus'],
+                    'icon' => $isComplete ?
                         '<i class="fa fa-check-circle" style="color: green;" title="Data Sudah Lengkap."></i>' :
                         '<i class="fa fa-warning" style="color: orange;" title="Data Belum Lengkap!"></i>',
-                    'complete_status' => $isUncomplete ? 1:0,
+                    'complete_status' => $isComplete ? 1 : 0,
                     // Add other fields as needed
                 ];
             })
@@ -209,10 +270,7 @@ class AllocationController extends Controller
             ->where('id', $assets_id)
             ->first();
 
-        // Debugging output to check the value of $assets_id
-        // var_dump($assets_id); die();
-
-        $allocation_id = [];
+        $allocation_id = null; // Initialize allocation_id
 
         if ($allocation) {
             if ($allocation->allocation_code == "2") {
@@ -221,36 +279,19 @@ class AllocationController extends Controller
                 $data = $assets;
             }
             $allocation_id = $allocation->id;
-        } else {
-            // If no allocation is found, create a new one
-            $allocation = Allocation::create([
-                'company_id' => $assets->company_id,
-                'user_id' => $user->id,
-                'assigned_type' => 'App\Models\User',
-                'assets_id' => $assets->id,
-                'category_id' => $assets->model->category_id,
-                'name' => $assets->name,
-                'bmn' => $assets->bmn,
-                'serial' => $assets->serial,
-                'kondisi' => $assets->kondisi,
-                'os' => $assets->_snipeit_sistem_operasi_2,
-                'office' => $assets->_snipeit_software_office_1,
-                'antivirus' => $assets->_snipeit_antivirus_3,
-                'status' => 'Belum Dikirim',
-                'request_date' => now(),
-                'allocation_code' => '1'
-            ]);
-            $allocation_id = $allocation->id;
-            $data = $allocation;
         }
 
         // Retrieve the asset tag from the assets
         $asset = $data;
         $asset_tag = $assets->asset_tag;
 
+        // Debugging output to check the value of $allocation_id
+        // var_dump($allocation_id); die();
+
         // Pass the allocation data to the view
         return view('account/edit-allocation', compact('asset', 'asset_tag', 'allocation_id'));
     }
+
 
 
     public function destroy($allocation_id)
@@ -285,8 +326,10 @@ class AllocationController extends Controller
             'serial' => 'required|string|max:255',
             'kondisi' => 'required|string',
             'supporting_link' => 'nullable|url',
-            'os' => 'nullable|string|max:255',
+            'os' => 'required|string|max:255',
+            'os2' => 'nullable|string|max:255',
             'office' => 'required|string|max:255',
+            'office2' => 'nullable|string|max:255',
             'antivirus' => 'nullable|string|max:255',
         ]);
 
@@ -298,7 +341,9 @@ class AllocationController extends Controller
             $allocation->kondisi = $validatedData['kondisi'];
             $allocation->supporting_link = $validatedData['supporting_link'];
             $allocation->os = $validatedData['os'];
+            $allocation->os2 = $validatedData['os2'];
             $allocation->office = $validatedData['office'];
+            $allocation->office2 = $validatedData['office2'];
             $allocation->antivirus = $validatedData['antivirus'];
             $allocation->allocation_code = 2;
             $allocation->status = "Belum Dikirim";
@@ -311,8 +356,6 @@ class AllocationController extends Controller
             Log::error('Error updating allocation: ' . $e->getMessage());
             return redirect()->route('allocations.index')->with('error', 'Gagal update informasi perangkat. Silakan coba lagi.');
         }
-
-        
     }
 
     /**

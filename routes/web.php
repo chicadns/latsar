@@ -284,6 +284,7 @@ Route::group(['prefix' => 'approval', 'middleware' => ['auth']], function () {
     Route::get('request', [ApprovalController::class, 'getApprovalData'])->name('approval.request');
     Route::get('history', [ApprovalController::class, 'getAllData'])->name('approval.history');
     Route::post('update-status', [ApprovalController::class, 'updateStatus'])->name('approval.update-status');
+    Route::post('bulkUpdateStatus', [ApprovalController::class, 'bulkUpdateStatus'])->name('approval.bulkUpdateStatus');
 
 });
 

@@ -7,7 +7,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\ImageUploadRequest;
 use App\Models\Category;
 use App\Models\Company;
-use App\Models\Consumable;
+use App\Models\Asset;
 use App\Models\Allocation;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
@@ -36,7 +36,7 @@ class ApprovalController extends Controller
      */
     public function index()
     {
-        $this->authorize('index', Consumable::class);
+        // $this->authorize('index', Allocation::class);
 
         return view('approval/index');
     }
@@ -54,10 +54,25 @@ class ApprovalController extends Controller
                     ->join('users', 'users.id', '=', 'allocations.user_id')
                     ->get();
 
+        
         // Format data for the data-table
         $data = [
             'total' => $allocations->count(),
             'rows' => $allocations->map(function ($allocation) {
+                $os_output ='';
+                $office_output ='';
+
+                if ($allocation->os == 99){
+                    $os_output = $allocation->os2;
+                } else {
+                    $os_output = $allocation->os;
+                };
+                if ($allocation->office == 99){
+                    $office_output = $allocation->office2;
+                } else {
+                    $office_output = $allocation->office;
+                };
+
                 return [
                     'id' => $allocation->id,
                     'request_date' => $allocation->request_date,
@@ -69,8 +84,8 @@ class ApprovalController extends Controller
                     'status' => $allocation->status,
                     'kondisi' => $allocation->kondisi,
                     'supporting_link' => $allocation->supporting_link,
-                    'os' => $allocation->os,
-                    'office' => $allocation->office,
+                    'os' => $os_output,
+                    'office' => $office_output,
                     'antivirus' => $allocation->antivirus,
                     // Add other fields as needed
                 ];
@@ -100,12 +115,85 @@ class ApprovalController extends Controller
             $allocation->handling_date = now();
             $allocation->save();
 
+            $asset = Asset::find($allocation->assets_id);
+
+            // var_dump($asset);
+            // die();
+
+            // Update the related asset if needed
+            if ($asset) {
+                $asset->bmn = $allocation->bmn;
+                $asset->serial = $allocation->serial;
+                $asset->supporting_link = $allocation->supporting_link;
+                $asset->assigned_type = $allocation->assigned_type;
+                $asset->assigned_to = $allocation->user_id;
+                $asset->_snipeit_sistem_operasi_2 = $allocation->os;
+                $asset->_snipeit_software_office_1 = $allocation->office;
+                $asset->_snipeit_antivirus_3 = $allocation->antivirus;
+
+                // Update the notes column
+                if (!empty($asset->notes)) {
+                    $notesParts = explode(' - ', $asset->notes, 2);
+                    $notesParts[0] = $allocation->kondisi;
+                    $asset->notes = implode(' - ', $notesParts);
+                } else {
+                    $asset->notes = $allocation->kondisi;
+                }
+
+                $asset->save();
+            }
+
             return redirect()->back()->with('success', $status == 'Sudah Disetujui' ? 'Setujui Pengajuan Berhasil!' : 'Tidaksetujui Pengajuan Berhasil!');
         } else {
             return redirect()->back()->with('error', 'Alokasi Tidak Ditemukan!');
         }
     }
 
+    public function bulkUpdateStatus(Request $request)
+    {
+        $ids = $request->input('ids');
+        $status = $request->input('status');
+
+        // Validate the input
+        if (empty($ids) || !in_array($status, ['Sudah Disetujui', 'Tidak Disetujui'])) {
+            return response()->json(['message' => 'Invalid input'], 400);
+        }
+
+        // Find and update allocations
+        $allocations = Allocation::whereIn('id', $ids)->get();
+        foreach ($allocations as $allocation) {
+            $allocation->status = $status;
+            $allocation->handling_date = now();
+            $allocation->save();
+
+            $asset = Asset::find($allocation->assets_id);
+
+            // Update the related asset if needed
+            if ($asset) {
+                $asset->bmn = $allocation->bmn;
+                $asset->serial = $allocation->serial;
+                $asset->supporting_link = $allocation->supporting_link;
+                $asset->assigned_type = $allocation->assigned_type;
+                $asset->assigned_to = $allocation->user_id;
+                $asset->_snipeit_sistem_operasi_2 = $allocation->os;
+                $asset->_snipeit_software_office_1 = $allocation->office;
+                $asset->_snipeit_antivirus_3 = $allocation->antivirus;
+
+                // Update the notes column
+                if (!empty($asset->notes)) {
+                    $notesParts = explode(' - ', $asset->notes, 2);
+                    $notesParts[0] = $allocation->kondisi;
+                    $asset->notes = implode(' - ', $notesParts);
+                } else {
+                    $asset->notes = $allocation->kondisi;
+                }
+
+                $asset->save();
+            }
+        }
+
+        return response()->json(['message' => $status == 'Sudah Disetujui' ? 'Bulk Approve Successful!' : 'Bulk Decline Successful!']);
+    }
     
     public function getAllData()
     {
@@ -123,6 +211,19 @@ class ApprovalController extends Controller
         $data = [
             'total' => $allocations->count(),
             'rows' => $allocations->map(function ($allocation) {
+                $os_output = '';
+                $office_output = '';
+
+                if ($allocation->os == 99) {
+                    $os_output = $allocation->os2;
+                } else {
+                    $os_output = $allocation->os;
+                };
+                if ($allocation->office == 99) {
+                    $office_output = $allocation->office2;
+                } else {
+                    $office_output = $allocation->office;
+                };
                 return [
                     'id' => $allocation->id,
                     'request_date' => $allocation->request_date,
@@ -134,8 +235,8 @@ class ApprovalController extends Controller
                     'status' => $allocation->status,
                     'kondisi' => $allocation->kondisi,
                     'supporting_link' => $allocation->supporting_link,
-                    'os' => $allocation->os,
-                    'office' => $allocation->office,
+                    'os' => $os_output,
+                    'office' => $office_output,
                     'antivirus' => $allocation->antivirus,
                     // Add other fields as needed
                 ];
