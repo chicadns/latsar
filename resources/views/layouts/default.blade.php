@@ -437,13 +437,11 @@
                                 </a>
                             </li>
 
-                            @can('view', \App\Models\Consumable::class)
-                                    <li{!! (Request::is('consumables*') && !Request::is('consumablestransaction*') ? ' class="active"' : '') !!}>
-                                        <a href="{{ url('approval') }}">
-                                            <i class="fas fa-user-plus" aria-hidden="true"></i> <span>{{ trans('general.enduser') }}</span>
-                                        </a>
-                                    </li>
-                            @endcan
+                            <li {!! (\Request::route()->getName()=='approval' ? ' class="active"' : '') !!}>
+                                <a href="{{ url('approval') }}">
+                                    <i class="fas fa-user-plus" aria-hidden="true"></i> <span>{{ trans('general.enduser') }}</span>
+                                </a>
+                            </li>
                         
                         @can('index', \App\Models\Asset::class)
                             <li class="treeview menu-open" style="height: auto;">
@@ -1096,6 +1094,31 @@
                             <li>
                                 <a href="{{ url('processfile') }}">
                                     <i class="fas fa-file-code"></i> <span>Status Pemeliharaan Perangkat TI</span>
+                                </a>
+                            </li>
+                        </ul>
+                    @endif
+                    
+                    {{-- Buat Operator (Belum WKWK) --}}
+                    @if ((auth()->user()->can('admin')) && ($user->group = 5))
+                        <ul class="sidebar-menu" data-widget="tree">
+                            <li 
+                            {!! (\Request::route()->getName()=='operator' ? ' class="active"' : '') !!} class="firstnav"
+                            >
+                                <a href="{{ route('operator') }}">
+                                    <i class="fas fa-home fa-fw" aria-hidden="true"></i> <span>{{ trans('general.dashboard') }} Operator</span>
+                                </a>
+                            </li>
+                            <li {!! (\Request::route()->getName()=='approval' ? ' class="active"' : '') !!}>
+                                <a href="{{ url('approval') }}">
+                                    <i class="fas fa-user-plus" aria-hidden="true"></i> <span>{{ trans('general.enduser') }}</span>
+                                </a>
+                            </li>
+                            <li 
+                            {{-- {!! (\Request::route()->getName()=='home' ? ' class="active"' : '') !!} --}}
+                            >
+                                <a href="{{ url('hardware?status=Allitems') }}">
+                                    <i class="fas fa-file-alt fa-fw" aria-hidden="true"></i> <span>{{ trans('general.assets') }}</span>
                                 </a>
                             </li>
                         </ul>

@@ -269,6 +269,9 @@ Route::get('/import',
     \App\Http\Livewire\Importer::class
 )->middleware('auth')->name('imports.index');
 
+Route::get('/operator', [DashboardController::class, 'operator'])->name('operator');
+
+
 /*
 |--------------------------------------------------------------------------
 | Approval Routes
