@@ -70,12 +70,7 @@ class AllocationController extends Controller
                     ->where('status_alias.archived', '=', 0);
             })
             ->where('assets.non_it_stuff', '=', 0);
-        // ->whereNotIn('assets.id', function ($subquery) use ($user) {
-        //     $subquery->select('allocations.assets_id')
-        //     ->from('allocations')
-        //     ->where('allocations.user_id', '=', $user->id)
-        //     ->whereIn('allocations.status', ['Belum Dikirim', 'Menunggu Persetujuan']);
-        // });
+
 
         if (!empty($search)) {
             $query->where(function ($q) use ($search) {

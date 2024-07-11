@@ -48,26 +48,26 @@ class ApprovalController extends Controller
 
         $user = Auth::user();
         $allocations = Allocation::select('allocations.*', 'categories.name AS category_name', 'users.first_name AS user_first_name')
-                    ->where('allocations.company_id', $user->company_id)
-                    ->where('allocations.status', "Menunggu Persetujuan")
-                    ->join('categories', 'categories.id', '=', 'allocations.category_id')
-                    ->join('users', 'users.id', '=', 'allocations.user_id')
-                    ->get();
+            ->where('allocations.company_id', $user->company_id)
+            ->where('allocations.status', "Menunggu Persetujuan")
+            ->join('categories', 'categories.id', '=', 'allocations.category_id')
+            ->join('users', 'users.id', '=', 'allocations.user_id')
+            ->get();
 
-        
+
         // Format data for the data-table
         $data = [
             'total' => $allocations->count(),
             'rows' => $allocations->map(function ($allocation) {
-                $os_output ='';
-                $office_output ='';
+                $os_output = '';
+                $office_output = '';
 
-                if ($allocation->os == 99){
+                if ($allocation->os == 99) {
                     $os_output = $allocation->os2;
                 } else {
                     $os_output = $allocation->os;
                 };
-                if ($allocation->office == 99){
+                if ($allocation->office == 99) {
                     $office_output = $allocation->office2;
                 } else {
                     $office_output = $allocation->office;
@@ -90,13 +90,15 @@ class ApprovalController extends Controller
                     // Add other fields as needed
                 ];
             })
-    ];
+        ];
 
-    return response()->json($data);
+        return response()->json($data);
     }
 
     public function updateStatus(Request $request)
     {
+        $user = Auth::user();
+
         // Check if 'setuju' or 'tidak_setuju' is present in the request
         if ($request->has('setuju')) {
             $id = $request->input('setuju');
@@ -111,43 +113,62 @@ class ApprovalController extends Controller
         // Find the allocation by id and update its status
         $allocation = Allocation::find($id);
         if ($allocation) {
-            $allocation->status = $status;
-            $allocation->handling_date = now();
-            $allocation->save();
+            // Check if the status is 'Sudah Disetujui'
+            if ($status == 'Sudah Disetujui') {
+                // Find the asset related to the allocation
+                $asset = Asset::find($allocation->assets_id);
+                if ($asset) {
+                    // Check if the current user is assigned to the asset or if it's unassigned
+                    if ($asset->assigned_to == $user->id || $asset->assigned_to == null) {
+                        // Proceed with the update
+                        $allocation->status = $status;
+                        $allocation->handling_date = now();
+                        $allocation->save();
 
-            $asset = Asset::find($allocation->assets_id);
+                        // Update the related asset
+                        $asset->bmn = $allocation->bmn;
+                        $asset->serial = $allocation->serial;
+                        $asset->supporting_link = $allocation->supporting_link;
+                        $asset->assigned_type = $allocation->assigned_type;
+                        $asset->assigned_to = $allocation->user_id;
+                        $asset->_snipeit_sistem_operasi_2 = $allocation->os;
+                        $asset->_snipeit_software_office_1 = $allocation->office;
+                        $asset->_snipeit_antivirus_3 = $allocation->antivirus;
 
-            // var_dump($asset);
-            // die();
+                        // Update the notes column
+                        if (!empty($asset->notes)) {
+                            $notesParts = explode(' - ', $asset->notes, 2);
+                            $notesParts[0] = $allocation->kondisi;
+                            $asset->notes = implode(' - ', $notesParts);
+                        } else {
+                            $asset->notes = $allocation->kondisi;
+                        }
 
-            // Update the related asset if needed
-            if ($asset) {
-                $asset->bmn = $allocation->bmn;
-                $asset->serial = $allocation->serial;
-                $asset->supporting_link = $allocation->supporting_link;
-                $asset->assigned_type = $allocation->assigned_type;
-                $asset->assigned_to = $allocation->user_id;
-                $asset->_snipeit_sistem_operasi_2 = $allocation->os;
-                $asset->_snipeit_software_office_1 = $allocation->office;
-                $asset->_snipeit_antivirus_3 = $allocation->antivirus;
+                        $asset->save();
 
-                // Update the notes column
-                if (!empty($asset->notes)) {
-                    $notesParts = explode(' - ', $asset->notes, 2);
-                    $notesParts[0] = $allocation->kondisi;
-                    $asset->notes = implode(' - ', $notesParts);
+                        return redirect()->back()->with('success', 'Setujui Pengajuan Berhasil!');
+                    } else {
+                        // Alert that the asset is already assigned to another user
+                        $assignedUser = $asset->assigned_to;
+                        $alertMessage = 'Asset ini sudah dialokasikan pada user ' . $assignedUser . '. Jika Anda ingin mengubah pengguna yang menguasai perangkat, harap dealokasi pada Halaman Daftar Perangkat IT.';
+                        echo "<script>alert('{$alertMessage}'); window.history.back();</script>";
+                    }
                 } else {
-                    $asset->notes = $allocation->kondisi;
+                    return redirect()->back()->with('error', 'Aset Tidak Ditemukan!');
                 }
+            } else {
+                // If status is 'Tidak Disetujui', update only the allocation status
+                $allocation->status = $status;
+                $allocation->handling_date = now();
+                $allocation->save();
 
-                $asset->save();
+                return redirect()->back()->with('success', 'Tolak Pengajuan Berhasil!');
             }
-
-            return redirect()->back()->with('success', $status == 'Sudah Disetujui' ? 'Setujui Pengajuan Berhasil!' : 'Tolak Pengajuan Berhasil!');
         } else {
             return redirect()->back()->with('error', 'Alokasi Tidak Ditemukan!');
         }
     }
+
 
     public function bulkUpdateStatus(Request $request)
     {
@@ -159,42 +180,74 @@ class ApprovalController extends Controller
             return response()->json(['message' => 'Invalid input'], 400);
         }
 
+        // Initialize counter
+        $updatedCount = 0;
+
         // Find and update allocations
         $allocations = Allocation::whereIn('id', $ids)->get();
         foreach ($allocations as $allocation) {
-            $allocation->status = $status;
-            $allocation->handling_date = now();
-            $allocation->save();
+            if ($status == 'Sudah Disetujui') {
+                // Find the asset related to the allocation
+                $asset = Asset::find($allocation->assets_id);
+                if ($asset) {
+                    // Check if the current user is assigned to the asset or if it's unassigned
+                    if ($asset->assigned_to == Auth::id() || $asset->assigned_to == null) {
+                        // Proceed with the update
+                        $allocation->status = $status;
+                        $allocation->handling_date = now();
+                        $allocation->save();
 
-            $asset = Asset::find($allocation->assets_id);
+                        // Update the related asset
+                        $asset->bmn = $allocation->bmn;
+                        $asset->serial = $allocation->serial;
+                        $asset->supporting_link = $allocation->supporting_link;
+                        $asset->assigned_type = $allocation->assigned_type;
+                        $asset->assigned_to = $allocation->user_id;
+                        $asset->_snipeit_sistem_operasi_2 = $allocation->os;
+                        $asset->_snipeit_software_office_1 = $allocation->office;
+                        $asset->_snipeit_antivirus_3 = $allocation->antivirus;
 
-            // Update the related asset if needed
-            if ($asset) {
-                $asset->bmn = $allocation->bmn;
-                $asset->serial = $allocation->serial;
-                $asset->supporting_link = $allocation->supporting_link;
-                $asset->assigned_type = $allocation->assigned_type;
-                $asset->assigned_to = $allocation->user_id;
-                $asset->_snipeit_sistem_operasi_2 = $allocation->os;
-                $asset->_snipeit_software_office_1 = $allocation->office;
-                $asset->_snipeit_antivirus_3 = $allocation->antivirus;
+                        // Update the notes column
+                        if (!empty($asset->notes)) {
+                            $notesParts = explode(' - ', $asset->notes, 2);
+                            $notesParts[0] = $allocation->kondisi;
+                            $asset->notes = implode(' - ', $notesParts);
+                        } else {
+                            $asset->notes = $allocation->kondisi;
+                        }
 
-                // Update the notes column
-                if (!empty($asset->notes)) {
-                    $notesParts = explode(' - ', $asset->notes, 2);
-                    $notesParts[0] = $allocation->kondisi;
-                    $asset->notes = implode(' - ', $notesParts);
+                        $asset->save();
+
+                        // Increment updated count
+                        $updatedCount++;
+                    } else {
+                        // Skip updating and increment count of skipped updates
+                        continue;
+                    }
                 } else {
-                    $asset->notes = $allocation->kondisi;
+                    // Skip updating and increment count of skipped updates
+                    continue;
                 }
+            } else {
+                // If status is 'Tidak Disetujui', update only the allocation status
+                $allocation->status = $status;
+                $allocation->handling_date = now();
+                $allocation->save();
 
-                $asset->save();
+                // Increment updated count
+                $updatedCount++;
             }
         }
 
-        return response()->json(['message' => $status == 'Sudah Disetujui' ? 'Setujui Pengajuan Berhasil!' : 'Tolak Pengajuan Berhasil!']);
+        // Prepare success message with updated count
+        $successMessage = $status == 'Sudah Disetujui' ? 'Setujui Pengajuan Berhasil!' : 'Tolak Pengajuan Berhasil!';
+        $successMessage .= " Total Diperbarui: $updatedCount";
+
+        return response()->json(['message' => $successMessage]);
     }
-    
+
+
+
     public function getAllData()
     {
         // Fetch data from your model
@@ -202,10 +255,10 @@ class ApprovalController extends Controller
 
         $user = Auth::user();
         $allocations = Allocation::select('allocations.*', 'categories.name AS category_name', 'users.first_name AS user_first_name')
-                    ->where('allocations.company_id', $user->company_id)
-                    ->join('categories', 'categories.id', '=', 'allocations.category_id')
-                    ->join('users', 'users.id', '=', 'allocations.user_id')
-                    ->get();
+            ->where('allocations.company_id', $user->company_id)
+            ->join('categories', 'categories.id', '=', 'allocations.category_id')
+            ->join('users', 'users.id', '=', 'allocations.user_id')
+            ->get();
 
         // Format data for the data-table
         $data = [
@@ -242,9 +295,8 @@ class ApprovalController extends Controller
                     // Add other fields as needed
                 ];
             })
-    ];
+        ];
 
-    return response()->json($data);
+        return response()->json($data);
     }
-
 }

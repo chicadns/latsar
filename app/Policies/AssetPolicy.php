@@ -4,6 +4,8 @@ namespace App\Policies;
 
 use App\Models\User;
 
+use App\Models\Asset;
+
 class AssetPolicy extends CheckoutablePermissionsPolicy
 {
     protected function columnName()
