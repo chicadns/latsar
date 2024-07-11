@@ -47,9 +47,12 @@
 
               <div class="box-body">
                 <!-- Bulk Action Buttons -->
-                <button id="bulkApprove" class="btn btn-success">Bulk Approve</button>
-                <button id="bulkDecline" class="btn btn-danger">Bulk Decline</button>
-
+                <div>
+                  Aksi Pengajuan Terpilih : 
+                  <button id="bulkApprove" class="btn btn-success"><i class="fas fa-check" aria-hidden="true"></i> Setuju</button>
+                  <button id="bulkDecline" class="btn btn-danger"><i class="fas fa-times" aria-hidden="true"></i> Tolak</button>
+                </div>
+                
                 <!-- Approval Table -->
                 <table
                     data-columns="{{ \App\Presenters\ApprovalPresenter::dataTableLayout() }}"
@@ -140,7 +143,7 @@
             alert('Silahkan pilih minimal satu baris.');
             return;
         }
-        if (confirm('Setujui Semua Data Terpilih?')) {
+        if (confirm('Apakah Anda Yakin Ingin Menyetujui Semua Pengajuan Terpilih?')) {
             var ids = selectedRows.map(row => row.id);
 
             $.ajax({
@@ -156,7 +159,7 @@
                     $('#approvalTable').bootstrapTable('refresh');
                 },
                 error: function (response) {
-                    alert('Error occurred while processing the request.');
+                    alert('Terjadi kesalahan saat memproses permintaan.');
                 }
             });
         }
@@ -169,7 +172,7 @@
             alert('Silahkan pilih minimal satu baris.');
             return;
         }
-        if (confirm('Tidaksetujui Semua Data Terpilih?')) {
+        if (confirm('Apakah Anda Yakin Ingin Menolak Semua Pengajuan Terpilih?')) {
             var ids = selectedRows.map(row => row.id);
 
             $.ajax({
@@ -341,7 +344,7 @@
 
       <form action="{{ route('approval.update-status') }}" method="POST" style="display:inline;">
         <input type="hidden" name="tidak_setuju" value="${row.id}"> <!-- Pass the id of the row -->
-        <button type="submit" title="Tidak Setuju" class="btn btn-danger btn-sm" onclick="return confirm('Tidaksetujui Pengajuan?')">
+        <button type="submit" title="Tolak" class="btn btn-danger btn-sm" onclick="return confirm('Apakah Anda Yakin Ingin Menolak Pengajuan?')">
           <i class="fas fa-times" aria-hidden="true"></i>
         </button>
       </form>
