@@ -49,7 +49,4 @@ class DashboardController extends Controller
         }
     }
 
-    public function operator() {
-        return view('operator');
-    }
 }

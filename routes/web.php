@@ -18,6 +18,7 @@ use App\Http\Controllers\ModalController;
 use App\Http\Controllers\MonitoringController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\AllocationController;
+use App\Http\Controllers\OperatorController;
 use App\Http\Controllers\ProcessFileController;
 use App\Http\Controllers\ReportsController;
 use App\Http\Controllers\SettingsController;
@@ -269,7 +270,7 @@ Route::get('/import',
     \App\Http\Livewire\Importer::class
 )->middleware('auth')->name('imports.index');
 
-Route::get('/operator', [DashboardController::class, 'operator'])->name('operator');
+Route::get('/operator', [OperatorController::class, 'index'])->name('operator');
 
 
 /*

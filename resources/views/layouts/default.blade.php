@@ -1102,9 +1102,7 @@
                     {{-- Buat Operator (Belum WKWK) --}}
                     @if ((auth()->user()->can('admin')) && ($user->group = 5))
                         <ul class="sidebar-menu" data-widget="tree">
-                            <li 
-                            {!! (\Request::route()->getName()=='operator' ? ' class="active"' : '') !!} class="firstnav"
-                            >
+                            <li {!! (\Request::route()->getName()=='operator' ? ' class="active"' : '') !!} class="firstnav">
                                 <a href="{{ route('operator') }}">
                                     <i class="fas fa-home fa-fw" aria-hidden="true"></i> <span>{{ trans('general.dashboard') }} Operator</span>
                                 </a>
@@ -1114,11 +1112,10 @@
                                     <i class="fas fa-user-plus" aria-hidden="true"></i> <span>{{ trans('general.enduser') }}</span>
                                 </a>
                             </li>
-                            <li 
-                            {{-- {!! (\Request::route()->getName()=='home' ? ' class="active"' : '') !!} --}}
-                            >
-                                <a href="{{ url('hardware?status=Allitems') }}">
-                                    <i class="fas fa-file-alt fa-fw" aria-hidden="true"></i> <span>{{ trans('general.assets') }}</span>
+                            <li {!! (\Request::route()->getName()=='hardware' ? ' class="active"' : '') !!}>
+                                <a href="{{ url('hardware') }}">
+                                    <i class="fas fa-barcode
+                                     fa-fw" aria-hidden="true"></i> <span>{{ trans('general.assets') }}</span>
                                 </a>
                             </li>
                         </ul>
