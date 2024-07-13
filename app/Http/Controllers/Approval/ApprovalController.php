@@ -53,7 +53,15 @@ class ApprovalController extends Controller
             ->join('categories', 'categories.id', '=', 'allocations.category_id')
             ->join('users', 'users.id', '=', 'allocations.user_id')
             ->get();
-
+        
+        if ($user->id == 1) {
+            $allocations = Allocation::select('allocations.*', 'categories.name AS category_name', 'users.first_name AS user_first_name')
+            // ->where('allocations.company_id', $user->company_id)
+            ->where('allocations.status', "Menunggu Persetujuan")
+            ->join('categories', 'categories.id', '=', 'allocations.category_id')
+            ->join('users', 'users.id', '=', 'allocations.user_id')
+            ->get();
+        }
 
         // Format data for the data-table
         $data = [
@@ -263,6 +271,14 @@ class ApprovalController extends Controller
             ->join('categories', 'categories.id', '=', 'allocations.category_id')
             ->join('users', 'users.id', '=', 'allocations.user_id')
             ->get();
+
+        if ($user->id == 1) {
+            $allocations = Allocation::select('allocations.*', 'categories.name AS category_name', 'users.first_name AS user_first_name')
+            // ->where('allocations.company_id', $user->company_id)
+            ->join('categories', 'categories.id', '=', 'allocations.category_id')
+            ->join('users', 'users.id', '=', 'allocations.user_id')
+            ->get();
+        }
 
         // Format data for the data-table
         $data = [

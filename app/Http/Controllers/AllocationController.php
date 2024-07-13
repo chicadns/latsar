@@ -132,7 +132,7 @@ class AllocationController extends Controller
             ]);
         }
 
-        $ballon = $allocated->wasRecentlyCreated ? ['success', 'Perangkat IT Berhasil Ditambahkan!'] : ['error', 'Perangkat IT Sudah Anda Tambahkan.'];
+        $ballon = $allocated->wasRecentlyCreated ? ['success', 'Perangkat IT Berhasil Ditambahkan!'] : ['error', 'Perangkat IT Sudah Anda Tambahkan!'];
 
         return redirect()->route('allocations.index')->with($ballon[0], $ballon[1]);
     }
@@ -188,7 +188,7 @@ class AllocationController extends Controller
                 //     $existingAsset->allocation_id = null;
                 // } 
                 // else {
-                    $existingAsset->allocation_id = $allocation->id;
+                $existingAsset->allocation_id = $allocation->id;
                 // }
 
                 $existingAsset->name = $allocation->name;
@@ -385,6 +385,13 @@ class AllocationController extends Controller
                 'status' => 'Belum Dikirim',
             ]);
 
+            if ($allocation->os != 99) {
+                $allocation->os2 = null;
+            }
+            if ($allocation->office != 99) {
+                $allocation->office2 = null;
+            }
+
             $ballon = $allocation->wasRecentlyCreated ? ['success', 'Perangkat IT Berhasil Di-update!'] : ['error', 'Pengajuan Sudah Pernah Dibuat'];
 
             // Redirect back with success message
@@ -451,6 +458,14 @@ class AllocationController extends Controller
             $allocation->allocation_code = 2;
             $allocation->status = "Belum Dikirim";
             // Save changes
+
+            if ($allocation->os != 99) {
+                $allocation->os2 = null;
+            }
+            if ($allocation->office != 99) {
+                $allocation->office2 = null;
+            }
+
             $allocation->save();
 
             // Redirect back with success message

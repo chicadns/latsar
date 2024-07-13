@@ -760,11 +760,11 @@
           case "Belum Dikirim":
               if (row.complete_status == 1) {
                   editButton = createButton(editUrl, 'Edit', 'actions btn btn-sm btn-warning', 'fas fa-pencil-alt');
-                  deleteButton = createForm(deleteUrl, 'Hapus', 'btn btn-danger btn-sm', 'fas fa-trash', `onclick="return confirm('Apakah Anda Yakin Ingin Menghapus Pengajuan? (Menghapus Perangkat Tidak Akan Menghapus dari Database)')"`, methodDelete);
+                  deleteButton = createForm(deleteUrl, 'Hapus', 'btn btn-danger btn-sm', 'fas fa-trash', `onclick="return confirm('Apakah Anda Yakin Ingin Menghapus Pengajuan? (Menghapus Pengajuan Tidak Akan Menghapus Perangkat dari Database)')"`, methodDelete);
                   submitButton = createForm(submitUrl, 'Kirim', 'btn btn-success btn-sm', 'fas fa-paper-plane', `onclick="return confirm('Apakah Anda Yakin Ingin Mengirim Data ${row.name} Ini?')"`, `<input type="hidden" name="id" value="${row.id}">${methodPost}`);
               } else {
                   editButton = createButton(editUrl, 'Edit', 'actions btn btn-sm btn-warning', 'fas fa-pencil-alt');
-                  deleteButton = createForm(deleteUrl, 'Hapus', 'btn btn-danger btn-sm', 'fas fa-trash', `onclick="return confirm('Apakah Anda Yakin Ingin Menghapus Pengajuan? (Menghapus Perangkat Tidak Akan Menghapus dari Database)')"`, methodDelete);
+                  deleteButton = createForm(deleteUrl, 'Hapus', 'btn btn-danger btn-sm', 'fas fa-trash', `onclick="return confirm('Apakah Anda Yakin Ingin Menghapus Pengajuan? (Menghapus Pengajuan Tidak Akan Menghapus Perangkat dari Database)')"`, methodDelete);
                   submitButton = createForm('#', 'Kirim', 'btn btn-success btn-sm disabled', 'fas fa-paper-plane', '', `<input type="hidden" name="id" value="${row.id}">${methodPost}`);
               }
               break;
@@ -777,7 +777,7 @@
 
           case "Tidak Disetujui":
               editButton = createButton('#', 'Edit', 'actions btn btn-sm btn-warning disabled', 'fas fa-pencil-alt');
-              deleteButton = createForm(deleteUrl, 'Hapus', 'btn btn-danger btn-sm', 'fas fa-trash', `onclick="return confirm('Apakah Anda Yakin Ingin Menghapus Pengajuan? (Menghapus Perangkat Tidak Akan Menghapus dari Database)')"`, `${methodDelete}<input type="hidden" name="deleted_at" value="{{ now() }}">`);
+              deleteButton = createForm(deleteUrl, 'Hapus', 'btn btn-danger btn-sm', 'fas fa-trash', `onclick="return confirm('Apakah Anda Yakin Ingin Menghapus Pengajuan? (Menghapus Pengajuan Tidak Akan Menghapus Perangkat dari Database)')"`, `${methodDelete}<input type="hidden" name="deleted_at" value="{{ now() }}">`);
               submitButton = createForm('#', 'Kirim', 'btn btn-success btn-sm disabled', 'fas fa-paper-plane');
               break;
       }

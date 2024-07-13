@@ -429,7 +429,7 @@
                 <!-- sidebar: style can be found in sidebar.less -->
                 <section class="sidebar">
                     <!-- sidebar menu: : style can be found in sidebar.less -->
-                    @can('admin')
+                    @can('admin' && (! ($user->groups->contains('id', 5))))
                     <ul class="sidebar-menu" data-widget="tree">
                             <li {!! (\Request::route()->getName()=='home' ? ' class="active"' : '') !!} class="firstnav">
                                 <a href="{{ route('home') }}">
@@ -1099,12 +1099,12 @@
                         </ul>
                     @endif
                     
-                    {{-- Buat Operator (Belum WKWK) --}}
-                    @if ((auth()->user()->can('admin')) && ($user->group = 5))
-                        <ul class="sidebar-menu" data-widget="tree">
-                            <li {!! (\Request::route()->getName()=='operator' ? ' class="active"' : '') !!} class="firstnav">
-                                <a href="{{ route('operator') }}">
-                                    <i class="fas fa-home fa-fw" aria-hidden="true"></i> <span>{{ trans('general.dashboard') }} Operator</span>
+                    {{-- Buat Operator--}}
+                    @if ((auth()->user()->can('admin')) && ($user->groups->contains('id', 5))))
+                        <ul class="sidebar-menu" data-widget="tree" style="margin-top: -15px;">
+                            <li {!! (\Request::route()->getName()=='home' ? ' class="active"' : '') !!} class="firstnav">
+                                <a href="{{ route('home') }}">
+                                    <i class="fas fa-home fa-fw" aria-hidden="true"></i> <span>{{ trans('general.dashboard') }}</span>
                                 </a>
                             </li>
                             <li {!! (\Request::route()->getName()=='approval' ? ' class="active"' : '') !!}>
@@ -1115,7 +1115,7 @@
                             <li {!! (\Request::route()->getName()=='hardware' ? ' class="active"' : '') !!}>
                                 <a href="{{ url('hardware') }}">
                                     <i class="fas fa-barcode
-                                     fa-fw" aria-hidden="true"></i> <span>{{ trans('general.assets') }}</span>
+                                    fa-fw" aria-hidden="true"></i> <span>{{ trans('general.assets') }}</span>
                                 </a>
                             </li>
                         </ul>
