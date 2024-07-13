@@ -78,6 +78,7 @@ class Allocation extends SnipeModel
         'updated_at',
         'deleted_at',
         'allocation_code',
+        'handling_user_id',
     ];
 
     use Searchable;

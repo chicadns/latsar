@@ -13,6 +13,7 @@ use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Input;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Gate;
 
 
 use Illuminate\Http\Request;
@@ -38,6 +39,8 @@ class ApprovalController extends Controller
     {
         // $this->authorize('index', Allocation::class);
 
+        $user = Auth::user();
+
         return view('approval/index');
     }
 
@@ -53,8 +56,8 @@ class ApprovalController extends Controller
             ->join('categories', 'categories.id', '=', 'allocations.category_id')
             ->join('users', 'users.id', '=', 'allocations.user_id')
             ->get();
-        
-        if ($user->id == 1) {
+
+        if (Gate::allows('superadmin')) {
             $allocations = Allocation::select('allocations.*', 'categories.name AS category_name', 'users.first_name AS user_first_name')
             // ->where('allocations.company_id', $user->company_id)
             ->where('allocations.status', "Menunggu Persetujuan")
@@ -131,6 +134,7 @@ class ApprovalController extends Controller
                         // Proceed with the update
                         $allocation->status = $status;
                         $allocation->handling_date = now();
+                        $allocation->handling_user_id = $user->id;
                         $allocation->save();
 
                         // Update the related asset
@@ -168,6 +172,7 @@ class ApprovalController extends Controller
                 // If status is 'Tidak Disetujui', update only the allocation status
                 $allocation->status = $status;
                 $allocation->handling_date = now();
+                $allocation->handling_user_id = $user->id;
                 $allocation->save();
 
                 return redirect()->back()->with('success', 'Tolak Pengajuan Berhasil!');
@@ -182,6 +187,7 @@ class ApprovalController extends Controller
     {
         $ids = $request->input('ids');
         $status = $request->input('status');
+        $user = Auth::user();
 
         // Validate the input
         if (empty($ids) || !in_array($status, ['Sudah Disetujui', 'Tidak Disetujui'])) {
@@ -204,6 +210,7 @@ class ApprovalController extends Controller
                         // Proceed with the update
                         $allocation->status = $status;
                         $allocation->handling_date = now();
+                        $allocation->handling_user_id = $user->id;
                         $allocation->save();
 
                         // Update the related asset
@@ -243,6 +250,7 @@ class ApprovalController extends Controller
                 // If status is 'Tidak Disetujui', update only the allocation status
                 $allocation->status = $status;
                 $allocation->handling_date = now();
+                $allocation->handling_user_id = $user->id;
                 $allocation->save();
 
                 // Increment updated count
@@ -266,13 +274,14 @@ class ApprovalController extends Controller
         // $allocations = Allocation::all();
 
         $user = Auth::user();
+
         $allocations = Allocation::select('allocations.*', 'categories.name AS category_name', 'users.first_name AS user_first_name')
             ->where('allocations.company_id', $user->company_id)
             ->join('categories', 'categories.id', '=', 'allocations.category_id')
             ->join('users', 'users.id', '=', 'allocations.user_id')
             ->get();
 
-        if ($user->id == 1) {
+        if (Gate::allows('superadmin')) {
             $allocations = Allocation::select('allocations.*', 'categories.name AS category_name', 'users.first_name AS user_first_name')
             // ->where('allocations.company_id', $user->company_id)
             ->join('categories', 'categories.id', '=', 'allocations.category_id')
