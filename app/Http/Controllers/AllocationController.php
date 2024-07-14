@@ -70,10 +70,16 @@ class AllocationController extends Controller
             })
             ->where('assets.non_it_stuff', '=', 0);
 
-        if (in_array($user->company_id, range(1, 4)) || in_array($user->company_id, range(8, 25))) {
-            $query->where('company_id', 5);
+        // if (in_array($user->company_id, range(1, 4)) || in_array($user->company_id, range(8, 25))) {
+        //     $query->where('company_id', 5);
+        // } else {
+        //     $query->where('company_id', $user->company_id);
+        // }
+
+        if ($user->company_id == 10) {
+            $query->where('assets.company_id', 5);
         } else {
-            $query->where('company_id', $user->company_id);
+            $query->where('assets.company_id', $user->company_id);
         }
 
         if (!empty($search)) {

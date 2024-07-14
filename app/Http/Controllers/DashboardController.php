@@ -30,24 +30,7 @@ class DashboardController extends Controller
         // Show the page
         $user = Auth::user();
 
-        if (Auth::user()->hasAccess('admin') && (!($user->groups->contains('id', 5)))) {
-            $asset_stats = null;
-
-            $counts['asset'] = \App\Models\Asset::count();
-            $counts['accessory'] = (\App\Models\Asset::CategoryNonTISum()->count()) + (\App\Models\License::CategoryNonTI3()->count());
-            $counts['license'] = (\App\Models\License::count()) - (\App\Models\License::CategoryNonTI3()->count());
-            $counts['consumable'] = \App\Models\Consumable::count();
-            $counts['component'] = \App\Models\Component::count();
-            $counts['user'] = \App\Models\Company::scopeCompanyables(Auth::user())->count();
-            $counts['grand_total'] = $counts['asset'] + $counts['accessory'] + $counts['license'] + $counts['consumable'];
-
-            if ((! file_exists(storage_path().'/oauth-private.key')) || (! file_exists(storage_path().'/oauth-public.key'))) {
-                Artisan::call('migrate', ['--force' => true]);
-                Artisan::call('passport:install');
-            }
-
-            return view('dashboard')->with('asset_stats', $asset_stats)->with('counts', $counts);
-        } else if ($user->groups->contains('id', 5)) {
+        if ($user->groups->contains('id', 5)) {
             // Fetch total number of users with allocated assets
             $totalUsers = User::where('company_id', $user->company_id)->count();
 
@@ -76,12 +59,28 @@ class DashboardController extends Controller
             $notAllocatedAssets = $totalAssets - $allocatedAssets;
 
             return view('operator', compact('totalUsers', 'allocatedUsersCount', 'notAllocatedUsersCount', 'totalAssets', 'allocatedAssets', 'notAllocatedAssets'));
-    
-        } 
-        else {
+        
+        } else if (Auth::user()->hasAccess('admin')) {
+            $asset_stats = null;
+
+            $counts['asset'] = \App\Models\Asset::count();
+            $counts['accessory'] = (\App\Models\Asset::CategoryNonTISum()->count()) + (\App\Models\License::CategoryNonTI3()->count());
+            $counts['license'] = (\App\Models\License::count()) - (\App\Models\License::CategoryNonTI3()->count());
+            $counts['consumable'] = \App\Models\Consumable::count();
+            $counts['component'] = \App\Models\Component::count();
+            $counts['user'] = \App\Models\Company::scopeCompanyables(Auth::user())->count();
+            $counts['grand_total'] = $counts['asset'] + $counts['accessory'] + $counts['license'] + $counts['consumable'];
+
+            if ((!file_exists(storage_path() . '/oauth-private.key')) || (!file_exists(storage_path() . '/oauth-public.key'))) {
+                Artisan::call('migrate', ['--force' => true]);
+                Artisan::call('passport:install');
+            }
+
+            return view('dashboard')->with('asset_stats', $asset_stats)->with('counts', $counts);
+        
+        } else {
             // Redirect to the profile page
             return redirect()->intended('account/view-assets');
         }
     }
-
 }
