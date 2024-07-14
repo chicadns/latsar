@@ -350,6 +350,7 @@
                                     </a>
                                     <ul class="dropdown-menu">
                                         <!-- User image -->
+                                        @can('admin')
                                         <li {!! (Request::is('account/profile') ? ' class="active"' : '') !!}>
                                             <a href="{{ route('view-assets') }}">
                                                 <i class="fas fa-barcode fa-fw" aria-hidden="true"></i>
@@ -393,7 +394,9 @@
                                                 </a>
                                             </li>
                                         @endcan
+
                                         <li class="divider"></li>
+                                        @endcan
                                         <li>
 
                                             <a href="{{ route('logout.get') }}" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
