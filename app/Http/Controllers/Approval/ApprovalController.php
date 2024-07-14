@@ -141,6 +141,7 @@ class ApprovalController extends Controller
                         // Update the related asset
                         $asset->bmn = $allocation->bmn;
                         $asset->serial = $allocation->serial;
+                        $asset->company_id = $allocation->company_id;
                         $asset->supporting_link = $allocation->supporting_link;
                         $asset->assigned_type = $allocation->assigned_type;
                         $asset->assigned_to = $allocation->user_id;
@@ -217,6 +218,7 @@ class ApprovalController extends Controller
                         // Update the related asset
                         $asset->bmn = $allocation->bmn;
                         $asset->serial = $allocation->serial;
+                        $asset->company_id = $allocation->company_id;
                         $asset->supporting_link = $allocation->supporting_link;
                         $asset->assigned_type = $allocation->assigned_type;
                         $asset->assigned_to = $allocation->user_id;
