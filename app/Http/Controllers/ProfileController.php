@@ -35,6 +35,10 @@ class ProfileController extends Controller
     {
         $user = Auth::user();
 
+        if (!Gate::allows('self.api')) {
+            abort(403);
+        }
+
         return view('account/profile', compact('user'));
     }
 
@@ -48,6 +52,11 @@ class ProfileController extends Controller
     public function postIndex(ImageUploadRequest $request)
     {
         $user = Auth::user();
+
+        if (!Gate::allows('self.api')) {
+            abort(403);
+        }
+
         $user->first_name = $request->input('first_name');
         $user->last_name = $request->input('last_name');
         $user->website = $request->input('website');
@@ -108,6 +117,9 @@ class ProfileController extends Controller
     public function password()
     {
         $user = Auth::user();
+        if (!Gate::allows('self.api')) {
+            abort(403);
+        }
         
         return view('account/change-password', compact('user'));
     }
@@ -119,6 +131,10 @@ class ProfileController extends Controller
      */
     public function passwordSave(Request $request)
     {
+        if (!Gate::allows('self.api')) {
+            abort(403);
+        }
+        
         if (config('app.lock_passwords')) {
             return redirect()->route('account.password.index')->with('error', trans('admin/users/table.lock_passwords'));
         }

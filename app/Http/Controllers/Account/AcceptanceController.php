@@ -30,6 +30,7 @@ use App\Http\Controllers\SettingsController;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Carbon\Carbon;
 use phpDocumentor\Reflection\Types\Compound;
+use Illuminate\Support\Facades\Gate;
 
 class AcceptanceController extends Controller
 {
@@ -41,6 +42,10 @@ class AcceptanceController extends Controller
     public function index()
     {
         $acceptances = CheckoutAcceptance::forUser(Auth::user())->pending()->get();
+
+        if (!Gate::allows('self.api')) {
+            abort(403);
+        }
 
         return view('account/accept.index', compact('acceptances'));
     }
