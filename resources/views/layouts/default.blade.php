@@ -432,7 +432,8 @@
                 <!-- sidebar: style can be found in sidebar.less -->
                 <section class="sidebar">
                     <!-- sidebar menu: : style can be found in sidebar.less -->
-                    @can('admin' && (! ($user->groups->contains('id', 5))))
+                    @can('admin')
+                    @if (!($user->groups->contains('id', 5)))
                     <ul class="sidebar-menu" data-widget="tree">
                             <li {!! (\Request::route()->getName()=='home' ? ' class="active"' : '') !!} class="firstnav">
                                 <a href="{{ route('home') }}">
@@ -1076,6 +1077,7 @@
 
 
                     </ul>
+                    @endif
                     @endcan
                     @if (! (auth()->user()->can('admin') || auth()->user()->can('superadmin')))
                         <ul class="sidebar-menu" data-widget="tree">

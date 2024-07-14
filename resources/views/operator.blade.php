@@ -56,7 +56,7 @@ if (!$user->groups->contains('id', 5)) {
     <div class="col-md-3 mb-4" style="background: white; padding: 5px; margin-left:17px;">
         <div class="card">
             <div class="card-header text-center">
-                <h5 class="card-title mb-0"><b>Persentase Jumlah Pegawai yang <br/> Sudah Menguasai Perangkat IT</b></h5>
+                <h5 class="card-title mb-0"><b>Pegawai yang <br/> Menguasai Perangkat IT</b></h5>
             </div>
             <hr/>
             <div class="card-body text-center" style="padding-bottom: 8px;">
@@ -67,7 +67,7 @@ if (!$user->groups->contains('id', 5)) {
     <div class="col-md-3 mb-4" style="background: white; padding: 5px; margin-left:17px;">
         <div class="card">
             <div class="card-header text-center">
-                <h5 class="card-title mb-0"><b>Persentase Jumlah Perangkat IT yang <br/> Belum Dialokasikan ke Pegawai</h5>
+                <h5 class="card-title mb-0"><b>Perangkat IT yang <br/> Dialokasikan ke Pegawai</h5>
             </div>
             <hr/>
             <div class="card-body text-center" style="padding-bottom: 8px;">
@@ -90,7 +90,7 @@ if (!$user->groups->contains('id', 5)) {
         const notAllocatedUsersCount = @json($notAllocatedUsersCount);
 
         const allocatedUsersData = {
-            labels: ['Allocated', 'Not Allocated'],
+            labels: ['Sudah Menguasai', 'Belum Menguasai'],
             datasets: [{
                 data: [allocatedUsersCount, notAllocatedUsersCount],
                 backgroundColor: [
@@ -124,7 +124,7 @@ if (!$user->groups->contains('id', 5)) {
         const notAllocatedAssets = @json($notAllocatedAssets);
 
         const itemsNotAllocatedData = {
-            labels: ['Allocated', 'Not Allocated'],
+            labels: ['Sudah Dialokasikan', 'Belum Dialokasikan'],
             datasets: [{
                 data: [allocatedAssets, notAllocatedAssets],
                 backgroundColor: [
