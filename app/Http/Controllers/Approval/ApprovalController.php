@@ -8,6 +8,7 @@ use App\Http\Requests\ImageUploadRequest;
 use App\Models\Category;
 use App\Models\Company;
 use App\Models\Asset;
+use App\Models\Asset2;
 use App\Models\Allocation;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
@@ -127,7 +128,7 @@ class ApprovalController extends Controller
             // Check if the status is 'Sudah Disetujui'
             if ($status == 'Sudah Disetujui') {
                 // Find the asset related to the allocation
-                $asset = Asset::find($allocation->assets_id);
+                $asset = Asset2::find($allocation->assets_id);
                 if ($asset) {
                     // Check if the current user is assigned to the asset or if it's unassigned
                     if ($asset->assigned_to == $allocation->user_id || $asset->assigned_to == null) {
@@ -203,7 +204,7 @@ class ApprovalController extends Controller
         foreach ($allocations as $allocation) {
             if ($status == 'Sudah Disetujui') {
                 // Find the asset related to the allocation
-                $asset = Asset::find($allocation->assets_id);
+                $asset = Asset2::find($allocation->assets_id);
                 if ($asset) {
                     // Check if the current user is assigned to the asset or if it's unassigned
                     if ($asset->assigned_to == $allocation->user_id || $asset->assigned_to == null) {

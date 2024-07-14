@@ -22,4 +22,18 @@ class AssetPolicy extends CheckoutablePermissionsPolicy
     {
         return $user->hasAccess('assets.audit');
     }
+
+    public function viewCompanyAssets(User $user, Asset $asset)
+    {
+        // Allow users from company IDs 1-4 and 8-25 to access assets from company ID 5
+        $allowedCompanyIds = array_merge(range(1, 4), range(8, 25));
+
+        // Check if the user belongs to allowed company IDs and the asset belongs to company ID 5
+        if ($asset->company_id == 5 && in_array($user->company_id, $allowedCompanyIds)) {
+            return true;
+        }
+
+        // Default permission check
+        return $user->company_id == $asset->company_id;
+    }
 }

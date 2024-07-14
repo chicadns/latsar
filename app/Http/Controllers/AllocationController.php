@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\ImageUploadRequest;
 use App\Models\Asset;
+use App\Models\Asset2;
 use App\Models\Allocation;
 use App\Models\Setting;
 use App\Models\User;
@@ -53,7 +54,8 @@ class AllocationController extends Controller
         $sort = $request->get('sort', 'id'); // Sort column
         $order = $request->get('order', 'asc'); // Sort order
 
-        $query = Asset::select('assets.*', 'categories.name AS category_name')
+        $query = Asset2::select('assets.*', 'categories.name AS category_name')
+        // ->where('assets.company_id', $user->company_id)
         ->join('models AS category_models', function ($join) {
             $join->on('category_models.id', '=', 'assets.model_id')
             ->join('categories', function ($subjoin) {
@@ -70,16 +72,10 @@ class AllocationController extends Controller
             })
             ->where('assets.non_it_stuff', '=', 0);
 
-        // if (in_array($user->company_id, range(1, 4)) || in_array($user->company_id, range(8, 25))) {
-        //     $query->where('company_id', 5);
-        // } else {
-        //     $query->where('company_id', $user->company_id);
-        // }
-
-        if ($user->company_id == 10) {
-            $query->where('assets.company_id', 5);
+        if (in_array($user->company_id, range(1, 4)) || in_array($user->company_id, range(8, 25))) {
+            $query->where('company_id', 5);
         } else {
-            $query->where('assets.company_id', $user->company_id);
+            $query->where('company_id', $user->company_id);
         }
 
         if (!empty($search)) {
@@ -113,7 +109,7 @@ class AllocationController extends Controller
             return redirect()->back()->with('error', 'No assets selected');
         }
 
-        $assets = Asset::whereIn('id', $selectedIds)->get();
+        $assets = Asset2::whereIn('id', $selectedIds)->get();
 
         Log::info('Assets found: ', $assets->toArray());
 
@@ -124,7 +120,7 @@ class AllocationController extends Controller
                 'user_id' => $user->id,
                 'assets_id' => $asset->id,
             ], [
-                'company_id' => $asset->company_id,
+                'company_id' => $user->company_id,
                 'user_id' => $user->id,
                 'assigned_type' => 'App\Models\User',
                 'assets_id' => $asset->id,
@@ -299,8 +295,7 @@ class AllocationController extends Controller
             ->first();
 
         // Find the asset that matches the given assets_id and belongs to the same company as the authenticated user
-        $assets = Asset::where('company_id', $user->company_id)
-            ->where('id', $assets_id)
+        $assets = Asset2::where('id', $assets_id)
             ->first();
 
         $allocation_id = null; // Initialize allocation_id

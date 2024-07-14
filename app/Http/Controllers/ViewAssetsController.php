@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Actionlog;
 use App\Models\Asset;
+use App\Models\Asset2;
 use App\Models\AssetModel;
 use App\Models\Company;
 use App\Models\Setting;
@@ -14,6 +15,8 @@ use App\Notifications\RequestAssetNotification;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Allocation;
+
+use Illuminate\Support\Facades\Gate;
 
 /**
  * This controller handles all actions related to the ability for users
@@ -41,6 +44,39 @@ class ViewAssetsController extends Controller
             'accessories',
             'licenses',
         )->find(Auth::user()->id);
+
+        $query = Asset::select('assets.*', 'categories.name AS category_name')
+        // ->where('assets.company_id', 5)
+        ->join('models AS category_models', function ($join) {
+            $join->on('category_models.id', '=', 'assets.model_id')
+            ->join('categories', function ($subjoin) {
+                $subjoin->on('categories.id', '=', 'category_models.category_id')
+                ->whereIn('category_models.category_id', [3, 19, 20, 5, 8, 21, 27, 34, 85]);
+            });
+        })
+            ->whereNull('assets.assigned_to')
+            ->join('status_labels AS status_alias', function ($join) {
+                $join->on('status_alias.id', '=', 'assets.status_id')
+                ->where('status_alias.deployable', '=', 1)
+                ->where('status_alias.pending', '=', 0)
+                ->where('status_alias.archived', '=', 0);
+            })
+            ->where('assets.non_it_stuff', '=', 0);
+
+        // $query = '';
+        // $query = Asset2::where('company_id', 5)->get();
+
+        // $assets = Asset::where(function ($query) use ($user) {
+        //     $query->where('company_id', $user->company_id);
+
+        //     // Allow users from specific company IDs to access company ID 5
+        //     $allowedCompanyIds = array_merge(range(1, 4), range(8, 25));
+        //     if (in_array($user->company_id, $allowedCompanyIds)) {
+        //         $query->orWhere('company_id', 5);
+        //     }
+        //     })->get();
+
+        // dd($query->count()); die();
 
         $allocations = Allocation::where('user_id', Auth::user()->id)->get();
         $asset_satker = NULL;
