@@ -489,10 +489,6 @@ Route::group(['prefix' => 'setup', 'middleware' => 'web'], function () {
     )->name('setup');
 });
 
-
-
-
-
 Route::group(['middleware' => 'web'], function () {
 
     Route::get(

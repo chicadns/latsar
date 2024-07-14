@@ -54,23 +54,27 @@ class AllocationController extends Controller
         $order = $request->get('order', 'asc'); // Sort order
 
         $query = Asset::select('assets.*', 'categories.name AS category_name')
-            ->where('company_id', $user->company_id)
-            ->join('models AS category_models', function ($join) {
-                $join->on('category_models.id', '=', 'assets.model_id')
-                    ->join('categories', function ($subjoin) {
-                        $subjoin->on('categories.id', '=', 'category_models.category_id')
-                            ->whereIn('category_models.category_id', [3, 19, 20, 5, 8, 21, 27, 34, 85]);
-                    });
-            })
+        ->join('models AS category_models', function ($join) {
+            $join->on('category_models.id', '=', 'assets.model_id')
+            ->join('categories', function ($subjoin) {
+                $subjoin->on('categories.id', '=', 'category_models.category_id')
+                ->whereIn('category_models.category_id', [3, 19, 20, 5, 8, 21, 27, 34, 85]);
+            });
+        })
             ->whereNull('assets.assigned_to')
             ->join('status_labels AS status_alias', function ($join) {
                 $join->on('status_alias.id', '=', 'assets.status_id')
-                    ->where('status_alias.deployable', '=', 1)
-                    ->where('status_alias.pending', '=', 0)
-                    ->where('status_alias.archived', '=', 0);
+                ->where('status_alias.deployable', '=', 1)
+                ->where('status_alias.pending', '=', 0)
+                ->where('status_alias.archived', '=', 0);
             })
             ->where('assets.non_it_stuff', '=', 0);
 
+        if (in_array($user->company_id, range(1, 4)) || in_array($user->company_id, range(8, 25))) {
+            $query->where('company_id', 5);
+        } else {
+            $query->where('company_id', $user->company_id);
+        }
 
         if (!empty($search)) {
             $query->where(function ($q) use ($search) {
@@ -128,7 +132,7 @@ class AllocationController extends Controller
                 'antivirus' => $asset->_snipeit_antivirus_3,
                 'status' => 'Belum Dikirim',
                 'request_date' => now(),
-                'allocation_code' => '1'
+                'allocation_code' => '1',
             ]);
         }
 

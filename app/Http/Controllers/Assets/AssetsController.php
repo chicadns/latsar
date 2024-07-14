@@ -61,8 +61,13 @@ class AssetsController extends Controller
     {
         $this->authorize('index', Asset::class);
         $company = Company::find($request->input('company_id'));
+        $user = Auth::user();
 
-        return view('hardware/index')->with('company', $company);
+        if ($user->groups->contains('id', 5)) {
+            return view('hardware/operator')->with('company', $company);
+        } else {
+            return view('hardware/index')->with('company', $company);
+        }
     }
 
     /**
