@@ -6,6 +6,12 @@
 @parent
 @stop
 
+@php
+if (!$user->groups->contains('id', 5)) {
+            abort(403);
+    }
+@endphp
+
 {{-- Page content --}}
 @section('content')
 

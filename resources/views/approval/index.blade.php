@@ -1,5 +1,11 @@
 @extends('layouts/default')
 
+@php
+if ($user->groups->contains('id', 4)) {
+            abort(403);
+    }
+@endphp
+
 {{-- Page title --}}
 @section('title')
   Pengajuan BMN End-User

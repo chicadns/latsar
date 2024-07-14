@@ -2,6 +2,11 @@
 
 @section('title0')
 
+@php
+if ($user->groups->contains('id', 4)) {
+            abort(403);
+    }
+@endphp
 
 @if (Request::get('status'))
   @if (Request::get('status')=='Allitems')

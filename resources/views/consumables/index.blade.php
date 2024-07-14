@@ -6,6 +6,12 @@ Daftar Barang
 @parent
 @stop
 
+@php
+if ($user->groups->contains('id', 4)) {
+            abort(403);
+    }
+@endphp
+
 @section('header_right')
   @can('create', \App\Models\Consumable::class)
   <a href="{{ route('consumables.create') }}" class="btn btn-primary pull-right"> {{ trans('general.create') }}</a>

@@ -12,6 +12,12 @@
 
 @stop
 
+@php
+if ($user->groups->contains('id', 4)) {
+            abort(403);
+    }
+@endphp
+
 @section('header_right')
 
     @can('superadmin')
