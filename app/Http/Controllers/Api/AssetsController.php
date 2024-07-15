@@ -20,7 +20,7 @@ use App\Models\License;
 use App\Models\Location;
 use App\Models\Setting;
 use App\Models\User;
-use Auth;
+// use Auth;
 use Carbon\Carbon;
 use DB;
 use Illuminate\Http\Request;
@@ -32,6 +32,10 @@ use Str;
 use TCPDF;
 use Validator;
 use Route;
+
+use Illuminate\Support\Facades\Auth;
+use App\Models\Asset2;
+
 
 /**
  * This class controls all actions related to assets for
@@ -503,7 +507,6 @@ class AssetsController extends Controller
          */
         return (new $transformer)->transformAssets($assets, $total, $request);
     }
-
 
     /**
      * Returns JSON with information about an asset (by tag) for detail view.

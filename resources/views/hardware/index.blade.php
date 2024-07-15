@@ -3,9 +3,11 @@
 @section('title0')
 
 @php
-if ($user->groups->contains('id', 4)) {
-            abort(403);
-    }
+$groupIds = $user->groups->pluck('id')->all();
+
+if (in_array(4, $groupIds) && count($groupIds) === 1) {
+    abort(403);
+}
 @endphp
 
 @if (Request::get('status'))

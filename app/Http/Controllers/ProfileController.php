@@ -64,15 +64,15 @@ class ProfileController extends Controller
         $user->skin = $request->input('skin');
         $user->phone = $request->input('phone');
 
-        if (! config('app.lock_passwords')) {
+        if (!config('app.lock_passwords')) {
             $user->locale = $request->input('locale', 'en');
         }
 
-        if ((Gate::allows('self.two_factor')) && ((Setting::getSettings()->two_factor_enabled == '1') && (! config('app.lock_passwords')))) {
+        if ((Gate::allows('self.two_factor')) && ((Setting::getSettings()->two_factor_enabled == '1') && (!config('app.lock_passwords')))) {
             $user->two_factor_optin = $request->input('two_factor_optin', '0');
         }
 
-        if (Gate::allows('self.edit_location') && (! config('app.lock_passwords'))) {
+        if (Gate::allows('self.edit_location') && (!config('app.lock_passwords'))) {
             $user->location_id = $request->input('location_id');
         }
 
@@ -120,7 +120,7 @@ class ProfileController extends Controller
         if (!Gate::allows('self.api')) {
             abort(403);
         }
-        
+
         return view('account/change-password', compact('user'));
     }
 
@@ -134,7 +134,7 @@ class ProfileController extends Controller
         if (!Gate::allows('self.api')) {
             abort(403);
         }
-        
+
         if (config('app.lock_passwords')) {
             return redirect()->route('account.password.index')->with('error', trans('admin/users/table.lock_passwords'));
         }
@@ -146,12 +146,12 @@ class ProfileController extends Controller
 
         $rules = [
             'current_password'     => 'required',
-            'password'         => Setting::passwordComplexityRulesSaving('store').'|confirmed',
+            'password'         => Setting::passwordComplexityRulesSaving('store') . '|confirmed',
         ];
 
         $validator = \Validator::make($request->all(), $rules);
         $validator->after(function ($validator) use ($request, $user) {
-            if (! Hash::check($request->input('current_password'), $user->password)) {
+            if (!Hash::check($request->input('current_password'), $user->password)) {
                 $validator->errors()->add('current_password', trans('validation.custom.hashed_pass'));
             }
 
@@ -168,24 +168,22 @@ class ProfileController extends Controller
                 if (($request->input('password') == $user->username) ||
                     ($request->input('password') == $user->email) ||
                     ($request->input('password') == $user->first_name) ||
-                    ($request->input('password') == $user->last_name)) {
+                    ($request->input('password') == $user->last_name)
+                ) {
                     $validator->errors()->add('password', trans('validation.disallow_same_pwd_as_user_fields'));
                 }
             }
         });
 
-        if (! $validator->fails()) {
+        if (!$validator->fails()) {
             $user->password = Hash::make($request->input('password'));
             $user->save();
 
             // Log the user out of other devices
             Auth::logoutOtherDevices($request->input('password'));
             return redirect()->route('account.password.index')->with('success', 'Password updated!');
-
         }
         return redirect()->back()->withInput()->withErrors($validator);
-
-
     }
 
     /**
