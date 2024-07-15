@@ -144,6 +144,26 @@ if (in_array(4, $groupIds) && count($groupIds) === 1) {
         return $('#approvalTable').bootstrapTable('getSelections');
     }
 
+    // Function to toggle button state based on selection
+    function toggleBulkActionButtons() {
+        var selectedRows = getSelectedRows();
+        if (selectedRows.length === 0) {
+            $('#bulkApprove').prop('disabled', true);
+            $('#bulkDecline').prop('disabled', true);
+        } else {
+            $('#bulkApprove').prop('disabled', false);
+            $('#bulkDecline').prop('disabled', false);
+        }
+    }
+
+    // Bind the toggle function to table's selection change event
+    $('#approvalTable').on('check.bs.table uncheck.bs.table check-all.bs.table uncheck-all.bs.table', function () {
+        toggleBulkActionButtons();
+    });
+
+    // Initial button state
+    toggleBulkActionButtons();
+
     // Bulk Approve Action
     $('#bulkApprove').on('click', function () {
         var selectedRows = getSelectedRows();
@@ -200,6 +220,11 @@ if (in_array(4, $groupIds) && count($groupIds) === 1) {
                 }
             });
         }
+    });
+
+    // Refresh the table and button state after an action
+    $('#approvalTable').on('post-body.bs.table', function () {
+        toggleBulkActionButtons();
     });
 
 
