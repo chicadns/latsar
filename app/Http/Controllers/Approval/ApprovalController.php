@@ -278,14 +278,16 @@ class ApprovalController extends Controller
 
         $user = Auth::user();
 
-        $allocations = Allocation::select('allocations.*', 'categories.name AS category_name', DB::raw("CONCAT(users.first_name, ' ', users.last_name) AS user_first_name"))
+        $allocations = Allocation::withTrashed()
+            ->select('allocations.*', 'categories.name AS category_name', DB::raw("CONCAT(users.first_name, ' ', users.last_name) AS user_first_name"))
             ->where('allocations.company_id', $user->company_id)
             ->join('categories', 'categories.id', '=', 'allocations.category_id')
             ->join('users', 'users.id', '=', 'allocations.user_id')
             ->get();
-
+        
         if (Gate::allows('superadmin')) {
-            $allocations = Allocation::select('allocations.*', 'categories.name AS category_name', DB::raw("CONCAT(users.first_name, ' ', users.last_name) AS user_first_name"))
+            $allocations = Allocation::withTrashed()
+                ->select('allocations.*', 'categories.name AS category_name', DB::raw("CONCAT(users.first_name, ' ', users.last_name) AS user_first_name"))
                 // ->where('allocations.company_id', $user->company_id)
                 ->join('categories', 'categories.id', '=', 'allocations.category_id')
                 ->join('users', 'users.id', '=', 'allocations.user_id')
