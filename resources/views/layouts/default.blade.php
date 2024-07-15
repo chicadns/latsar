@@ -394,9 +394,16 @@
                                                 </a>
                                             </li>
                                         @endcan
-
-                                        <li class="divider"></li>
                                         @endcan
+
+                                        @foreach ($user->groups as $group)
+                                            <li class="text-left" style="padding: 5px;">
+                                                <i class="fas fa-user-lock fa-fw"></i>
+                                                 {{ $group['name'] }}
+                                            </li>
+                                        @endforeach
+                                        
+                                        <li class="divider"></li>
                                         <li>
 
                                             <a href="{{ route('logout.get') }}" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
