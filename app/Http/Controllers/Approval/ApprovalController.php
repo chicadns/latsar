@@ -16,7 +16,7 @@ use Illuminate\Support\Facades\Input;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Gate;
 
-
+use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 
 /**
@@ -51,7 +51,7 @@ class ApprovalController extends Controller
         // $allocations = Allocation::all();
 
         $user = Auth::user();
-        $allocations = Allocation::select('allocations.*', 'categories.name AS category_name', 'users.first_name AS user_first_name')
+        $allocations = Allocation::select('allocations.*', 'categories.name AS category_name', DB::raw("CONCAT(users.first_name, ' ', users.last_name) AS user_first_name"))
             ->where('allocations.company_id', $user->company_id)
             ->where('allocations.status', "Menunggu Persetujuan")
             ->join('categories', 'categories.id', '=', 'allocations.category_id')
@@ -59,8 +59,8 @@ class ApprovalController extends Controller
             ->get();
 
         if (Gate::allows('superadmin')) {
-            $allocations = Allocation::select('allocations.*', 'categories.name AS category_name', 'users.first_name AS user_first_name')
-                // ->where('allocations.company_id', $user->company_id)
+            $allocations = Allocation::select('allocations.*', 'categories.name AS category_name', DB::raw("CONCAT(users.first_name, ' ', users.last_name) AS user_first_name"))
+                // ->where('allocations.company_id', $user->comppany_id)
                 ->where('allocations.status', "Menunggu Persetujuan")
                 ->join('categories', 'categories.id', '=', 'allocations.category_id')
                 ->join('users', 'users.id', '=', 'allocations.user_id')
@@ -278,14 +278,14 @@ class ApprovalController extends Controller
 
         $user = Auth::user();
 
-        $allocations = Allocation::select('allocations.*', 'categories.name AS category_name', 'users.first_name AS user_first_name')
+        $allocations = Allocation::select('allocations.*', 'categories.name AS category_name', DB::raw("CONCAT(users.first_name, ' ', users.last_name) AS user_first_name"))
             ->where('allocations.company_id', $user->company_id)
             ->join('categories', 'categories.id', '=', 'allocations.category_id')
             ->join('users', 'users.id', '=', 'allocations.user_id')
             ->get();
 
         if (Gate::allows('superadmin')) {
-            $allocations = Allocation::select('allocations.*', 'categories.name AS category_name', 'users.first_name AS user_first_name')
+            $allocations = Allocation::select('allocations.*', 'categories.name AS category_name', DB::raw("CONCAT(users.first_name, ' ', users.last_name) AS user_first_name"))
                 // ->where('allocations.company_id', $user->company_id)
                 ->join('categories', 'categories.id', '=', 'allocations.category_id')
                 ->join('users', 'users.id', '=', 'allocations.user_id')

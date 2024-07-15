@@ -19,7 +19,7 @@ use Illuminate\Support\Facades\Storage;
 use Image;
 use Redirect;
 use View;
-
+use Illuminate\Support\Facades\DB;
 
 
 
@@ -148,7 +148,7 @@ class AllocationController extends Controller
         $user = Auth::user();
         $userAssets = $user->assets;
 
-        $allocations = Allocation::select('allocations.*', 'categories.name AS category_name', 'users.first_name AS user_first_name')
+        $allocations = Allocation::select('allocations.*', 'categories.name AS category_name', DB::raw("CONCAT(users.first_name, ' ', users.last_name) AS user_first_name"))
             ->where('allocations.user_id', $user->id)
             ->whereNull('allocations.deleted_at') // Ensure allocations are not soft deleted
             ->join('categories', 'categories.id', '=', 'allocations.category_id')
