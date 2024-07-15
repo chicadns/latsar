@@ -350,7 +350,7 @@
                                     </a>
                                     <ul class="dropdown-menu">
                                         <!-- User image -->
-                                        @can('admin')
+                                        @can('superadmin')
                                         <li {!! (Request::is('account/profile') ? ' class="active"' : '') !!}>
                                             <a href="{{ route('view-assets') }}">
                                                 <i class="fas fa-barcode fa-fw" aria-hidden="true"></i>
