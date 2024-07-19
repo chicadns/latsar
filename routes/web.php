@@ -47,7 +47,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::resource('categories', CategoriesController::class, [
         'parameters' => ['category' => 'category_id'],
     ]);
-
+  
     /*
     * Labels
     */
@@ -61,9 +61,8 @@ Route::group(['middleware' => 'auth'], function () {
      */
 
     Route::group(['prefix' => 'locations', 'middleware' => ['auth']], function () {
-
-        Route::get(
-            '{locationId}/clone',
+        
+        Route::get('{locationId}/clone',
             [LocationsController::class, 'getClone']
         )->name('clone/location');
 
@@ -103,7 +102,7 @@ Route::group(['middleware' => 'auth'], function () {
     */
 
     Route::group(['prefix' => 'manufacturers', 'middleware' => ['auth']], function () {
-        Route::post('{manufacturers_id}/restore', [ManufacturersController::class, 'restore'])->name('restore/manufacturer');
+        Route::post('{manufacturers_id}/restore', [ManufacturersController::class, 'restore'] )->name('restore/manufacturer');
     });
 
     Route::resource('manufacturers', ManufacturersController::class, [
@@ -121,15 +120,15 @@ Route::group(['middleware' => 'auth'], function () {
     * Depreciations
      */
     Route::resource('depreciations', DepreciationsController::class, [
-        'parameters' => ['depreciation' => 'depreciation_id'],
-    ]);
+         'parameters' => ['depreciation' => 'depreciation_id'],
+     ]);
 
     /*
     * Status Labels
      */
     Route::resource('statuslabels', StatuslabelsController::class, [
-        'parameters' => ['statuslabel' => 'statuslabel_id'],
-    ]);
+          'parameters' => ['statuslabel' => 'statuslabel_id'],
+      ]);
 
     /*
     * Departments
@@ -150,7 +149,7 @@ Route::group(['middleware' => 'auth'], function () {
 */
 
 Route::group(['middleware' => 'auth', 'prefix' => 'modals'], function () {
-    Route::get('{type}/{itemId?}', [ModalController::class, 'show'])->name('modal.show');
+    Route::get('{type}/{itemId?}', [ModalController::class, 'show'] )->name('modal.show');
 });
 
 /*
@@ -229,28 +228,21 @@ Route::group(['prefix' => 'admin', 'middleware' => ['auth', 'authorize:superuser
 
     // Backups
     Route::group(['prefix' => 'backups', 'middleware' => 'auth'], function () {
-        Route::get(
-            'download/{filename}',
-            [SettingsController::class, 'downloadFile']
-        )->name('settings.backups.download');
+        Route::get('download/{filename}',
+            [SettingsController::class, 'downloadFile'])->name('settings.backups.download');
 
-        Route::delete(
-            'delete/{filename}',
-            [SettingsController::class, 'deleteFile']
-        )->name('settings.backups.destroy');
+        Route::delete('delete/{filename}',
+            [SettingsController::class, 'deleteFile'])->name('settings.backups.destroy');
 
-        Route::post(
-            '/',
+        Route::post('/', 
             [SettingsController::class, 'postBackups']
         )->name('settings.backups.create');
 
-        Route::post(
-            '/restore/{filename}',
+        Route::post('/restore/{filename}', 
             [SettingsController::class, 'postRestore']
         )->name('settings.backups.restore');
 
-        Route::post(
-            '/upload',
+        Route::post('/upload', 
             [SettingsController::class, 'postUploadBackup']
         )->name('settings.backups.upload');
 
@@ -274,8 +266,7 @@ Route::group(['prefix' => 'admin', 'middleware' => ['auth', 'authorize:superuser
 |
 */
 
-Route::get(
-    '/import',
+Route::get('/import',
     \App\Http\Livewire\Importer::class
 )->middleware('auth')->name('imports.index');
 
@@ -298,11 +289,12 @@ Route::group(['prefix' => 'approval', 'middleware' => ['auth']], function () {
     Route::get('history', [ApprovalController::class, 'getAllData'])->name('approval.history');
     Route::post('update-status', [ApprovalController::class, 'updateStatus'])->name('approval.update-status');
     Route::post('bulkUpdateStatus', [ApprovalController::class, 'bulkUpdateStatus'])->name('approval.bulkUpdateStatus');
+
 });
 
 Route::get('satker', [AllocationController::class, 'satker'])->name('satker.index');
-Route::post('/allocations/store', [AllocationController::class, 'storeAllocations'])->name('allocations.store');
-Route::get('/allocations/user', [AllocationController::class, 'viewAllocations'])->name('allocations.user');
+Route::post('/allocations/store', [AllocationController::class, 'storeAllocations'])->name('allocations.store'); 
+Route::get('/allocations/user', [AllocationController::class, 'viewAllocations'])->name('allocations.user'); 
 
 
 /*
@@ -318,10 +310,10 @@ Route::group(['prefix' => 'account', 'middleware' => ['auth']], function () {
     // Tambah Alokasi
     Route::get('/view-assets#asset', [AllocationController::class, 'getIndex'])->name('allocations.index');
     Route::get('/allocations/{id}/{asset_id}/edit', [AllocationController::class, 'edit'])->name('allocations.edit');
-
+    
     Route::get('/allocations/{asset_id}/edit-new', [AllocationController::class, 'editNew'])->name('allocations.edit.new');
-    Route::put('/allocations/{asset_id}/create', [AllocationController::class, 'createAllocations'])->name('allocations.create');
-
+    Route::put('/allocations/{asset_id}/create', [AllocationController::class, 'createAllocations'])->name('allocations.create'); 
+    
     Route::delete('allocations/{allocation_id}', [AllocationController::class, 'destroy'])->name('allocations.destroy');
     Route::post('allocations/{allocation_id}', [AllocationController::class, 'submit'])->name('allocations.submit');
     Route::put('allocations/{allocation_id}', [AllocationController::class, 'update'])->name('allocations.update');
@@ -384,11 +376,11 @@ Route::group(['prefix' => 'account', 'middleware' => ['auth']], function () {
             'emailAssetList'
         ]
     )->name('profile.email_assets');
+
 });
 
 Route::group(['middleware' => ['auth']], function () {
-    Route::get(
-        'reports/audit',
+    Route::get('reports/audit', 
         [ReportsController::class, 'audit']
     )->name('reports.audit');
 
@@ -552,7 +544,7 @@ Route::group(['middleware' => 'web'], function () {
     )->name('password.email')->middleware('throttle:forgotten_password');
 
 
-    // Socialite Google login
+     // Socialite Google login
     Route::get('google', 'App\Http\Controllers\GoogleAuthController@redirectToGoogle')->name('google.redirect');
     Route::get('google/callback', 'App\Http\Controllers\GoogleAuthController@handleGoogleCallback')->name('google.callback');
 
@@ -562,8 +554,7 @@ Route::group(['middleware' => 'web'], function () {
         [
             'as' => 'home',
             'middleware' => ['auth'],
-            'uses' => 'DashboardController@getIndex'
-        ]
+            'uses' => 'DashboardController@getIndex' ]
     );
 
     // need to keep GET /logout for SAML SLO
@@ -581,7 +572,7 @@ Route::group(['middleware' => 'web'], function () {
 //Auth::routes();
 
 Route::get(
-    '/health',
+    '/health', 
     [HealthController::class, 'get']
 )->name('health');
 

@@ -350,13 +350,13 @@
                                     </a>
                                     <ul class="dropdown-menu">
                                         <!-- User image -->
-                                        @can('superadmin')
                                         <li {!! (Request::is('account/profile') ? ' class="active"' : '') !!}>
                                             <a href="{{ route('view-assets') }}">
                                                 <i class="fas fa-barcode fa-fw" aria-hidden="true"></i>
                                                 {{ trans('general.viewassets') }}
                                             </a></li>
 
+                                        @can('superadmin')
                                         <!-- @can('viewRequestable', \App\Models\Asset::class)
                                             <li {!! (Request::is('account/requested') ? ' class="active"' : '') !!}>
                                                 <a href="{{ route('account.requested') }}">
@@ -395,15 +395,19 @@
                                             </li>
                                         @endcan
                                         @endcan
-
+                                        
+                                        <li class="divider"></li>
+                                        
                                         @foreach ($user->groups as $group)
                                             <li class="text-left" style="padding: 5px;">
                                                 <i class="fas fa-user-lock fa-fw"></i>
                                                  {{ $group['name'] }}
                                             </li>
                                         @endforeach
+
+                                        <!--<li class="divider"></li>-->
                                         
-                                        <li class="divider"></li>
+                                        <!--Logout-->
                                         <li>
 
                                             <a href="{{ route('logout.get') }}" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
@@ -1354,8 +1358,7 @@
                 event.preventDefault();
                 $(this).ekkoLightbox();
             });
-
-
+            
         </script>
 
         @if ((Session::get('topsearch')=='true') || (Request::is('/')))

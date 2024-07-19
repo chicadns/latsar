@@ -116,7 +116,7 @@ function generateSelectOptions($name, $options, $selectedValue) {
 
                 {{-- Microsoft Office --}}
                 <div class="form-group">
-                    <label for="office" class=" col-md-3 control-label">Microsoft Office *</label>
+                    <label for="office" class=" col-md-3 control-label">Aplikasi Office *</label>
                     <div class="required col-md-8">
                         <select required class="form-control" id="office" name="office" onchange="toggleOtherOfficeField()">
                             {!! generateSelectOptions('office', [
@@ -137,7 +137,7 @@ function generateSelectOptions($name, $options, $selectedValue) {
 
                 <!-- Office Lainnya Input -->
                 <div class="form-group" id="other-office-group" style="display: none;">
-                    <label for="other_office" class="col-md-3 control-label" style="margin-top: -10px;">Masukkan Nama <br/>Microsoft Office *</label>
+                    <label for="other_office" class="col-md-3 control-label" style="margin-top: -10px;">Masukkan Nama <br/>Aplikasi Office *</label>
                     <div class="col-md-8">
                         <input class="form-control" type="text" name="office2" id="other_office" placeholder="Masukkan Nama Office Lainnya" value="{{ old('other_office', $asset->office2) }}">
                         {!! $errors->first('other_office', '<span class="alert-msg" aria-hidden="true"><i class="fas fa-times" aria-hidden="true"></i> :message</span>') !!}

@@ -229,8 +229,10 @@ class SamlController extends Controller
     public function sls(Request $request)
     {
         $auth = $this->saml->getAuth();
-        //$retrieveParametersFromServer = $this->saml->getSetting('retrieveParametersFromServer', false);
-        //$sloUrl = $auth->processSLO(true, null, $retrieveParametersFromServer, null, true);
+        $retrieveParametersFromServer = $this->saml->getSetting('retrieveParametersFromServer', false);
+        //(Rihan Y. | 18/07/2024 - Change SLS URL to HTTP-Redirect, based on configuration on IdP SSO BPS' server)
+        // $sloUrl = $auth->processSLO(true, null, $retrieveParametersFromServer, null, true);
+        $sloUrl = "https://mania.bps.go.id";
         $errors = $auth->getErrors();
 
         Log::info('SLO URL: ' . $sloUrl);
@@ -241,6 +243,7 @@ class SamlController extends Controller
             return view('errors.403');
         }
 
+        //      or change the SLS URL from the configuration (via database or SAML setting in Admin GUI)
         return redirect()->route('logout.get')->with(['saml_logout' => true,'saml_slo_redirect_url' => $sloUrl]);
     }
 }

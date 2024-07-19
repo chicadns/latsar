@@ -1271,6 +1271,15 @@ Route::group(['prefix' => 'v1', 'middleware' => ['api', 'throttle:api']], functi
                 'assets'
             ]
             )->name('api.users.assetlist');
+            
+            // API with email, user ~ email
+            Route::get('{user}/assets-email',
+            [
+                Api\UsersController::class, 
+                'assetsEmail'
+            ]
+            )->name('api.users.assetlist');
+
 
             Route::post('{user}/email',
                 [

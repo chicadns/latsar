@@ -491,13 +491,25 @@ class UsersController extends Controller
         $this->$id = $id;
         $this->authorize('view', User::class);
         $this->authorize('view', Asset::class);
-        if (strlen($id) == 18 || strlen($id) == 9){
+        if ($id && (strlen($id) == 18 || strlen($id) == 9)){
             $this->id = User::where('nip_baru', '=', $id)->orWhere('employee_num', '=', $id)->first()->id;
         } 
         $assets = Asset::where('assigned_to', '=', $this->id)->where('assigned_type', '=', User::class)->with('model')->get();
 
         return (new AssetsTransformer)->transformAssetsSimplified($assets, $assets->count(), $request);
     }
+
+    public function assetsEmail(Request $request, $id)
+    {
+        $this->$id = $id;
+        $this->authorize('view', User::class);
+        $this->authorize('view', Asset::class);
+        $this->$id = User::where('email', '=', $id)->first()->id;
+        $assets = Asset::where('assigned_to', '=', $this->$id)->where('assigned_type', '=', User::class)->with('model')->get();
+
+        return (new AssetsTransformer)->transformAssetsSimplified($assets, $assets->count(), $request);
+    }
+
 
     /**
      * Notify a specific user via email with all of their assigned assets.

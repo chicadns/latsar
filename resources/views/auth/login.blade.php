@@ -45,7 +45,6 @@
                                 <div class="col-md-12">
                                     <!-- CSRF Token -->
 
-
                                     <fieldset>
 
                                         <div class="form-group{{ $errors->has('username') ? ' has-error' : '' }}">

@@ -294,6 +294,7 @@ class ApprovalController extends Controller
                 ->get();
         }
 
+
         // Format data for the data-table
         $data = [
             'total' => $allocations->count(),

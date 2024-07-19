@@ -71,13 +71,15 @@ class AllocationController extends Controller
                 ->where('status_alias.archived', '=', 0);
             })
             ->where('assets.non_it_stuff', '=', 0);
-
-        if (in_array($user->company_id, range(1, 4)) || in_array($user->company_id, range(8, 25))) {
+            
+        if($user){
+            if (in_array($user->company_id, range(1, 4)) || in_array($user->company_id, range(8, 25))) {
             $query->where('company_id', 5);
-        } else {
-            $query->where('company_id', $user->company_id);
+            } else {
+                $query->where('company_id', $user->company_id);
+            }
         }
-
+        
         if (!empty($search)) {
             $query->where(function ($q) use ($search) {
                 $q->where('assets.name', 'like', '%' . $search . '%')
@@ -146,92 +148,95 @@ class AllocationController extends Controller
     public function viewAllocations()
     {
         $user = Auth::user();
-        $userAssets = $user->assets;
-
-        $allocations = Allocation::select('allocations.*', 'categories.name AS category_name', DB::raw("CONCAT(users.first_name, ' ', users.last_name) AS user_first_name"))
-            ->where('allocations.user_id', $user->id)
-            ->whereNull('allocations.deleted_at') // Ensure allocations are not soft deleted
-            ->join('categories', 'categories.id', '=', 'allocations.category_id')
-            ->join('users', 'users.id', '=', 'allocations.user_id')
-            ->get();
-
-        // Create a collection to hold the final data
-        $finalData = collect();
-
-        // Add user assets to the final data with the status "Sudah Disetujui"
-        foreach ($userAssets as $asset) {
-            // Fetch asset from the database based on $asset->id
-            $assetData = Asset::find($asset->id); // Replace 'Asset' with your actual Eloquent model name for assets
-
-            if ($assetData) {
-                // Add additional fields to $assetData
-                $assetData->status = 'Sudah Disetujui'; // Add 'status' field
-                $assetData->source = 'user'; // Add 'source' field
-                $assetData->allocation_id = null; // Add 'allocation_id' field
-
-                // Assuming relationships exist properly, add 'category_name' field
-                if ($assetData->model && $assetData->model->category) {
-                    $assetData->category_name = $assetData->model->category->name;
-                } else {
-                    $assetData->category_name = null; // Handle if category name is not available
+        if($user){
+            $userAssets = $user->assets;
+            
+            $allocations = Allocation::select('allocations.*', 'categories.name AS category_name', DB::raw("CONCAT(users.first_name, ' ', users.last_name) AS user_first_name"))
+                ->where('allocations.user_id', $user->id)
+                ->whereNull('allocations.deleted_at') // Ensure allocations are not soft deleted
+                ->join('categories', 'categories.id', '=', 'allocations.category_id')
+                ->join('users', 'users.id', '=', 'allocations.user_id')
+                ->get();
+    
+            // Create a collection to hold the final data
+            $finalData = collect();
+    
+            // Add user assets to the final data with the status "Sudah Disetujui"
+            foreach ($userAssets as $asset) {
+                // Fetch asset from the database based on $asset->id
+                $assetData = Asset::find($asset->id); // Replace 'Asset' with your actual Eloquent model name for assets
+    
+                if ($assetData) {
+                    // Add additional fields to $assetData
+                    $assetData->status = 'Sudah Disetujui'; // Add 'status' field
+                    $assetData->source = 'user'; // Add 'source' field
+                    $assetData->allocation_id = null; // Add 'allocation_id' field
+    
+                    // Assuming relationships exist properly, add 'category_name' field
+                    if ($assetData->model && $assetData->model->category) {
+                        $assetData->category_name = $assetData->model->category->name;
+                    } else {
+                        $assetData->category_name = null; // Handle if category name is not available
+                    }
+    
+                    $finalData->push($assetData); // Push the enhanced asset data into $finalData collection
                 }
-
-                $finalData->push($assetData); // Push the enhanced asset data into $finalData collection
             }
-        }
+        
 
-        // Add allocations to the final data
-        foreach ($allocations as $allocation) {
-            // Check if the asset from allocation already exists in $finalData
-            $existingAsset = $finalData->firstWhere('id', $allocation->assets_id);
-
-            if ($existingAsset) {
-                // If existing asset found
-                // if (($allocation->status == "Sudah Disetujui") || $allocation->deleted_at != null) {
-                //     continue;
-                // } else {
-                // if ($allocation->status = "Sudah Disetujui") {
-                //     $existingAsset->allocation_id = null;
-                // } 
-                // else {
-                $existingAsset->allocation_id = $allocation->id;
-                // }
-
-                $existingAsset->name = $allocation->name;
-                $existingAsset->category_name = $allocation->category_name;
-                $existingAsset->status = $allocation->status;
-                $existingAsset->source = 'allocation';
-                $existingAsset->request_date = $allocation->request_date;
-                $existingAsset->user_first_name = $allocation->user_first_name;
-                $existingAsset->bmn = $allocation->bmn;
-                $existingAsset->serial = $allocation->serial;
-                $existingAsset->kondisi = $allocation->kondisi;
-                $existingAsset->os = $allocation->os;
-                $existingAsset->os2 = $allocation->os2;
-                $existingAsset->office = $allocation->office;
-                $existingAsset->office2 = $allocation->office2;
-                $existingAsset->antivirus = $allocation->antivirus;
-                // }       
-            } else {
-                // If no existing asset found, add allocation data as a new entry in $finalData
-                $finalData->push([
-                    'allocation_id' => $allocation->id,
-                    'id' => $allocation->assets_id,
-                    'name' => $allocation->name,
-                    'category_name' => $allocation->category_name,
-                    'status' => $allocation->status,
-                    'source' => 'allocation',
-                    'request_date' => $allocation->request_date,
-                    'user_first_name' => $allocation->user_first_name,
-                    'bmn' => $allocation->bmn,
-                    'serial' => $allocation->serial,
-                    'kondisi' => $allocation->kondisi,
-                    'os' => $allocation->os,
-                    'os2' => $allocation->os2,
-                    'office' => $allocation->office,
-                    'office2' => $allocation->office2,
-                    'antivirus' => $allocation->antivirus,
-                ]);
+            // Add allocations to the final data
+            foreach ($allocations as $allocation) {
+                // Check if the asset from allocation already exists in $finalData
+                $existingAsset = $finalData->firstWhere('id', $allocation->assets_id);
+    
+                if ($existingAsset) {
+                    // If existing asset found
+                    // if (($allocation->status == "Sudah Disetujui") || $allocation->deleted_at != null) {
+                    //     continue;
+                    // } else {
+                    // if ($allocation->status = "Sudah Disetujui") {
+                    //     $existingAsset->allocation_id = null;
+                    // } 
+                    // else {
+                    $existingAsset->allocation_id = $allocation->id;
+                    // }
+    
+                    $existingAsset->name = $allocation->name;
+                    $existingAsset->category_name = $allocation->category_name;
+                    $existingAsset->status = $allocation->status;
+                    $existingAsset->source = 'allocation';
+                    $existingAsset->request_date = $allocation->request_date;
+                    $existingAsset->user_first_name = $allocation->user_first_name;
+                    $existingAsset->bmn = $allocation->bmn;
+                    $existingAsset->serial = $allocation->serial;
+                    $existingAsset->kondisi = $allocation->kondisi;
+                    $existingAsset->os = $allocation->os;
+                    $existingAsset->os2 = $allocation->os2;
+                    $existingAsset->office = $allocation->office;
+                    $existingAsset->office2 = $allocation->office2;
+                    $existingAsset->antivirus = $allocation->antivirus;
+                    // }       
+                } else {
+                    // If no existing asset found, add allocation data as a new entry in $finalData
+                    $finalData->push([
+                        'allocation_id' => $allocation->id,
+                        'id' => $allocation->assets_id,
+                        'name' => $allocation->name,
+                        'category_name' => $allocation->category_name,
+                        'status' => $allocation->status,
+                        'source' => 'allocation',
+                        'request_date' => $allocation->request_date,
+                        'user_first_name' => $allocation->user_first_name,
+                        'bmn' => $allocation->bmn,
+                        'serial' => $allocation->serial,
+                        'kondisi' => $allocation->kondisi,
+                        'os' => $allocation->os,
+                        'os2' => $allocation->os2,
+                        'office' => $allocation->office,
+                        'office2' => $allocation->office2,
+                        'antivirus' => $allocation->antivirus,
+                    ]);
+                }
             }
         }
 

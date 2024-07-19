@@ -469,7 +469,11 @@ class LoginController extends Controller
         }
 
         if (! empty($sloRequestUrl)) {
+            //(Rihan Y. | 18/07/2024 - Append another processes from default logout before slo request)
+            $request->session()->regenerate(true);
+            Auth::logout();
             return redirect()->away($sloRequestUrl);
+            // return redirect()->away($sloRequestUrl)->with(['success' => trans('auth/message.logout.success'), 'loggedout' => true]);
         }
 
         $request->session()->regenerate(true);
@@ -488,7 +492,7 @@ class LoginController extends Controller
         if ($settings->login_remote_user_enabled == '1' && $customLogoutUrl != '') {
             return redirect()->away($customLogoutUrl);
         }
-
+        
         return redirect()->route('login')->with(['success' => trans('auth/message.logout.success'), 'loggedout' => true]);
     }
 
